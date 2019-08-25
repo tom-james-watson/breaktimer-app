@@ -1,0 +1,35 @@
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "~@blueprintjs/core/lib/scss/variables.scss";
+@import "~@blueprintjs/table/lib/css/table.css";
+/*
+  Blueprint colors documented here:
+  https://blueprintjs.com/docs/#core/variables.color-aliases
+*/
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+}
+
+div.bp3-tab-panel {
+  height: 100%;
+  margin-top: 0;
+}
+
+div.navbar button.settings_button .bp3-icon{
+  color: $pt-dark-text-color;
+}

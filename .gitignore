@@ -1,0 +1,17 @@
+# Logs
+*.log*
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+.eslintcache
+
+# Dependency directory
+node_modules
+
+# OSX
+.DS_Store
+
+# Build files
+release
+app/main/dist
+app/renderer/dist

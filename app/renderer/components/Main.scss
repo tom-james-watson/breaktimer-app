@@ -1,0 +1,38 @@
+@import "~@blueprintjs/core/lib/scss/variables.scss";
+
+.main {
+  height: 100%;
+  display: grid;
+  grid-template:
+  "sidebar code"
+  "sidebar history";
+  grid-template-rows:    2fr 1fr;
+  grid-template-columns: 3fr 10fr;
+}
+
+.invisible_nav {
+  background: none !important;
+  pointer-events: none;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: $pt-app-background-color;
+  resize: horizontal;
+  overflow: auto;
+
+  h4 {
+    margin-top: 0;
+  }
+}
+
+.code {
+  grid-area: code;
+  resize: vertical;
+  overflow: auto;
+  z-index: 1;
+}
+
+.history {
+  grid-area: history;
+}
