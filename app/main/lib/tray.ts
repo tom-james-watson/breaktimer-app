@@ -29,8 +29,8 @@ export function buildTray(): void {
       label: breaksEnabled ? 'Disable breaks' : 'Enable breaks',
       click: setBreaksEnabled.bind(null, !breaksEnabled)
     },
-    {label: 'Restart countdown'},
-    {label: 'Start break now'},
+    {label: 'Restart countdown', enabled: false},
+    {label: 'Start break now', enabled: false},
     {type: 'separator'},
     {label: 'Quit', click: app.quit}
   ])
