@@ -39,6 +39,9 @@ const installExtensions = async () => {
   ).catch(console.log)
 }
 
+// Don't exit on close all windows - live in tray
+app.on('window-all-closed', e => e.preventDefault())
+
 app.on('ready', async () => {
   if (
     process.env.NODE_ENV === 'development' ||

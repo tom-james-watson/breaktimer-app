@@ -1,5 +1,4 @@
 import {
-  app,
   Menu,
   shell,
   BrowserWindow,
@@ -69,14 +68,6 @@ export default class MenuBuilder {
           selector: 'hideOtherApplications:'
         },
         {label: 'Show All', selector: 'unhideAllApplications:'},
-        {type: 'separator'},
-        {
-          label: 'Quit',
-          accelerator: 'Command+Q',
-          click: () => {
-            app.quit()
-          }
-        }
       ]
     }
     const subMenuEdit = {

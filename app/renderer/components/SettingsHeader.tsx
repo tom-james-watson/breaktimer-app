@@ -12,7 +12,9 @@ export default function SettingsHeader(props: Props) {
   return (
     <Navbar className={`${styles.navbar} bp3-dark`}>
       <Navbar.Group align={Alignment.LEFT}>
-        <Navbar.Heading><strong>Settings</strong></Navbar.Heading>
+        <Navbar.Heading>
+          <strong>Settings</strong>
+        </Navbar.Heading>
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
         <Button intent={Intent.SUCCESS} onClick={handleSave}>

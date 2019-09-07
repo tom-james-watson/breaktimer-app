@@ -13,8 +13,8 @@ export function createSettingsWindow() {
     show: false,
     width: 440,
     minWidth: 440,
-    height: 625,
-    minHeight: 625,
+    height: 630,
+    minHeight: 630,
     webPreferences: {
       // This effectively disables the sandbox inside the renderer process and
       // is now turned off by default as of v5. Without this, we cannot access

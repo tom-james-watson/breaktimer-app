@@ -65,14 +65,11 @@ export default function Main() {
     <React.Fragment>
       <SettingsHeader handleSave={handleSave} />
       <main className={styles.settings}>
-        <FormGroup label="Notify me with">
-          <HTMLSelect
-            value={settings.notificationType}
-            options={[
-              {value: NotificationType.Popup, label: "Fullscreen popup"},
-              {value: NotificationType.Notification, label: "Notification"},
-            ]}
-            onChange={handleNotificationTypeChange}
+        <FormGroup>
+          <Switch
+            label="Breaks enabled"
+            checked={settings.breaksEnabled}
+            onChange={handleSwitchChange.bind(null, 'breaksEnabled')}
           />
         </FormGroup>
         <Tabs defaultSelectedTabId="break-settings">
@@ -81,19 +78,65 @@ export default function Main() {
             title="Break Settings"
             panel={(
               <React.Fragment>
+                <FormGroup label="Notify me with">
+                  <HTMLSelect
+                    value={settings.notificationType}
+                    options={[
+                      {value: NotificationType.Popup, label: "Fullscreen popup"},
+                      {value: NotificationType.Notification, label: "Notification"},
+                    ]}
+                    onChange={handleNotificationTypeChange}
+                    disabled={!settings.breaksEnabled}
+                  />
+                </FormGroup>
                 <FormGroup label="Break frequency">
-                  <TimePicker onChange={handleDateChange.bind(null, 'breakFrequency')} value={new Date(settings.breakFrequency)} selectAllOnFocus />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'breakFrequency')}
+                    value={new Date(settings.breakFrequency)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled}
+                  />
                 </FormGroup>
                 <FormGroup label="Break length">
-                  <TimePicker onChange={handleDateChange.bind(null, 'breakLength')} value={new Date(settings.breakLength)} selectAllOnFocus />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'breakLength')}
+                    value={new Date(settings.breakLength)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled}
+                  />
                 </FormGroup>
                 <FormGroup label="Postpone length">
-                  <TimePicker onChange={handleDateChange.bind(null, 'postponeLength')} value={new Date(settings.postponeLength)} selectAllOnFocus />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'postponeLength')}
+                    value={new Date(settings.postponeLength)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled}
+                  />
                 </FormGroup>
-                <Switch label="Play gong sound" checked={settings.gongEnabled} onChange={handleSwitchChange.bind(null, 'gongEnabled')} />
-                <Switch label="Allow skip break" checked={settings.skipBreakEnabled} onChange={handleSwitchChange.bind(null, 'skipBreakEnabled')} />
-                <Switch label="Allow postpone break" checked={settings.postponeBreakEnabled} onChange={handleSwitchChange.bind(null, 'postponeBreakEnabled')} />
-                <Switch label="Allow end break" checked={settings.endBreakEnabled} onChange={handleSwitchChange.bind(null, 'endBreakEnabled')} />
+                <Switch
+                  label="Play gong sound"
+                  checked={settings.gongEnabled}
+                  onChange={handleSwitchChange.bind(null, 'gongEnabled')}
+                  disabled={!settings.breaksEnabled}
+                />
+                <Switch
+                  label="Allow skip break"
+                  checked={settings.skipBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, 'skipBreakEnabled')}
+                  disabled={!settings.breaksEnabled}
+                />
+                <Switch
+                  label="Allow postpone break"
+                  checked={settings.postponeBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, 'postponeBreakEnabled')}
+                  disabled={!settings.breaksEnabled}
+                />
+                <Switch
+                  label="Allow end break"
+                  checked={settings.endBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, 'endBreakEnabled')}
+                  disabled={!settings.breaksEnabled}
+                />
               </React.Fragment>
             )}
           />
@@ -103,10 +146,20 @@ export default function Main() {
             panel={(
               <React.Fragment>
                 <FormGroup label="Break title">
-                  <InputGroup id="break-title" value={settings.breakTitle} onChange={handleTextChange.bind(null, 'breakTitle')} />
+                  <InputGroup
+                    id="break-title"
+                    value={settings.breakTitle}
+                    onChange={handleTextChange.bind(null, 'breakTitle')}
+                    disabled={!settings.breaksEnabled}
+                  />
                 </FormGroup>
                 <FormGroup label="Break message">
-                  <InputGroup id="break-message" value={settings.breakMessage} onChange={handleTextChange.bind(null, 'breakMessage')} />
+                  <InputGroup
+                    id="break-message"
+                    value={settings.breakMessage}
+                    onChange={handleTextChange.bind(null, 'breakMessage')}
+                    disabled={!settings.breaksEnabled}
+                  />
                 </FormGroup>
               </React.Fragment>
             )}
@@ -116,21 +169,73 @@ export default function Main() {
             title="Working Hours"
             panel={(
               <React.Fragment>
-                <Switch label="Enable working hours" checked={settings.workingHoursEnabled} onChange={handleSwitchChange.bind(null, 'workingHoursEnabled')} />
+                <FormGroup>
+                  <Switch
+                    label="Enable working hours"
+                    checked={settings.workingHoursEnabled}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursEnabled')}
+                    disabled={!settings.breaksEnabled}
+                  />
+                </FormGroup>
                 <FormGroup label="Breaks from">
-                  <TimePicker onChange={handleDateChange.bind(null, 'workingHoursFrom')} value={new Date(settings.workingHoursFrom)} selectAllOnFocus disabled={!settings.workingHoursEnabled} />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'workingHoursFrom')}
+                    value={new Date(settings.workingHoursFrom)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
                 </FormGroup>
                 <FormGroup label="Breaks to">
-                  <TimePicker onChange={handleDateChange.bind(null, 'workingHoursTo')} value={new Date(settings.workingHoursTo)} selectAllOnFocus disabled={!settings.workingHoursEnabled} />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'workingHoursTo')}
+                    value={new Date(settings.workingHoursTo)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
                 </FormGroup>
                 <FormGroup label="Breaks on">
-                  <Switch label="Monday" checked={settings.workingHoursMonday} onChange={handleSwitchChange.bind(null, 'workingHoursMonday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Tuesday" checked={settings.workingHoursTuesday} onChange={handleSwitchChange.bind(null, 'workingHoursTuesday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Wednesday" checked={settings.workingHoursWednesday} onChange={handleSwitchChange.bind(null, 'workingHoursWednesday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Thursday" checked={settings.workingHoursThursday} onChange={handleSwitchChange.bind(null, 'workingHoursThursday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Friday" checked={settings.workingHoursFriday} onChange={handleSwitchChange.bind(null, 'workingHoursFriday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Saturday" checked={settings.workingHoursSaturday} onChange={handleSwitchChange.bind(null, 'workingHoursSaturday')} disabled={!settings.workingHoursEnabled} />
-                  <Switch label="Sunday" checked={settings.workingHoursSunday} onChange={handleSwitchChange.bind(null, 'workingHoursSunday')} disabled={!settings.workingHoursEnabled} />
+                  <Switch
+                    label="Monday"
+                    checked={settings.workingHoursMonday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursMonday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Tuesday"
+                    checked={settings.workingHoursTuesday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursTuesday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Wednesday"
+                    checked={settings.workingHoursWednesday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursWednesday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Thursday"
+                    checked={settings.workingHoursThursday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursThursday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Friday"
+                    checked={settings.workingHoursFriday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursFriday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Saturday"
+                    checked={settings.workingHoursSaturday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursSaturday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
+                  <Switch
+                    label="Sunday"
+                    checked={settings.workingHoursSunday}
+                    onChange={handleSwitchChange.bind(null, 'workingHoursSunday')}
+                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                  />
                 </FormGroup>
               </React.Fragment>
             )}
@@ -140,9 +245,21 @@ export default function Main() {
             title="Idle Reset"
             panel={(
               <React.Fragment>
-                <Switch label="Enable idle reset" checked={settings.idleResetEnabled} onChange={handleSwitchChange.bind(null, 'idleResetEnabled')} />
+                <FormGroup>
+                  <Switch
+                    label="Enable idle reset"
+                    checked={settings.idleResetEnabled}
+                    onChange={handleSwitchChange.bind(null, 'idleResetEnabled')}
+                    disabled={!settings.breaksEnabled}
+                  />
+                </FormGroup>
                 <FormGroup label="Reset break countdown when idle for">
-                  <TimePicker onChange={handleDateChange.bind(null, 'idleResetLength')} value={new Date(settings.idleResetLength)} selectAllOnFocus disabled={!settings.idleResetEnabled} />
+                  <TimePicker
+                    onChange={handleDateChange.bind(null, 'idleResetLength')}
+                    value={new Date(settings.idleResetLength)}
+                    selectAllOnFocus
+                    disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
+                  />
                 </FormGroup>
               </React.Fragment>
             )}
