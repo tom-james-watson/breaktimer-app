@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {ipcRenderer, IpcRendererEvent} from 'electron'
 import {Tabs, Tab, Switch, HTMLSelect, FormGroup, InputGroup, Intent} from "@blueprintjs/core"
-import {TimePicker} from "@blueprintjs/datetime"
+import {TimePicker, TimePrecision} from "@blueprintjs/datetime"
 import {Settings, NotificationType} from "../../types/settings"
 import {IpcChannel} from "../../types/ipc"
 import {toast} from "../toaster"
@@ -102,6 +102,7 @@ export default function Main() {
                     onChange={handleDateChange.bind(null, 'breakLength')}
                     value={new Date(settings.breakLength)}
                     selectAllOnFocus
+                    precision={TimePrecision.SECOND}
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
@@ -110,6 +111,7 @@ export default function Main() {
                     onChange={handleDateChange.bind(null, 'postponeLength')}
                     value={new Date(settings.postponeLength)}
                     selectAllOnFocus
+                    precision={TimePrecision.SECOND}
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>

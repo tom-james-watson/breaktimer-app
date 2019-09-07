@@ -1,7 +1,3 @@
-/**
- * When running `yarn build` or `yarn build-main`, this file is compiled to
- * `/app/main/dist/main.prod.js` using webpack. This gives us some performance wins.
- */
 import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
