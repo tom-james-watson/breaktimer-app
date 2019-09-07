@@ -1,5 +1,6 @@
 import Store from 'electron-store'
 import {Settings, NotificationType} from '../../types/settings'
+import {initBreaks} from './breaks'
 
 const defaultSettings: Settings = {
   breaksEnabled: true,
@@ -40,5 +41,6 @@ export function getSettings(): Settings {
 }
 
 export function setSettings(settings: Settings): void {
-  return store.set({settings})
+  store.set({settings})
+  initBreaks()
 }
