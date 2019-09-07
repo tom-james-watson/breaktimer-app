@@ -1,13 +1,27 @@
-import {ipcMain, IpcMainEvent} from 'electron'
+import {ipcMain, IpcMainEvent, BrowserWindow} from 'electron'
 import {Settings} from '../../types/settings'
 import {IpcChannel} from '../../types/ipc'
+import {getSettingsWindow} from './windows'
 import {getSettings, setSettings} from './store'
 
-ipcMain.on(IpcChannel.GET_SETTINGS, async (event: IpcMainEvent): Promise<void> => {
+export function sendIpc(channel: IpcChannel, ...args: any[]): void {
+  const settingsWindow: BrowserWindow = getSettingsWindow()
+
+  if (!settingsWindow) {
+    console.warn(`Can't send event ${channel}, no main window open`)
+    return
+  }
+
+  console.log(`Send event ${channel}`, args)
+
+  settingsWindow.webContents.send(channel, ...args)
+}
+
+ipcMain.on(IpcChannel.GET_SETTINGS, (event: IpcMainEvent): void => {
   console.log(IpcChannel.GET_SETTINGS)
 
   try {
-    const settings: Settings = await getSettings()
+    const settings: Settings = getSettings()
     event.reply(IpcChannel.GET_SETTINGS_SUCCESS, settings)
   } catch (err)  {
     console.error(err)
@@ -15,10 +29,10 @@ ipcMain.on(IpcChannel.GET_SETTINGS, async (event: IpcMainEvent): Promise<void> =
   }
 })
 
-ipcMain.on(IpcChannel.SET_SETTINGS, async (event: IpcMainEvent, settings: Settings): Promise<void> => {
+ipcMain.on(IpcChannel.SET_SETTINGS, (event: IpcMainEvent, settings: Settings): void => {
   console.log(IpcChannel.SET_SETTINGS, {settings})
   try {
-    await setSettings(settings)
+    setSettings(settings)
     event.reply(IpcChannel.SET_SETTINGS_SUCCESS, settings)
   } catch (err)  {
     console.error(err)

@@ -2,10 +2,14 @@ import path from 'path'
 import {BrowserWindow} from 'electron'
 import MenuBuilder from './menu'
 
-let mainWindow: BrowserWindow = null
+let settingsWindow: BrowserWindow = null
+
+export function getSettingsWindow(): BrowserWindow {
+  return settingsWindow
+}
 
 export function createSettingsWindow() {
-  mainWindow = new BrowserWindow({
+  settingsWindow = new BrowserWindow({
     show: false,
     width: 440,
     minWidth: 440,
@@ -23,28 +27,28 @@ export function createSettingsWindow() {
     icon: path.join(__dirname, 'icon.png')
   })
 
-  mainWindow.loadURL(
+  settingsWindow.loadURL(
     process.env.NODE_ENV === 'development' ?
       `file://${__dirname}/../views/app.html?page=settings` :
       `file://${path.join(__dirname, '../views/app.html?page=settings')}`
   )
 
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined')
+  settingsWindow.webContents.on('did-finish-load', () => {
+    if (!settingsWindow) {
+      throw new Error('"settingsWindow" is not defined')
     }
     if (process.env.START_MINIMIZED) {
-      mainWindow.minimize()
+      settingsWindow.minimize()
     } else {
-      mainWindow.show()
-      mainWindow.focus()
+      settingsWindow.show()
+      settingsWindow.focus()
     }
   })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
+  settingsWindow.on('closed', () => {
+    settingsWindow = null
   })
 
-  const menuBuilder = new MenuBuilder(mainWindow)
+  const menuBuilder = new MenuBuilder(settingsWindow)
   menuBuilder.buildMenu()
 }

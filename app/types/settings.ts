@@ -4,6 +4,7 @@ export enum NotificationType {
 }
 
 export interface Settings {
+  breaksEnabled: boolean
   notificationType: NotificationType
   breakFrequency: Date
   breakLength: Date
