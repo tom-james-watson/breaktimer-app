@@ -1,14 +1,13 @@
 import * as React from 'react'
-import Header from './Header'
-const styles = require('./Main.scss')
+import Settings from './Settings'
 
 export default function Main() {
-  return (
-    <React.Fragment>
-      <Header />
-      <main className={styles.main}>
-        <p>Stuff</p>
-      </main>
-    </React.Fragment>
-  )
+  const params = new URLSearchParams(location.search)
+  const page = params.get('page')
+
+  if (page === 'settings') {
+    return <Settings />
+  }
+
+  return null
 }

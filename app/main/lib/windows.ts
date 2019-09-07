@@ -7,10 +7,10 @@ let mainWindow: BrowserWindow = null
 export function createMainWindow() {
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    minWidth: 1024,
-    height: 728,
-    minHeight: 728,
+    width: 440,
+    minWidth: 440,
+    height: 625,
+    minHeight: 625,
     webPreferences: {
       // This effectively disables the sandbox inside the renderer process and
       // is now turned off by default as of v5. Without this, we cannot access
@@ -25,8 +25,8 @@ export function createMainWindow() {
 
   mainWindow.loadURL(
     process.env.NODE_ENV === 'development' ?
-      `file://${__dirname}/../views/app.html` :
-      `file://${path.join(__dirname, '../views/app.html')}`
+      `file://${__dirname}/../views/app.html?page=settings` :
+      `file://${path.join(__dirname, '../views/app.html?page=settings')}`
   )
 
   mainWindow.webContents.on('did-finish-load', () => {

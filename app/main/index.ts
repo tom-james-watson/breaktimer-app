@@ -6,6 +6,7 @@ import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
 import {createMainWindow} from './lib/windows'
+import './lib/ipc'
 
 export default class AppUpdater {
   constructor() {

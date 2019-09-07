@@ -1,0 +1,15 @@
+@import "~@blueprintjs/core/lib/scss/variables.scss";
+
+.settings {
+  margin: $pt-grid-size * 2;
+}
+
+:global {
+  .bp3-tabs .bp3-tab-list {
+    margin-bottom: $pt-grid-size * 2;
+  }
+
+  .bp3-form-group:last-child {
+    margin-bottom: 0;
+  }
+}

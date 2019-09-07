@@ -1,19 +1,21 @@
 import * as React from 'react'
 import {Navbar, Button, Alignment, Intent} from '@blueprintjs/core'
-const styles = require('./Header.scss')
+const styles = require('./SettingsHeader.scss')
 
 interface Props {
-  canSave?: string
+  handleSave: () => void
 }
 
-export default function Header(props: Props) {
+export default function SettingsHeader(props: Props) {
+  const {handleSave} = props
+
   return (
     <Navbar className={`${styles.navbar} bp3-dark`}>
       <Navbar.Group align={Alignment.LEFT}>
-        <Navbar.Heading><strong>BreakTimer</strong></Navbar.Heading>
+        <Navbar.Heading><strong>Settings</strong></Navbar.Heading>
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
-        <Button intent={Intent.SUCCESS}>
+        <Button intent={Intent.SUCCESS} onClick={handleSave}>
           Save
         </Button>
       </Navbar.Group>

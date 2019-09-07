@@ -21,6 +21,7 @@ module.exports = {
   },
   "rules": {
     "@typescript-eslint/indent": ["error", 2],
+    "react/jsx-no-bind": 0,
     "react/jsx-filename-extension": 0,
     "operator-linebreak": 0,
     "object-curly-newline": 0,

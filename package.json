@@ -168,6 +168,7 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^3.17.1",
+    "@blueprintjs/datetime": "^3.9.2",
     "@blueprintjs/icons": "^3.9.1",
     "@blueprintjs/table": "^3.6.0",
     "@types/moment-timezone": "^0.5.12",
@@ -177,6 +178,7 @@
     "classnames": "^2.2.6",
     "connected-react-router": "^6.1.0",
     "devtron": "^1.4.0",
+    "electron-store": "^4.0.0",
     "eslint-config-structure": "^0.1.7",
     "history": "^4.7.2",
     "react": "^16.7.0",
