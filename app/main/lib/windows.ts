@@ -4,7 +4,7 @@ import MenuBuilder from './menu'
 
 let mainWindow: BrowserWindow = null
 
-export function createMainWindow() {
+export function createSettingsWindow() {
   mainWindow = new BrowserWindow({
     show: false,
     width: 440,

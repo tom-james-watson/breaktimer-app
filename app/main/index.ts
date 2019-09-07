@@ -5,8 +5,8 @@
 import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
-import {createMainWindow} from './lib/windows'
 import './lib/ipc'
+import './lib/tray'
 
 export default class AppUpdater {
   constructor() {
@@ -38,14 +38,6 @@ const installExtensions = async () => {
   ).catch(console.log)
 }
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
 app.on('ready', async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -53,8 +45,6 @@ app.on('ready', async () => {
   ) {
     await installExtensions()
   }
-
-  createMainWindow()
 
   // TODO - use this to enable auto-updating
   // eslint-disable-next-line
