@@ -20,6 +20,7 @@
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron ./app/main/main.dev.babel.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
   },
+  "license": "GPL-3.0-or-later",
   "main": "./app/main/dist/main.prod.js",
   "build": {
     "productName": "BreakTimer",
