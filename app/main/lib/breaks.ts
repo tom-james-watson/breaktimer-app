@@ -1,8 +1,9 @@
 import moment, {Moment} from 'moment'
-import {Settings} from '../../types/settings'
+import {Settings, NotificationType} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
 import {getSettings} from './store'
 import {buildTray} from './tray'
+import {showNotification} from './notifications'
 
 let breakTime: BreakTime = null
 let havingBreak = false
@@ -69,6 +70,26 @@ function checkInWorkingHours(): boolean {
   return true
 }
 
+function doBreak(): void {
+  const settings: Settings = getSettings()
+
+  if (settings.notificationType === NotificationType.Notification) {
+    showNotification(
+      settings.breakTitle,
+      settings.breakMessage
+      // (e: Event) => {
+      //   console.log('on click', {e})
+      // }
+    )
+    createBreak()
+  }
+
+  if (settings.notificationType === NotificationType.Popup) {
+    console.warn('Popup break not implemented')
+    createBreak()
+  }
+}
+
 function checkShouldHaveBreak(): boolean {
   const settings: Settings = getSettings()
   const inWorkingHours = checkInWorkingHours()
@@ -88,8 +109,7 @@ function checkBreak(): void {
     // TODO - lauch break window / notification
     // Create break window and set havingBreak to true. Set it back to false
     // when window closes and a new break should be created automatically
-    console.log('BREAK TIME')
-    createBreak()
+    doBreak()
   }
 }
 
