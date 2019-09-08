@@ -33,6 +33,11 @@ export default function Sounds() {
       clearInterval(rerenderInterval)
       rerenderInterval = setInterval(() => {
         const now = moment()
+
+        if (now > moment(breakEndTime)) {
+          window.close()
+        }
+
         let secondsRemaining = moment(breakEndTime).diff(now, 'seconds')
         setHoursRemaining(Math.floor(secondsRemaining / 3600))
         secondsRemaining %= 3600
