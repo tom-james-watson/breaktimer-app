@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ipcRenderer, IpcRendererEvent} from 'electron'
 import {Tabs, Tab, Switch, HTMLSelect, FormGroup, InputGroup, Intent} from "@blueprintjs/core"
 import {TimePicker, TimePrecision} from "@blueprintjs/datetime"
-import {Settings, NotificationType} from "../../types/settings"
+import {Settings, NotificationType, NotificationClick} from "../../types/settings"
 import {IpcChannel} from "../../types/ipc"
 import {toast} from "../toaster"
 import SettingsHeader from './SettingsHeader'
@@ -31,9 +31,14 @@ export default function SettingsEl() {
     return null
   }
 
-  const handleNotificationTypeChange= (e: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleNotificationTypeChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const notificationType = e.target.value as NotificationType
     setSettings({...settings, notificationType})
+  }
+
+  const handleNotificationClickChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const notificationClick = e.target.value as NotificationClick
+    setSettings({...settings, notificationClick})
   }
 
   const handleDateChange = (field: string, newVal: Date): void => {
@@ -80,7 +85,7 @@ export default function SettingsEl() {
                     value={settings.notificationType}
                     options={[
                       {value: NotificationType.Popup, label: "Fullscreen popup"},
-                      {value: NotificationType.Notification, label: "Notification"},
+                      {value: NotificationType.Notification, label: "Simple notification"},
                     ]}
                     onChange={handleNotificationTypeChange}
                     disabled={!settings.breaksEnabled}
@@ -104,31 +109,31 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
+                <FormGroup label="Clicking break start notification should">
+                  <HTMLSelect
+                    value={settings.notificationClick}
+                    options={[
+                      {value: NotificationClick.DoNothing, label: "Do nothing"},
+                      {value: NotificationClick.Skip, label: "Skip the break"},
+                      {value: NotificationClick.Postpone, label: "Postpone the break", disabled: true},
+                    ]}
+                    onChange={handleNotificationClickChange}
+                    disabled={!settings.breaksEnabled || settings.notificationType !== NotificationType.Popup}
+                  />
+                </FormGroup>
                 <FormGroup label="Postpone length">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'postponeLength')}
                     value={new Date(settings.postponeLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settings.breaksEnabled}
+                    disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
                   />
                 </FormGroup>
                 <Switch
-                  label="Play gong sound"
+                  label="Play gong sound on break start/end"
                   checked={settings.gongEnabled}
                   onChange={handleSwitchChange.bind(null, 'gongEnabled')}
-                  disabled={!settings.breaksEnabled}
-                />
-                <Switch
-                  label="Allow skip break"
-                  checked={settings.skipBreakEnabled}
-                  onChange={handleSwitchChange.bind(null, 'skipBreakEnabled')}
-                  disabled={!settings.breaksEnabled}
-                />
-                <Switch
-                  label="Allow postpone break"
-                  checked={settings.postponeBreakEnabled}
-                  onChange={handleSwitchChange.bind(null, 'postponeBreakEnabled')}
                   disabled={!settings.breaksEnabled}
                 />
                 <Switch

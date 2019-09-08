@@ -1,5 +1,5 @@
 import moment, {Moment} from 'moment'
-import {Settings, NotificationType} from '../../types/settings'
+import {Settings, NotificationType, NotificationClick} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
 import {IpcChannel} from '../../types/ipc'
 import {sendIpc} from './ipc'
@@ -130,13 +130,24 @@ function doBreak(): void {
       }
     }, 10000)
 
+    let body: string | null = null
+
+    if (settings.notificationClick === NotificationClick.Skip) {
+      body = 'Click to skip'
+    } else if (settings.notificationClick === NotificationClick.Postpone) {
+      body = 'Click to postpone'
+    }
+
     showNotification(
       'Break about to start...',
-      'Click to skip',
+      body,
       (): void => {
-        clearTimeout(breakTimeout)
-        breakTime = null
-        havingBreak = false
+        if (settings.notificationClick === NotificationClick.Skip) {
+          clearTimeout(breakTimeout)
+          breakTime = null
+          havingBreak = false
+        }
+        // TODO - handle postpone
       }
     )
   }
@@ -153,9 +164,6 @@ function checkBreak(): void {
   const now = moment()
 
   if (now > breakTime) {
-    // TODO - lauch break window / notification
-    // Create break window and set havingBreak to true. Set it back to false
-    // when window closes and a new break should be created automatically
     doBreak()
   }
 }
