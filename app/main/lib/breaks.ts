@@ -120,6 +120,9 @@ function doBreak(): void {
 
   if (settings.notificationType === NotificationType.Popup) {
     const breakTimeout = setTimeout(() => {
+      // Reset breakTime to now to adjust for the time the warning notification
+      // was open
+      breakTime = moment()
       createBreakWindows()
 
       if (settings.gongEnabled) {
