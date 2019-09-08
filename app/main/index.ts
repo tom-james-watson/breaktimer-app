@@ -2,6 +2,7 @@ import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
 import {initBreaks} from './lib/breaks'
+import {createSoundsWindow} from './lib/windows'
 import './lib/ipc'
 import './lib/tray'
 
@@ -47,6 +48,7 @@ app.on('ready', async () => {
   }
 
   initBreaks()
+  createSoundsWindow()
 
   // TODO - use this to enable auto-updating
   // eslint-disable-next-line

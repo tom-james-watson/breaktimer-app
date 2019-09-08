@@ -182,6 +182,7 @@
     "electron-store": "^4.0.0",
     "eslint-config-structure": "^0.1.7",
     "history": "^4.7.2",
+    "howler": "^2.1.2",
     "moment": "^2.24.0",
     "react": "^16.7.0",
     "react-ace": "^7.0.2",

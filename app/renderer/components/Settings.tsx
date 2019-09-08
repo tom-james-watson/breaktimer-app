@@ -8,7 +8,7 @@ import {toast} from "../toaster"
 import SettingsHeader from './SettingsHeader'
 const styles = require('./Settings.scss')
 
-export default function Main() {
+export default function SettingsEl() {
   const [settings, setSettings] = React.useState<Settings>(null)
 
   React.useEffect(() => {
@@ -30,8 +30,6 @@ export default function Main() {
   if (!settings) {
     return null
   }
-
-  console.log(settings)
 
   const handleNotificationTypeChange= (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const notificationType = e.target.value as NotificationType
@@ -57,7 +55,6 @@ export default function Main() {
   }
 
   const handleSave = (): void => {
-    console.log('handleSave')
     ipcRenderer.send(IpcChannel.SET_SETTINGS, settings)
   }
 

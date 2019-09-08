@@ -1,6 +1,8 @@
 import moment, {Moment} from 'moment'
 import {Settings, NotificationType} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
+import {IpcChannel} from '../../types/ipc'
+import {sendIpc} from './ipc'
 import {getSettings} from './store'
 import {buildTray} from './tray'
 import {showNotification} from './notifications'
@@ -81,6 +83,9 @@ function doBreak(): void {
       //   console.log('on click', {e})
       // }
     )
+    if (settings.gongEnabled) {
+      sendIpc(IpcChannel.PLAY_START_GONG)
+    }
     createBreak()
   }
 
@@ -89,6 +94,8 @@ function doBreak(): void {
     createBreak()
   }
 }
+
+setTimeout(doBreak, 5000)
 
 function checkShouldHaveBreak(): boolean {
   const settings: Settings = getSettings()

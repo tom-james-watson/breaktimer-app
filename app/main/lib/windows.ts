@@ -3,9 +3,10 @@ import {BrowserWindow} from 'electron'
 import MenuBuilder from './menu'
 
 let settingsWindow: BrowserWindow = null
+let soundsWindow: BrowserWindow = null
 
-export function getSettingsWindow(): BrowserWindow {
-  return settingsWindow
+export function getWindows(): BrowserWindow[] {
+  return [settingsWindow, soundsWindow]
 }
 
 export function createSettingsWindow() {
@@ -51,4 +52,25 @@ export function createSettingsWindow() {
 
   const menuBuilder = new MenuBuilder(settingsWindow)
   menuBuilder.buildMenu()
+}
+
+export function createSoundsWindow() {
+  soundsWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    },
+    icon: path.join(__dirname, 'icon.png')
+  })
+
+  soundsWindow.loadURL(
+    process.env.NODE_ENV === 'development' ?
+      `file://${__dirname}/../views/app.html?page=sounds` :
+      `file://${path.join(__dirname, '../views/app.html?page=sounds')}`
+  )
+
+  soundsWindow.on('closed', () => {
+    console.error('Sounds window closed unexpectedly')
+    createSoundsWindow()
+  })
 }

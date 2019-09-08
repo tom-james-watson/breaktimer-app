@@ -1,20 +1,21 @@
 import {ipcMain, IpcMainEvent, BrowserWindow} from 'electron'
 import {Settings} from '../../types/settings'
 import {IpcChannel} from '../../types/ipc'
-import {getSettingsWindow} from './windows'
+import {getWindows} from './windows'
 import {getSettings, setSettings} from './store'
 
 export function sendIpc(channel: IpcChannel, ...args: any[]): void {
-  const settingsWindow: BrowserWindow = getSettingsWindow()
-
-  if (!settingsWindow) {
-    console.warn(`Can't send event ${channel}, no main window open`)
-    return
-  }
+  const windows: BrowserWindow[] = getWindows()
 
   console.log(`Send event ${channel}`, args)
 
-  settingsWindow.webContents.send(channel, ...args)
+  for (const window of windows) {
+    if (!window) {
+      continue
+    }
+
+    window.webContents.send(channel, ...args)
+  }
 }
 
 ipcMain.on(IpcChannel.GET_SETTINGS, (event: IpcMainEvent): void => {
