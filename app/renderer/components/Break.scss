@@ -1,0 +1,25 @@
+@import "~@blueprintjs/core/lib/scss/variables.scss";
+
+.break {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #16a085;
+  color: white;
+}
+
+.breakTitle {
+  margin-bottom: 0;
+}
+
+.countdown {
+  font-size: 80px;
+  margin: $pt-grid-size * 4;
+}
+
+.endBreak {
+  margin: $pt-grid-size * 2
+}

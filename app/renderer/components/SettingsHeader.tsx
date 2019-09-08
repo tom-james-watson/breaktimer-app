@@ -17,7 +17,7 @@ export default function SettingsHeader(props: Props) {
         </Navbar.Heading>
       </Navbar.Group>
       <Navbar.Group align={Alignment.RIGHT}>
-        <Button intent={Intent.SUCCESS} onClick={handleSave}>
+        <Button intent={Intent.PRIMARY} onClick={handleSave}>
           Save
         </Button>
       </Navbar.Group>

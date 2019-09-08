@@ -17,7 +17,7 @@ export default function SettingsEl() {
     })
 
     ipcRenderer.on(IpcChannel.SET_SETTINGS_SUCCESS, () => {
-      toast('Settings saved', Intent.SUCCESS)
+      toast('Settings saved', Intent.PRIMARY)
     })
 
     ipcRenderer.on(IpcChannel.ERROR, (event: IpcRendererEvent, error: string) => {
@@ -91,6 +91,7 @@ export default function SettingsEl() {
                     onChange={handleDateChange.bind(null, 'breakFrequency')}
                     value={new Date(settings.breakFrequency)}
                     selectAllOnFocus
+                    precision={TimePrecision.SECOND}
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>

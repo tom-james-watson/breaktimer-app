@@ -6,12 +6,27 @@ import {sendIpc} from './ipc'
 import {getSettings} from './store'
 import {buildTray} from './tray'
 import {showNotification} from './notifications'
+import {createBreakWindows} from './windows'
 
 let breakTime: BreakTime = null
 let havingBreak = false
 
 export function getBreakTime(): BreakTime {
   return breakTime
+}
+
+export function getBreakEndTime(): BreakTime {
+  if (!breakTime) {
+    return null
+  }
+
+  const settings: Settings = getSettings()
+  const length = new Date(settings.breakLength)
+
+  return moment(breakTime)
+    .add(length.getHours(), 'hours')
+    .add(length.getMinutes(), 'minutes')
+    .add(length.getSeconds(), 'seconds')
 }
 
 function createBreak() {
@@ -21,6 +36,7 @@ function createBreak() {
   breakTime = moment()
     .add(freq.getHours(), 'hours')
     .add(freq.getMinutes(), 'minutes')
+    .add(freq.getSeconds(), 'seconds')
 
   buildTray()
 }
@@ -72,30 +88,56 @@ function checkInWorkingHours(): boolean {
   return true
 }
 
+export function clearBreakTime(): void {
+  if (breakTime) {
+    breakTime = null
+    havingBreak = false
+
+    const settings: Settings = getSettings()
+
+    if (settings.gongEnabled) {
+      sendIpc(IpcChannel.PLAY_END_GONG)
+    }
+  }
+}
+
 function doBreak(): void {
+  havingBreak = true
+
   const settings: Settings = getSettings()
 
   if (settings.notificationType === NotificationType.Notification) {
     showNotification(
       settings.breakTitle,
       settings.breakMessage
-      // (e: Event) => {
-      //   console.log('on click', {e})
-      // }
     )
     if (settings.gongEnabled) {
       sendIpc(IpcChannel.PLAY_START_GONG)
     }
+    havingBreak = false
     createBreak()
   }
 
   if (settings.notificationType === NotificationType.Popup) {
-    console.warn('Popup break not implemented')
-    createBreak()
+    const breakTimeout = setTimeout(() => {
+      createBreakWindows()
+
+      if (settings.gongEnabled) {
+        sendIpc(IpcChannel.PLAY_START_GONG)
+      }
+    }, 10000)
+
+    showNotification(
+      'Break about to start...',
+      'Click to skip',
+      (): void => {
+        clearTimeout(breakTimeout)
+        breakTime = null
+        havingBreak = false
+      }
+    )
   }
 }
-
-setTimeout(doBreak, 5000)
 
 function checkShouldHaveBreak(): boolean {
   const settings: Settings = getSettings()
@@ -107,11 +149,6 @@ function checkShouldHaveBreak(): boolean {
 function checkBreak(): void {
   const now = moment()
 
-  console.log({
-    now: now.toISOString(),
-    breakTime: breakTime.toISOString()
-  })
-
   if (now > breakTime) {
     // TODO - lauch break window / notification
     // Create break window and set havingBreak to true. Set it back to false
@@ -121,18 +158,15 @@ function checkBreak(): void {
 }
 
 function tick(): void {
-  if (!breakTime) {
-    return
-  }
-
   const shouldHaveBreak = checkShouldHaveBreak()
 
   // TODO:
   // - touch a "last seen" - if it's been more than x mins then the computer
   //   has been asleep - createBreak
   // - monitor for idle - https://electronjs.org/docs/api/power-monitor#powermonitorgetsystemidletime
+  // - have a setting for what to do when you click "break about to start" - postpone/skip/nothing
 
-  if (!shouldHaveBreak && breakTime) {
+  if (!shouldHaveBreak && !havingBreak && breakTime) {
     breakTime = null
     buildTray()
     return
@@ -143,7 +177,9 @@ function tick(): void {
     return
   }
 
-  checkBreak()
+  if (shouldHaveBreak) {
+    checkBreak()
+  }
 }
 
 setInterval(tick, 1000)
