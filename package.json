@@ -77,7 +77,8 @@
         "snap",
         "AppImage"
       ],
-      "category": "Development"
+      "icon": "resources/icon256x256.png",
+      "category": "Utility"
     },
     "directories": {
       "buildResources": "resources",

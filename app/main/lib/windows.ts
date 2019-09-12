@@ -33,7 +33,6 @@ export function createSettingsWindow() {
       // that for now as the webpack build will require some tweaking.
       nodeIntegration: true
     },
-    icon: path.join(__dirname, 'icon.png')
   })
 
   settingsWindow.loadURL(
@@ -61,10 +60,10 @@ export function createSettingsWindow() {
 export function createSoundsWindow() {
   soundsWindow = new BrowserWindow({
     show: false,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true
     },
-    icon: path.join(__dirname, 'icon.png')
   })
 
   soundsWindow.loadURL(
@@ -91,7 +90,6 @@ export function createBreakWindows() {
       webPreferences: {
         nodeIntegration: true
       },
-      icon: path.join(__dirname, 'icon.png')
     })
 
     breakWindow.loadURL(
