@@ -51,7 +51,7 @@ export function buildTray(): void {
     {label: 'Start break now', enabled: false},
     {type: 'separator'},
     {label: 'Settings', click: createSettingsWindow},
-    {label: 'Quit', click: app.quit}
+    {label: 'Quit', click: app.exit.bind(null, 0)}
   ])
 
   // Call this again for Linux because we modified the context menu
