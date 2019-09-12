@@ -50,7 +50,6 @@ app.on('ready', async () => {
   initBreaks()
   createSoundsWindow()
 
-  // TODO - use this to enable auto-updating
   // eslint-disable-next-line
-  // new AppUpdater()
+  new AppUpdater()
 })
