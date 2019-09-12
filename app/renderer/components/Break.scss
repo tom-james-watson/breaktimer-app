@@ -11,13 +11,26 @@
   color: white;
 }
 
-.breakTitle {
+.breakTitle,
+.breakMessage {
   margin-bottom: 0;
 }
 
 .countdown {
   font-size: 80px;
   margin: $pt-grid-size * 4;
+  margin-bottom: $pt-grid-size * 2;
+}
+
+.progress {
+  max-width: 400px;
+  margin-bottom: $pt-grid-size * 4;
+
+  :global {
+    .bp3-progress-meter {
+      background-color: #ffffff !important;
+    }
+  }
 }
 
 .endBreak {
