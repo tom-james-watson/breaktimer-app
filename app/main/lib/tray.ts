@@ -1,3 +1,4 @@
+import path from 'path'
 import {app, Menu, Tray} from 'electron'
 import {Settings} from '../../types/settings'
 import {IpcChannel} from '../../types/ipc'
@@ -10,7 +11,10 @@ let tray = null
 
 export function buildTray(): void {
   if (!tray) {
-    tray = new Tray('app/main/icon.png')
+    const imgPath = process.env.NODE_ENV === 'development' ?
+      'app/main/icon.png' :
+      path.join(process.resourcesPath, 'icon.png')
+    tray = new Tray(imgPath)
   }
 
   let settings: Settings = getSettings()

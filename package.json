@@ -2,6 +2,7 @@
   "name": "breaktimer-app",
   "version": "0.17.1",
   "productName": "BreakTimer",
+  "description": "Manage periodic breaks",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -24,14 +25,27 @@
   "main": "./app/main/dist/main.prod.js",
   "build": {
     "productName": "BreakTimer",
-    "appId": "org.tom-james-watson.BreakTimer",
+    "copyright": "Copyright © 2019 Thomas James Watson",
+    "appId": "org.tom-james-watson.breaktimer",
     "files": [
       "app/renderer/dist/",
+      "app/main/sounds/",
+      "app/main/icon.png",
       "app/main/views/app.html",
       "app/main/dist/main.prod.js",
       "app/main/dist/main.prod.js.map",
       "package.json"
     ],
+    "extraFiles": [
+      {
+        "from": "app/main",
+        "to": "resources",
+        "filter": [
+          "*.png"
+        ]
+      }
+    ],
+    "asar": false,
     "dmg": {
       "contents": [
         {

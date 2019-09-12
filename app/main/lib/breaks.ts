@@ -128,7 +128,7 @@ function doBreak(): void {
       if (settings.gongEnabled) {
         sendIpc(IpcChannel.PLAY_START_GONG)
       }
-    }, 10000)
+    }, 5000)
 
     let body: string | null = null
 

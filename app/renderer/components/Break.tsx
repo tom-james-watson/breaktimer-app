@@ -30,6 +30,8 @@ export default function Sounds() {
     })
 
     ipcRenderer.on(IpcChannel.GET_BREAK_END_TIME_SUCCESS, (event: IpcRendererEvent, breakEndTime: string) => {
+      ipcRenderer.send(IpcChannel.SHOW_BREAK_WINDOW)
+
       clearInterval(rerenderInterval)
       rerenderInterval = setInterval(() => {
         const now = moment()
