@@ -2,9 +2,16 @@ import path from 'path'
 import {Notification, Event} from 'electron'
 
 export function showNotification(title: string, body: string, onClick?: (e: Event) => void) {
-  const imgPath = process.env.NODE_ENV === 'development' ?
-    'app/main/icon.png' :
-    path.join(process.resourcesPath, 'icon.png')
+  let imgPath
+  if (process.platform === 'darwin') {
+    imgPath = process.env.NODE_ENV === 'development' ?
+      'resources/tray/icon.png' :
+      path.join(process.resourcesPath, 'app/resources/tray/icon.png')
+  } else {
+    imgPath = process.env.NODE_ENV === 'development' ?
+      'resources/tray/icon.png' :
+      path.join(process.resourcesPath, 'icon.png')
+  }
 
   const notification = new Notification({
     title,
