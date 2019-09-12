@@ -2,7 +2,9 @@ import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
 import {initBreaks} from './lib/breaks'
+import {getAppInitialized, setAppInitialized} from './lib/store'
 import {createSoundsWindow} from './lib/windows'
+import {setAutoLauch} from './lib/auto-launch'
 import './lib/ipc'
 import './lib/tray'
 
@@ -47,9 +49,18 @@ app.on('ready', async () => {
     await installExtensions()
   }
 
+  const appInitialized = getAppInitialized()
+
+  if (!appInitialized) {
+    setAutoLauch(true)
+    setAppInitialized()
+  }
+
   initBreaks()
   createSoundsWindow()
 
-  // eslint-disable-next-line
-  new AppUpdater()
+  if (process.env.NODE_ENV !== 'development') {
+    // eslint-disable-next-line
+    new AppUpdater()
+  }
 })

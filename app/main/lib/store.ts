@@ -1,8 +1,10 @@
 import Store from 'electron-store'
 import {Settings, NotificationType, NotificationClick} from '../../types/settings'
+import {setAutoLauch} from './auto-launch'
 import {initBreaks} from './breaks'
 
 const defaultSettings: Settings = {
+  autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
   notificationClick: NotificationClick.Skip,
@@ -29,9 +31,10 @@ const defaultSettings: Settings = {
   endBreakEnabled: true,
 }
 
-const store = new Store<Settings>({
+const store = new Store<Settings | boolean>({
   defaults: {
-    settings: defaultSettings
+    settings: defaultSettings,
+    appInitialized: false
   }
 })
 
@@ -40,6 +43,20 @@ export function getSettings(): Settings {
 }
 
 export function setSettings(settings: Settings): void {
+  const currentSettings = getSettings()
+
+  if (currentSettings.autoLaunch !== settings.autoLaunch) {
+    setAutoLauch(settings.autoLaunch)
+  }
+
   store.set({settings})
   initBreaks()
+}
+
+export function getAppInitialized(): boolean {
+  return store.get('appInitialized') as boolean
+}
+
+export function setAppInitialized(): void {
+  store.set({appInitialized: true})
 }

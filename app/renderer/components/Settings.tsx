@@ -269,6 +269,21 @@ export default function SettingsEl() {
               </React.Fragment>
             )}
           />
+          <Tab
+            id="system"
+            title="System"
+            panel={(
+              <React.Fragment>
+                <FormGroup>
+                  <Switch
+                    label="Start at login"
+                    checked={settings.autoLaunch}
+                    onChange={handleSwitchChange.bind(null, 'autoLaunch')}
+                  />
+                </FormGroup>
+              </React.Fragment>
+            )}
+          />
         </Tabs>
       </main>
     </React.Fragment>

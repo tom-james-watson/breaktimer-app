@@ -10,6 +10,7 @@ export enum NotificationClick {
 }
 
 export interface Settings {
+  autoLaunch: boolean
   breaksEnabled: boolean
   notificationType: NotificationType
   notificationClick: NotificationClick
