@@ -8,6 +8,12 @@ import {setAutoLauch} from './lib/auto-launch'
 import './lib/ipc'
 import './lib/tray'
 
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+}
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info'
