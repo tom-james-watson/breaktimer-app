@@ -96,7 +96,13 @@ export function clearBreakTime(): void {
     const settings: Settings = getSettings()
 
     if (settings.gongEnabled) {
-      sendIpc(IpcChannel.PLAY_END_GONG)
+      // For some reason the end gong sounds completely distorted on macOS.
+      // Let's just play the start gong again as a workaround for now.
+      if (process.process.platform === 'darwin') {
+        sendIpc(IpcChannel.PLAY_START_GONG)
+      } else {
+        sendIpc(IpcChannel.PLAY_END_GONG)
+      }
     }
   }
 }
