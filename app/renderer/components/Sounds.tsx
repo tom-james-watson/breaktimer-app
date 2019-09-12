@@ -11,10 +11,10 @@ export default function Sounds() {
 
   React.useEffect(() => {
     ipcRenderer.on(IpcChannel.PLAY_START_GONG, (): void=> {
-      playSound('../sounds/gong_start.wav')
+      playSound('../../renderer/sounds/gong_start.wav')
     })
     ipcRenderer.on(IpcChannel.PLAY_END_GONG, (): void=> {
-      playSound('../sounds/gong_end.wav')
+      playSound('../../renderer/sounds/gong_end.wav')
     })
   }, [])
 
