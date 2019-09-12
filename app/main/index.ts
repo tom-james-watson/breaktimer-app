@@ -54,6 +54,10 @@ app.on('ready', async () => {
     app.setAppUserModelId('org.tom-james-watson.breaktimer')
   }
 
+  if (process.platform === 'darwin') {
+    app.dock.hide()
+  }
+
   const appInitialized = getAppInitialized()
 
   if (!appInitialized) {
