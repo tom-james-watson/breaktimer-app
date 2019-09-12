@@ -34,6 +34,12 @@ export function buildTray(): void {
     buildTray()
   }
 
+  const quit = (): void => {
+    setTimeout(() => {
+      app.exit(0)
+    })
+  }
+
   const breakTime = getBreakTime()
 
   const contextMenu = Menu.buildFromTemplate([
@@ -51,7 +57,7 @@ export function buildTray(): void {
     {label: 'Start break now', enabled: false},
     {type: 'separator'},
     {label: 'Settings', click: createSettingsWindow},
-    {label: 'Quit', click: app.exit.bind(null, 0)}
+    {label: 'Quit', click: quit}
   ])
 
   // Call this again for Linux because we modified the context menu
