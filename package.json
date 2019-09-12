@@ -77,7 +77,6 @@
         "snap",
         "AppImage"
       ],
-      "icon": "resources/icon256x256.png",
       "category": "Utility"
     },
     "directories": {
