@@ -11,9 +11,16 @@ let tray = null
 
 export function buildTray(): void {
   if (!tray) {
-    const imgPath = process.env.NODE_ENV === 'development' ?
-      'app/main/icon.png' :
-      path.join(process.resourcesPath, 'icon.png')
+    let imgPath
+    if (process.platform === 'darwin') {
+      imgPath = process.env.NODE_ENV === 'development' ?
+        'app/main/tray-IconTemplate.png' :
+        path.join(process.resourcesPath, 'tray-IconTemplate.png')
+    } else {
+      imgPath = process.env.NODE_ENV === 'development' ?
+        'app/main/icon.png' :
+        path.join(process.resourcesPath, 'icon.png')
+    }
     tray = new Tray(imgPath)
   }
 
