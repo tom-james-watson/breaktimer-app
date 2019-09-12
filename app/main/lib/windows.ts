@@ -72,11 +72,6 @@ export function createSoundsWindow() {
       `file://${__dirname}/../views/app.html?page=sounds` :
       `file://${path.join(__dirname, '../views/app.html?page=sounds')}`
   )
-
-  soundsWindow.on('closed', () => {
-    console.error('Sounds window closed unexpectedly')
-    createSoundsWindow()
-  })
 }
 
 export function createBreakWindows() {
