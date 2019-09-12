@@ -44,7 +44,7 @@ function createBreak(isPostpone=false) {
   buildTray()
 }
 
-function checkInWorkingHours(): boolean {
+export function checkInWorkingHours(): boolean {
   const settings: Settings = getSettings()
 
   if (!settings.workingHoursEnabled) {

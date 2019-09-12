@@ -5,7 +5,7 @@ import {IpcChannel} from '../../types/ipc'
 import {sendIpc} from './ipc'
 import {getSettings, setSettings} from './store'
 import {createSettingsWindow} from './windows'
-import {getBreakTime} from './breaks'
+import {getBreakTime, checkInWorkingHours} from './breaks'
 
 let tray = null
 
@@ -41,11 +41,17 @@ export function buildTray(): void {
   }
 
   const breakTime = getBreakTime()
+  const inWorkingHours = checkInWorkingHours()
 
   const contextMenu = Menu.buildFromTemplate([
     {
       label: `Next break at ${breakTime && breakTime.format('HH:mm:ss')}`,
-      visible: breakTime !== null,
+      visible: breakTime !== null && inWorkingHours,
+      enabled: false
+    },
+    {
+      label: `Outside of working hours`,
+      visible: !inWorkingHours,
       enabled: false
     },
     {type: 'separator'},
