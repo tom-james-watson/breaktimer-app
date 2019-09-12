@@ -1,6 +1,6 @@
 {
   "name": "breaktimer-app",
-  "version": "0.17.1",
+  "version": "0.1.0",
   "productName": "BreakTimer",
   "description": "Manage periodic breaks",
   "scripts": {
