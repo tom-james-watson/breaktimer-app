@@ -111,7 +111,11 @@ export function createBreakWindows() {
     breakWindow.on('closed', () => {
       for (const win of breakWindows) {
         if (!win.isDestroyed()) {
-          win.close()
+          try {
+            win.close()
+          } catch (err) {
+            console.warn(err)
+          }
         }
       }
       breakWindows = []
