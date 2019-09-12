@@ -5,7 +5,7 @@ import {IpcChannel} from '../../types/ipc'
 import {sendIpc} from './ipc'
 import {getSettings, setSettings} from './store'
 import {createSettingsWindow} from './windows'
-import {getBreakTime, checkInWorkingHours} from './breaks'
+import {getBreakTime, checkInWorkingHours, startBreakNow, createBreak} from './breaks'
 
 let tray = null
 
@@ -59,8 +59,16 @@ export function buildTray(): void {
       label: breaksEnabled ? 'Disable' : 'Enable',
       click: setBreaksEnabled.bind(null, !breaksEnabled)
     },
-    {label: 'Restart countdown', enabled: false},
-    {label: 'Start break now', enabled: false},
+    {
+      label: 'Start break now',
+      visible: breakTime !== null && inWorkingHours,
+      click: startBreakNow
+    },
+    {
+      label: 'Restart break period',
+      visible: breakTime !== null && inWorkingHours,
+      click: createBreak.bind(null, false)
+    },
     {type: 'separator'},
     {label: 'Settings', click: createSettingsWindow},
     {label: 'Quit', click: quit}

@@ -29,7 +29,7 @@ export function getBreakEndTime(): BreakTime {
     .add(length.getSeconds(), 'seconds')
 }
 
-function createBreak(isPostpone=false) {
+export function createBreak(isPostpone=false) {
   const settings: Settings = getSettings()
 
   const freq = new Date(
@@ -175,6 +175,10 @@ function checkBreak(): void {
   if (now > breakTime) {
     doBreak()
   }
+}
+
+export function startBreakNow(): void {
+  breakTime = moment()
 }
 
 function tick(): void {
