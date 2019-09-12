@@ -85,13 +85,14 @@ export function createBreakWindows() {
   for (const display of displays) {
     const breakWindow = new BrowserWindow({
       show: false,
+      fullscreen: process.platform === 'darwin',
+      kiosk: process.platform !== 'darwin',
+      skipTaskbar: true,
       x: display.bounds.x,
       y: display.bounds.y,
       width: display.size.width,
       height: display.size.height,
-      skipTaskbar: true,
       backgroundColor: '#16a085',
-      kiosk: true,
       webPreferences: {
         nodeIntegration: true
       },
