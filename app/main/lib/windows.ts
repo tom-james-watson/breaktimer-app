@@ -24,6 +24,7 @@ export function createSettingsWindow() {
     height: 630,
     minHeight: 630,
     skipTaskbar: true,
+    autoHideMenuBar: true,
     webPreferences: {
       // This effectively disables the sandbox inside the renderer process and
       // is now turned off by default as of v5. Without this, we cannot access
@@ -82,6 +83,7 @@ export function createBreakWindows() {
       fullscreen: process.platform === 'darwin',
       kiosk: process.platform !== 'darwin',
       skipTaskbar: true,
+      autoHideMenuBar: true,
       x: display.bounds.x,
       y: display.bounds.y,
       width: display.size.width,
