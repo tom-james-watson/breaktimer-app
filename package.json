@@ -30,7 +30,7 @@
     "appId": "org.tom-james-watson.breaktimer",
     "files": [
       "app/renderer/dist/",
-      "app/main/sounds/",
+      "app/renderer/sounds/",
       "resources/tray/icon.png",
       "resources/tray/tray-iconTemplate.png",
       "resources/tray/tray-iconTemplate@2x.png",
