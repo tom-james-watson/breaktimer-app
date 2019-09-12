@@ -10,7 +10,7 @@ export function showNotification(title: string, body: string, onClick?: (e: Even
   } else {
     imgPath = process.env.NODE_ENV === 'development' ?
       'resources/tray/icon.png' :
-      path.join(process.resourcesPath, 'icon.png')
+      path.join(process.resourcesPath, 'app/resources/tray/icon.png')
   }
 
   const notification = new Notification({
