@@ -49,6 +49,11 @@ app.on('ready', async () => {
     await installExtensions()
   }
 
+  // Required for notifications to work on windows
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('org.tom-james-watson.breaktimer')
+  }
+
   const appInitialized = getAppInitialized()
 
   if (!appInitialized) {
