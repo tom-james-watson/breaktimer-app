@@ -115,7 +115,7 @@ export default function SettingsEl() {
                     options={[
                       {value: NotificationClick.DoNothing, label: "Do nothing"},
                       {value: NotificationClick.Skip, label: "Skip the break"},
-                      {value: NotificationClick.Postpone, label: "Postpone the break", disabled: true},
+                      {value: NotificationClick.Postpone, label: "Postpone the break"},
                     ]}
                     onChange={handleNotificationClickChange}
                     disabled={!settings.breaksEnabled || settings.notificationType !== NotificationType.Popup}

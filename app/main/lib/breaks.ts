@@ -29,9 +29,12 @@ export function getBreakEndTime(): BreakTime {
     .add(length.getSeconds(), 'seconds')
 }
 
-function createBreak() {
+function createBreak(isPostpone=false) {
   const settings: Settings = getSettings()
-  const freq = new Date(settings.breakFrequency)
+
+  const freq = new Date(
+    isPostpone ? settings.postponeLength : settings.breakFrequency
+  )
 
   breakTime = moment()
     .add(freq.getHours(), 'hours')
@@ -149,8 +152,11 @@ function doBreak(): void {
           clearTimeout(breakTimeout)
           breakTime = null
           havingBreak = false
+        } else if (settings.notificationClick === NotificationClick.Postpone) {
+          clearTimeout(breakTimeout)
+          havingBreak = false
+          createBreak(true)
         }
-        // TODO - handle postpone
       }
     )
   }
