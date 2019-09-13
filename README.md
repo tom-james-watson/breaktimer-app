@@ -26,11 +26,11 @@ BreakTimer allows you to customize:
 
 ## Screenshots
 
-![break panel](image/break.png)
+![break panel](screenshots/break.png)
 ---
 ![settings panel](screenshots/settings.png)
 ---
-![notification](image/notification.png)
+![notification](screenshots/notification.png)
 
 ## Development
 
