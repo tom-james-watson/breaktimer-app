@@ -1,4 +1,5 @@
 import path from 'path'
+import moment from 'moment'
 import {app, Menu, Tray} from 'electron'
 import {Settings} from '../../types/settings'
 import {IpcChannel} from '../../types/ipc'
@@ -7,7 +8,8 @@ import {getSettings, setSettings} from './store'
 import {createSettingsWindow} from './windows'
 import {getBreakTime, checkInWorkingHours, startBreakNow, createBreak} from './breaks'
 
-let tray = null
+let tray: Tray = null
+let lastMinsLeft = 0
 
 export function buildTray(): void {
   if (!tray) {
@@ -42,10 +44,21 @@ export function buildTray(): void {
 
   const breakTime = getBreakTime()
   const inWorkingHours = checkInWorkingHours()
+  const minsLeft = breakTime && breakTime.diff(moment(), 'minutes')
+
+  let nextBreak: string
+
+  if (minsLeft > 1) {
+    nextBreak = `Next break in ${minsLeft} minutes`
+  } else if (minsLeft === 1) {
+    nextBreak = `Next break in 1 minute`
+  } else {
+    nextBreak = `Next break in less than a minute`
+  }
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: `Next break at ${breakTime && breakTime.format('HH:mm:ss')}`,
+      label: nextBreak,
       visible: breakTime !== null && inWorkingHours,
       enabled: false
     },
@@ -85,4 +98,18 @@ export function buildTray(): void {
   }
 }
 
-app.on('ready', buildTray)
+app.on('ready', () => {
+  buildTray()
+  setInterval(() => {
+    const breakTime = getBreakTime()
+    if (breakTime === null) {
+      return
+    }
+
+    const minsLeft = breakTime.diff(moment(), 'minutes')
+    if (minsLeft !== lastMinsLeft) {
+      buildTray()
+      lastMinsLeft = minsLeft
+    }
+  }, 5000)
+})
