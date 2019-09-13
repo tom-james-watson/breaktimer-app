@@ -53,6 +53,7 @@
       }
     ],
     "asar": false,
+    "artifactName": "${productName}.${ext}",
     "dmg": {
       "contents": [
         {
@@ -74,7 +75,8 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb"
       ],
       "category": "Utility"
     },
