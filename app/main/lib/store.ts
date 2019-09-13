@@ -31,7 +31,12 @@ const defaultSettings: Settings = {
   endBreakEnabled: true,
 }
 
-const store = new Store<Settings | boolean>({
+interface IStore {
+  settings: Settings
+  appInitialized: boolean
+}
+
+const store = new Store<IStore>({
   defaults: {
     settings: defaultSettings,
     appInitialized: false
