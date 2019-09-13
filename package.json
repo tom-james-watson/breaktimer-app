@@ -76,7 +76,8 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "snap",
+        "tar.gz"
       ],
       "category": "Utility"
     },
