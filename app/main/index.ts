@@ -5,6 +5,7 @@ import {initBreaks} from './lib/breaks'
 import {getAppInitialized, setAppInitialized} from './lib/store'
 import {createSoundsWindow} from './lib/windows'
 import {setAutoLauch} from './lib/auto-launch'
+import {showNotification} from './lib/notifications'
 import './lib/ipc'
 import './lib/tray'
 
@@ -68,6 +69,12 @@ app.on('ready', async () => {
 
   if (!appInitialized) {
     setAutoLauch(true)
+    showNotification(
+      'BreakTimer runs in the background',
+      'The app can be accessed via the system tray',
+      null,
+      false
+    )
     setAppInitialized()
   }
 

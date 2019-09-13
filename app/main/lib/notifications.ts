@@ -1,7 +1,7 @@
 import path from 'path'
 import {Notification, Event} from 'electron'
 
-export function showNotification(title: string, body: string, onClick?: (e: Event) => void) {
+export function showNotification(title: string, body: string, onClick?: (e: Event) => void, forceClose=true) {
   let imgPath
   if (process.platform === 'darwin') {
     imgPath = process.env.NODE_ENV === 'development' ?
@@ -16,13 +16,16 @@ export function showNotification(title: string, body: string, onClick?: (e: Even
   const notification = new Notification({
     title,
     body,
-    icon: imgPath
+    icon: imgPath,
+    silent: true
   })
 
-  // Ensure notification doesn't stay open longer than 10 secs
-  setTimeout(() => {
-    notification.close()
-  }, 5000)
+  if (forceClose) {
+    // Ensure notification doesn't stay open longer than 10 secs
+    setTimeout(() => {
+      notification.close()
+    }, 5000)
+  }
 
   if (onClick) {
     notification.on('click', onClick)
