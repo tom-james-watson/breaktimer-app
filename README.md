@@ -1,73 +1,37 @@
 BreakTimer App
 ===========
 
-## Requirements
+BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS and Linux.
 
-Install dependencies:
+BreakTimer allows you to customize:
 
-```bash
-yarn
-```
+* How long your breaks are and how often you wish to have them
+* Whether to be reminded with a simple notification or a fullscreen break window
+* Working hours so you are only reminded when you want to be
+* The content of messages shown during breaks.
+* Whether to intelligently restart your break countdown when it detects that you have not been using the computer
 
-## Run
+## Installation
 
-```bash
-yarn dev
-```
+* Windows - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe)
+* macOS - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
+* Linux:
+  * Auto-updating *[\*preferred\*]*:
+    * [BreakTimer Snap](https://snapcraft.io/breaktimer) - *also available in the Ubuntu App Store*.
+    * [BreakTimer.AppImage](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.AppImage)
+  * Non auto-updating
+    * [BreakTimer.deb](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.deb)
+    * [BreakTimer.rpm](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.rpm) (untested)
+    * [BreakTimer.tar.gz](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.tar.gz)
 
-If you don't need autofocus when your files was changed, then run `dev` with env `START_MINIMIZED=true`:
+## Screenshots
 
-```bash
-START_MINIMIZED=true yarn dev
-```
+![break panel](image/break.png)
+---
+![settings panel](screenshots/settings.png)
+---
+![notification](image/notification.png)
 
-To start the app in `production` environment:
+## Development
 
-```bash
-yarn build
-yarn start
-```
-
-To start the app in `production` environment with debugging enabled:
-
-```bash
-DEBUG_PROD=true yarn start
-```
-
-## Testing
-
-Run normal tests:
-
-```bash
-yarn test
-```
-
-## Packaging
-
-To package apps for the local platform:
-
-```bash
-yarn package
-```
-
-To package apps for all platforms:
-
-First, refer to the [Multi Platform Build docs](https://www.electron.build/multi-platform-build) for dependencies.
-
-Then,
-
-```bash
-yarn package-all
-```
-
-To package apps with options:
-
-```bash
-yarn package --[option]
-```
-
-:bulb: You can debug your production build with devtools by simply setting the `DEBUG_PROD` env variable:
-
-```bash
-DEBUG_PROD=true yarn package
-```
+See [./DEVELOPMENT.md](DEVELOPMENT.md).
