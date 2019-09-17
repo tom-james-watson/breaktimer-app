@@ -252,10 +252,10 @@ export default function SettingsEl() {
               <React.Fragment>
                 <FormGroup>
                   <Switch
-                    label="Enable idle reset"
+                    label="Enable idle reset (under development)"
                     checked={settings.idleResetEnabled}
                     onChange={handleSwitchChange.bind(null, 'idleResetEnabled')}
-                    disabled={!settings.breaksEnabled}
+                    disabled={!settings.breaksEnabled || true}
                   />
                 </FormGroup>
                 <FormGroup label="Reset break countdown when idle for">
