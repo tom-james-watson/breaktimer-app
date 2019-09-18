@@ -1,6 +1,5 @@
 import path from 'path'
 import {screen, BrowserWindow} from 'electron'
-import MenuBuilder from './menu'
 import {clearBreakTime} from './breaks'
 
 let settingsWindow: BrowserWindow = null
@@ -53,9 +52,6 @@ export function createSettingsWindow() {
   settingsWindow.on('closed', () => {
     settingsWindow = null
   })
-
-  const menuBuilder = new MenuBuilder(settingsWindow)
-  menuBuilder.buildMenu()
 }
 
 export function createSoundsWindow() {
