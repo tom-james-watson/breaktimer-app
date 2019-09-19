@@ -78,6 +78,7 @@ export function createBreakWindows() {
       show: false,
       fullscreen: process.platform === 'darwin',
       kiosk: process.platform !== 'darwin',
+      alwaysOnTop: true,
       skipTaskbar: true,
       autoHideMenuBar: true,
       x: display.bounds.x,
