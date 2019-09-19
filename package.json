@@ -30,7 +30,7 @@
   "build": {
     "productName": "BreakTimer",
     "copyright": "Copyright © 2019 Thomas James Watson",
-    "appId": "org.tom-james-watson.breaktimer",
+    "appId": "com.tomjwatson.breaktimer",
     "files": [
       "app/renderer/dist/",
       "app/renderer/sounds/",

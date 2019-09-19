@@ -58,7 +58,7 @@ app.on('ready', async () => {
 
   // Required for notifications to work on windows
   if (process.platform === 'win32') {
-    app.setAppUserModelId('org.tom-james-watson.breaktimer')
+    app.setAppUserModelId('com.tomjwatson.breaktimer')
   }
 
   if (process.platform === 'darwin') {
