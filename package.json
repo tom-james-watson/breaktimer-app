@@ -34,6 +34,7 @@
     "files": [
       "app/renderer/dist/",
       "app/renderer/sounds/",
+      "resources/icon.png",
       "resources/tray/icon.png",
       "resources/tray/tray-iconTemplate.png",
       "resources/tray/tray-iconTemplate@2x.png",
