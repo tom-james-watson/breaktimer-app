@@ -19,7 +19,7 @@ function pad(num: number): string {
 
 let startSecondsRemaining
 
-export default function Sounds() {
+export default function Break() {
   const [settings, setSettings] = React.useState<Settings>(null)
   const [hoursRemaining, setHoursRemaining] = React.useState<number | null>(null)
   const [minutesRemaining, setMinutesRemaining] = React.useState<number | null>(null)
@@ -68,10 +68,13 @@ export default function Sounds() {
     return null
   }
 
-  console.log({hoursRemaining, minutesRemaining, secondsRemaining})
+  const style = {
+    color: settings.textColor,
+    backgroundColor: settings.backgroundColor
+  }
 
   return (
-    <div className={styles.break}>
+    <div className={styles.break} style={style}>
       <h1 className={styles.breakTitle}>{settings.breakTitle}</h1>
       <h3 className={styles.breakMessage}>{settings.breakMessage}</h3>
       <div className={styles.countdown}>

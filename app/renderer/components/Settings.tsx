@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {ipcRenderer, IpcRendererEvent} from 'electron'
-import {Tabs, Tab, Switch, HTMLSelect, FormGroup, InputGroup, Intent} from "@blueprintjs/core"
+import {
+  Tabs, Tab, Switch, HTMLSelect, FormGroup, InputGroup, Intent, Button
+} from "@blueprintjs/core"
 import {TimePicker, TimePrecision} from "@blueprintjs/datetime"
 import {Settings, NotificationType, NotificationClick} from "../../types/settings"
 import {IpcChannel} from "../../types/ipc"
@@ -59,13 +61,25 @@ export default function SettingsEl() {
     setSettings(newSettings)
   }
 
+  const handleResetColors = (): void => {
+    setSettings({
+      ...settings,
+      textColor: '#ffffff',
+      backgroundColor: '#16a085',
+    })
+  }
+
   const handleSave = (): void => {
     ipcRenderer.send(IpcChannel.SET_SETTINGS, settings)
   }
 
   return (
     <React.Fragment>
-      <SettingsHeader handleSave={handleSave} />
+      <SettingsHeader
+        textColor={settings.textColor}
+        backgroundColor={settings.backgroundColor}
+        handleSave={handleSave}
+      />
       <main className={styles.settings}>
         <FormGroup>
           <Switch
@@ -165,6 +179,29 @@ export default function SettingsEl() {
                     onChange={handleTextChange.bind(null, 'breakMessage')}
                     disabled={!settings.breaksEnabled}
                   />
+                </FormGroup>
+                <FormGroup label="Primary color">
+                  <InputGroup
+                    id="primary-color"
+                    className={styles.colorPicker}
+                    type="color"
+                    value={settings.backgroundColor}
+                    onChange={handleTextChange.bind(null, 'backgroundColor')}
+                    disabled={!settings.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup label="Text color">
+                  <InputGroup
+                    id="text-color"
+                    className={styles.colorPicker}
+                    type="color"
+                    value={settings.textColor}
+                    onChange={handleTextChange.bind(null, 'textColor')}
+                    disabled={!settings.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Button onClick={handleResetColors}>Reset colors</Button>
                 </FormGroup>
               </React.Fragment>
             )}

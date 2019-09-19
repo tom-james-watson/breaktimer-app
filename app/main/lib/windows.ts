@@ -1,5 +1,7 @@
 import path from 'path'
 import {screen, BrowserWindow} from 'electron'
+import {Settings} from '../../types/settings'
+import {getSettings} from './store'
 import {clearBreakTime} from './breaks'
 
 let settingsWindow: BrowserWindow = null
@@ -74,6 +76,7 @@ export function createSoundsWindow() {
 
 export function createBreakWindows() {
   const displays = screen.getAllDisplays()
+  const settings: Settings = getSettings()
 
   for (const display of displays) {
     const breakWindow = new BrowserWindow({
@@ -87,7 +90,7 @@ export function createBreakWindows() {
       y: display.bounds.y,
       width: display.size.width,
       height: display.size.height,
-      backgroundColor: '#16a085',
+      backgroundColor: settings.backgroundColor,
       webPreferences: {
         nodeIntegration: true
       },
