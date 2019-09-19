@@ -22,8 +22,10 @@ export function createSettingsWindow() {
     minWidth: 507,
     height: process.platform === 'win32' ? 650 : 610,
     minHeight: process.platform === 'win32' ? 650 : 610,
-    skipTaskbar: true,
     autoHideMenuBar: true,
+    icon: process.env.NODE_ENV === 'development' ?
+      path.join(__dirname, '../../../resources/tray/icon.png') :
+      path.join(process.resourcesPath, 'app/resources/tray/icon.png'),
     webPreferences: {
       // This effectively disables the sandbox inside the renderer process and
       // is now turned off by default as of v5. Without this, we cannot access

@@ -1,6 +1,7 @@
 import path from 'path'
 import moment from 'moment'
 import {app, Menu, Tray} from 'electron'
+import openAboutWindow from 'about-window'
 import {Settings} from '../../types/settings'
 import {IpcChannel} from '../../types/ipc'
 import {sendIpc} from './ipc'
@@ -34,6 +35,21 @@ export function buildTray(): void {
     setSettings({...settings, breaksEnabled})
     sendIpc(IpcChannel.GET_SETTINGS_SUCCESS, settings)
     buildTray()
+  }
+
+  const createAboutWindow = (): void => {
+    openAboutWindow({
+      icon_path: process.env.NODE_ENV === 'development' ?
+        path.join(__dirname, '../../../resources/icon.png') :
+        path.join(process.resourcesPath, 'app/resources/icon.png'),
+      package_json_dir: path.join(__dirname, '../../..'),
+      win_options: {
+        icon: process.env.NODE_ENV === 'development' ?
+          path.join(__dirname, '../../../resources/tray/icon.png') :
+          path.join(process.resourcesPath, 'app/resources/tray/icon.png'),
+        autoHideMenuBar: true,
+      }
+    })
   }
 
   const quit = (): void => {
@@ -84,6 +100,7 @@ export function buildTray(): void {
     },
     {type: 'separator'},
     {label: 'Settings', click: createSettingsWindow},
+    {label: 'About', click: createAboutWindow},
     {label: 'Quit', click: quit}
   ])
 

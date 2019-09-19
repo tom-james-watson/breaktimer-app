@@ -96,13 +96,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/tom-james-watson/breaktimer-app.git"
+    "url": "git+ssh://git@github.com/tom-james-watson/breaktimer-app.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/tom-james-watson/breaktimer-app/issues"
+    "url": "https://github.com/tom-james-watson/breaktimer-app/issues"
   },
   "author": "Tom Watson <tom@tomjwatson.com>",
-  "homepage": "https://gitlab.com/tom-james-watson/breaktimer-app",
+  "homepage": "https://github.com/tom-james-watson/breaktimer-app",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
@@ -197,6 +197,7 @@
     "@types/moment-timezone": "^0.5.12",
     "@typescript-eslint/eslint-plugin": "^1.12.0",
     "@typescript-eslint/parser": "^1.12.0",
+    "about-window": "^1.13.1",
     "auto-launch": "^5.0.5",
     "brace": "^0.11.1",
     "classnames": "^2.2.6",
