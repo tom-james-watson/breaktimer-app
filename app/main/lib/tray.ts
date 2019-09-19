@@ -7,7 +7,9 @@ import {IpcChannel} from '../../types/ipc'
 import {sendIpc} from './ipc'
 import {getSettings, setSettings} from './store'
 import {createSettingsWindow} from './windows'
-import {getBreakTime, checkInWorkingHours, startBreakNow, createBreak} from './breaks'
+import {
+  getBreakTime, checkInWorkingHours, checkIdle, startBreakNow, createBreak,
+} from './breaks'
 
 let tray: Tray = null
 let lastMinsLeft = 0
@@ -60,6 +62,7 @@ export function buildTray(): void {
 
   const breakTime = getBreakTime()
   const inWorkingHours = checkInWorkingHours()
+  const idle = checkIdle()
   const minsLeft = breakTime && breakTime.diff(moment(), 'minutes')
 
   let nextBreak: string
@@ -81,6 +84,11 @@ export function buildTray(): void {
     {
       label: `Outside of working hours`,
       visible: !inWorkingHours,
+      enabled: false
+    },
+    {
+      label: `Idle`,
+      visible: idle,
       enabled: false
     },
     {type: 'separator'},

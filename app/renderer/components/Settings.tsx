@@ -289,10 +289,10 @@ export default function SettingsEl() {
               <React.Fragment>
                 <FormGroup>
                   <Switch
-                    label="Enable idle reset (under development)"
+                    label="Enable idle reset"
                     checked={settings.idleResetEnabled}
                     onChange={handleSwitchChange.bind(null, 'idleResetEnabled')}
-                    disabled={!settings.breaksEnabled || true}
+                    disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Reset break countdown when idle for">
@@ -300,6 +300,7 @@ export default function SettingsEl() {
                     onChange={handleDateChange.bind(null, 'idleResetLength')}
                     value={new Date(settings.idleResetLength)}
                     selectAllOnFocus
+                    precision={TimePrecision.SECOND}
                     disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
                   />
                 </FormGroup>

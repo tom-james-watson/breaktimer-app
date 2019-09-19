@@ -1,4 +1,5 @@
 import moment, {Moment} from 'moment'
+import {powerMonitor} from 'electron'
 import {Settings, NotificationType, NotificationClick} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
 import {IpcChannel} from '../../types/ipc'
@@ -42,53 +43,6 @@ export function createBreak(isPostpone=false) {
     .add(freq.getSeconds(), 'seconds')
 
   buildTray()
-}
-
-export function checkInWorkingHours(): boolean {
-  const settings: Settings = getSettings()
-
-  if (!settings.workingHoursEnabled) {
-    return true
-  }
-
-  const now = moment()
-
-  const days = {
-    1: settings.workingHoursMonday,
-    2: settings.workingHoursTuesday,
-    3: settings.workingHoursWednesday,
-    4: settings.workingHoursThursday,
-    5: settings.workingHoursFriday,
-    6: settings.workingHoursSaturday,
-    7: settings.workingHoursSunday,
-  }
-
-  const isWorkingDay = days[now.day()]
-
-  if (!isWorkingDay) {
-    return false
-  }
-
-  let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom)
-  let hoursTo: Date | Moment = new Date(settings.workingHoursTo)
-  hoursFrom = moment()
-    .set('hours', hoursFrom.getHours())
-    .set('minutes', hoursFrom.getMinutes())
-    .set('seconds', 0)
-  hoursTo = moment()
-    .set('hours', hoursTo.getHours())
-    .set('minutes', hoursTo.getMinutes())
-    .set('seconds', 0)
-
-  if (now < hoursFrom) {
-    return false
-  }
-
-  if (now > hoursTo) {
-    return false
-  }
-
-  return true
 }
 
 export function clearBreakTime(): void {
@@ -162,11 +116,79 @@ function doBreak(): void {
   }
 }
 
+export function checkInWorkingHours(): boolean {
+  const settings: Settings = getSettings()
+
+  if (!settings.workingHoursEnabled) {
+    return true
+  }
+
+  const now = moment()
+
+  const days = {
+    1: settings.workingHoursMonday,
+    2: settings.workingHoursTuesday,
+    3: settings.workingHoursWednesday,
+    4: settings.workingHoursThursday,
+    5: settings.workingHoursFriday,
+    6: settings.workingHoursSaturday,
+    7: settings.workingHoursSunday,
+  }
+
+  const isWorkingDay = days[now.day()]
+
+  if (!isWorkingDay) {
+    return false
+  }
+
+  let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom)
+  let hoursTo: Date | Moment = new Date(settings.workingHoursTo)
+  hoursFrom = moment()
+    .set('hours', hoursFrom.getHours())
+    .set('minutes', hoursFrom.getMinutes())
+    .set('seconds', 0)
+  hoursTo = moment()
+    .set('hours', hoursTo.getHours())
+    .set('minutes', hoursTo.getMinutes())
+    .set('seconds', 0)
+
+  if (now < hoursFrom) {
+    return false
+  }
+
+  if (now > hoursTo) {
+    return false
+  }
+
+  return true
+}
+
+enum IdleState {
+  Active = "active",
+  Idle = "idle",
+  Locked = "locked",
+  Unknown = "unknown"
+}
+
+export function checkIdle(): boolean {
+  const settings: Settings = getSettings()
+  const idleResetLength = new Date(settings.idleResetLength)
+  const idleSeconds = (
+    (idleResetLength.getHours() * 60 * 60) +
+    (idleResetLength.getMinutes() * 60) +
+    (idleResetLength.getSeconds())
+  )
+  const state: IdleState = powerMonitor.getSystemIdleState(idleSeconds) as IdleState
+
+  return !([IdleState.Active, IdleState.Unknown].includes(state))
+}
+
 function checkShouldHaveBreak(): boolean {
   const settings: Settings = getSettings()
   const inWorkingHours = checkInWorkingHours()
+  const idle = checkIdle()
 
-  return !havingBreak && settings.breaksEnabled && inWorkingHours
+  return !havingBreak && settings.breaksEnabled && inWorkingHours && !idle
 }
 
 function checkBreak(): void {
@@ -188,7 +210,6 @@ function tick(): void {
   // - touch a "last seen" - if it's been more than x mins then the computer
   //   has been asleep - createBreak
   // - monitor for idle - https://electronjs.org/docs/api/power-monitor#powermonitorgetsystemidletime
-  // - have a setting for what to do when you click "break about to start" - postpone/skip/nothing
 
   if (!shouldHaveBreak && !havingBreak && breakTime) {
     breakTime = null
