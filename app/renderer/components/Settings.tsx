@@ -105,7 +105,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break frequency">
+                <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'breakFrequency')}
                     value={new Date(settings.breakFrequency)}
@@ -114,7 +114,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break length">
+                <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'breakLength')}
                     value={new Date(settings.breakLength)}
@@ -135,7 +135,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled || settings.notificationType !== NotificationType.Popup}
                   />
                 </FormGroup>
-                <FormGroup label="Postpone length">
+                <FormGroup label="Postpone length" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'postponeLength')}
                     value={new Date(settings.postponeLength)}
@@ -295,7 +295,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Reset break countdown when idle for">
+                <FormGroup label="Reset break countdown when idle for" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'idleResetLength')}
                     value={new Date(settings.idleResetLength)}
