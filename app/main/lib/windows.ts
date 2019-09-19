@@ -20,8 +20,8 @@ export function createSettingsWindow() {
     show: false,
     width: 507,
     minWidth: 507,
-    height: 630,
-    minHeight: 630,
+    height: process.platform === 'win32' ? 650 : 610,
+    minHeight: process.platform === 'win32' ? 650 : 610,
     skipTaskbar: true,
     autoHideMenuBar: true,
     webPreferences: {
