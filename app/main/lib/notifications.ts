@@ -17,7 +17,7 @@ export function showNotification(title: string, body: string, onClick?: (e: Even
     title,
     body,
     icon: imgPath,
-    silent: true
+    silent: process.platform !== 'win32'
   })
 
   if (forceClose) {
