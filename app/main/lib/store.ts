@@ -21,7 +21,7 @@ const defaultSettings: Settings = {
   workingHoursFriday: true,
   workingHoursSaturday: false,
   workingHoursSunday: false,
-  idleResetEnabled: false,
+  idleResetEnabled: true,
   idleResetLength: new Date(0, 0, 0, 0, 5),
   gongEnabled: true,
   breakTitle: 'Time for a break!',
