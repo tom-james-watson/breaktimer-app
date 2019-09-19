@@ -3,11 +3,7 @@ import {Notification, Event} from 'electron'
 
 export function showNotification(title: string, body: string, onClick?: (e: Event) => void, forceClose=true) {
   let imgPath
-  if (process.platform === 'darwin') {
-    imgPath = process.env.NODE_ENV === 'development' ?
-      'resources/tray/icon.png' :
-      path.join(process.resourcesPath, 'app/resources/tray/icon.png')
-  } else {
+  if (process.platform !== 'darwin') {
     imgPath = process.env.NODE_ENV === 'development' ?
       'resources/tray/icon.png' :
       path.join(process.resourcesPath, 'app/resources/tray/icon.png')
