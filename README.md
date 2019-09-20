@@ -1,4 +1,4 @@
-BreakTimer App [BETA]
+[BreakTimer App](https://breaktimer.app)
 ===========
 
 BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS and Linux.
