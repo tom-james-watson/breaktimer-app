@@ -324,6 +324,12 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
                   />
                 </FormGroup>
+                <Switch
+                  label="Show notification on idle reset"
+                  checked={settings.idleResetNotification}
+                  onChange={handleSwitchChange.bind(null, 'idleResetNotification')}
+                  disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
+                />
               </React.Fragment>
             )}
           />

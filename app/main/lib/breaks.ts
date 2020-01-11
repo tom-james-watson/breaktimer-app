@@ -12,6 +12,7 @@ import {createBreakWindows} from './windows'
 let breakTime: BreakTime = null
 let havingBreak = false
 let postponedCount = 0
+let idleStart: Date = null
 
 export function getBreakTime(): BreakTime {
   return breakTime
@@ -31,8 +32,45 @@ export function getBreakEndTime(): BreakTime {
     .add(length.getSeconds(), 'seconds')
 }
 
+function zeroPad(n) {
+  n = String(n)
+  return n.length === 1 ? `0${n}` : n
+}
+
+function createIdleNotification() {
+  const settings: Settings = getSettings()
+
+  const now = new Date()
+
+  let idleSeconds = Number(((+now - +idleStart) / 1000).toFixed(0))
+  let idleMinutes = 0
+  let idleHours = 0
+
+  if (idleSeconds > 60) {
+    idleMinutes = Math.floor(idleSeconds / 60)
+    idleSeconds -= idleMinutes * 60
+  }
+
+  if (idleMinutes > 60) {
+    idleHours = Math.floor(idleMinutes / 60)
+    idleMinutes -= idleHours * 60
+  }
+
+  if (settings.idleResetNotification) {
+    showNotification(
+      'Break countdown reset',
+      `Idle for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(idleSeconds)}`
+    )
+  }
+}
+
 export function createBreak(isPostpone=false) {
   const settings: Settings = getSettings()
+
+  if (idleStart) {
+    createIdleNotification()
+  }
+  idleStart = null
 
   const freq = new Date(
     isPostpone ? settings.postponeLength : settings.breakFrequency
@@ -220,6 +258,9 @@ function tick(): void {
   const shouldHaveBreak = checkShouldHaveBreak()
 
   if (!shouldHaveBreak && !havingBreak && breakTime) {
+    if (checkIdle()) {
+      idleStart = new Date()
+    }
     breakTime = null
     buildTray()
     return

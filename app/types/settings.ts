@@ -30,6 +30,7 @@ export interface Settings {
   workingHoursSunday: boolean
   idleResetEnabled: boolean
   idleResetLength: Date
+  idleResetNotification: boolean
   gongEnabled: boolean
   breakTitle: string
   breakMessage: string

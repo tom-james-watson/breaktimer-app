@@ -24,6 +24,7 @@ const defaultSettings: Settings = {
   workingHoursSunday: false,
   idleResetEnabled: true,
   idleResetLength: new Date(0, 0, 0, 0, 5),
+  idleResetNotification: true,
   gongEnabled: true,
   breakTitle: 'Time for a break!',
   breakMessage: 'Rest your eyes. Stretch your legs. Breathe. Relax.',
