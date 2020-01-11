@@ -17,6 +17,7 @@ export interface Settings {
   breakFrequency: Date
   breakLength: Date
   postponeLength: Date
+  postponeLimit: number
   workingHoursEnabled: boolean
   workingHoursFrom: Date
   workingHoursTo: Date

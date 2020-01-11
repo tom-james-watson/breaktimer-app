@@ -2,7 +2,7 @@ import path from 'path'
 import {screen, BrowserWindow} from 'electron'
 import {Settings} from '../../types/settings'
 import {getSettings} from './store'
-import {clearBreakTime} from './breaks'
+import {endPopupBreak} from './breaks'
 
 let settingsWindow: BrowserWindow = null
 let soundsWindow: BrowserWindow = null
@@ -22,8 +22,8 @@ export function createSettingsWindow() {
     show: false,
     width: 507,
     minWidth: 507,
-    height: process.platform === 'win32' ? 650 : 610,
-    minHeight: process.platform === 'win32' ? 650 : 610,
+    height: process.platform === 'win32' ? 700 : 660,
+    minHeight: process.platform === 'win32' ? 700 : 660,
     autoHideMenuBar: true,
     icon: process.env.NODE_ENV === 'development' ?
       path.join(__dirname, '../../../resources/tray/icon.png') :
@@ -121,7 +121,7 @@ export function createBreakWindows() {
         }
       }
       breakWindows = []
-      clearBreakTime()
+      endPopupBreak()
     })
 
     breakWindows.push(breakWindow)

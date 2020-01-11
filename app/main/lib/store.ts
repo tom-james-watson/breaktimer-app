@@ -11,6 +11,7 @@ const defaultSettings: Settings = {
   breakFrequency: new Date(0, 0, 0, 0, 28),
   breakLength: new Date(0, 0, 0, 0, 2),
   postponeLength: new Date(0, 0, 0, 0, 3),
+  postponeLimit: 0,
   workingHoursEnabled: true,
   workingHoursFrom: new Date(0, 0, 0, 9),
   workingHoursTo: new Date(0, 0, 0, 18),

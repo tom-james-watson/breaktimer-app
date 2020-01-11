@@ -49,6 +49,11 @@ export default function SettingsEl() {
     setSettings(newSettings)
   }
 
+  const handlePostponeLimitChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const postponeLimit = Number(e.target.value)
+    setSettings({...settings, postponeLimit})
+  }
+
   const handleTextChange = (field: string, e: React.ChangeEvent<HTMLInputElement>): void => {
     const newSettings = {...settings}
     newSettings[field] = e.target.value
@@ -141,6 +146,21 @@ export default function SettingsEl() {
                     value={new Date(settings.postponeLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
+                    disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
+                  />
+                </FormGroup>
+                <FormGroup label="Postpone limit">
+                  <HTMLSelect
+                    value={settings.postponeLimit}
+                    options={[
+                      {value: 1, label: "1"},
+                      {value: 2, label: "2"},
+                      {value: 3, label: "3"},
+                      {value: 4, label: "4"},
+                      {value: 5, label: "5"},
+                      {value: 0, label: "No limit"}
+                    ]}
+                    onChange={handlePostponeLimitChange}
                     disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
                   />
                 </FormGroup>

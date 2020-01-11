@@ -11,6 +11,7 @@ import {createBreakWindows} from './windows'
 
 let breakTime: BreakTime = null
 let havingBreak = false
+let postponedCount = 0
 
 export function getBreakTime(): BreakTime {
   return breakTime
@@ -45,10 +46,24 @@ export function createBreak(isPostpone=false) {
   buildTray()
 }
 
-export function clearBreakTime(): void {
+function beginPopupBreak(): void {
+  const settings: Settings = getSettings()
+
+  // Reset breakTime to now to adjust for the time the warning notification
+  // was open
+  breakTime = moment()
+  createBreakWindows()
+
+  if (settings.gongEnabled) {
+    sendIpc(IpcChannel.PLAY_START_GONG)
+  }
+}
+
+export function endPopupBreak(): void {
   if (breakTime) {
     breakTime = null
     havingBreak = false
+    postponedCount = 0
 
     const settings: Settings = getSettings()
 
@@ -79,22 +94,19 @@ function doBreak(): void {
   }
 
   if (settings.notificationType === NotificationType.Popup) {
-    const breakTimeout = setTimeout(() => {
-      // Reset breakTime to now to adjust for the time the warning notification
-      // was open
-      breakTime = moment()
-      createBreakWindows()
-
-      if (settings.gongEnabled) {
-        sendIpc(IpcChannel.PLAY_START_GONG)
-      }
-    }, 5000)
+    const breakTimeout = setTimeout(beginPopupBreak, 5000)
 
     let body: string | null = null
 
-    if (settings.notificationClick === NotificationClick.Skip) {
+    const allowSkip = settings.notificationClick === NotificationClick.Skip
+    const allowPostpone = (
+      settings.notificationClick === NotificationClick.Postpone &&
+      (!settings.postponeLimit || postponedCount < settings.postponeLimit)
+    )
+
+    if (allowSkip) {
       body = 'Click to skip'
-    } else if (settings.notificationClick === NotificationClick.Postpone) {
+    } else if (allowPostpone) {
       body = 'Click to postpone'
     }
 
@@ -102,11 +114,12 @@ function doBreak(): void {
       'Break about to start...',
       body,
       (): void => {
-        if (settings.notificationClick === NotificationClick.Skip) {
+        if (allowSkip) {
           clearTimeout(breakTimeout)
           breakTime = null
           havingBreak = false
-        } else if (settings.notificationClick === NotificationClick.Postpone) {
+        } else if (allowPostpone) {
+          postponedCount++
           clearTimeout(breakTimeout)
           havingBreak = false
           createBreak(true)
@@ -205,11 +218,6 @@ export function startBreakNow(): void {
 
 function tick(): void {
   const shouldHaveBreak = checkShouldHaveBreak()
-
-  // TODO:
-  // - touch a "last seen" - if it's been more than x mins then the computer
-  //   has been asleep - createBreak
-  // - monitor for idle - https://electronjs.org/docs/api/power-monitor#powermonitorgetsystemidletime
 
   if (!shouldHaveBreak && !havingBreak && breakTime) {
     breakTime = null
