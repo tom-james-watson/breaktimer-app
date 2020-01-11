@@ -61,6 +61,13 @@ export default function Break() {
     ipcRenderer.send(IpcChannel.GET_SETTINGS)
   }, [])
 
+  const endRef = React.useRef(null)
+  requestAnimationFrame(() => {
+    if (endRef.current !== null) {
+      endRef.current.buttonRef.focus()
+    }
+  })
+
   if (
     !settings || hoursRemaining === null || minutesRemaining === null ||
     secondsRemaining === null || progress === null
@@ -82,7 +89,7 @@ export default function Break() {
       </div>
       <ProgressBar value={progress} className={styles.progress} stripes={false} />
       {settings.endBreakEnabled && (
-        <Button className={styles.endBreak} onClick={window.close} intent={Intent.PRIMARY}>
+        <Button className={styles.endBreak} onClick={window.close} intent={Intent.PRIMARY} ref={endRef}>
           End Break
         </Button>
       )}

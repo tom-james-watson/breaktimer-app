@@ -9,6 +9,11 @@
   align-items: center;
   background: transparent;
   color: white;
+
+  :focus,
+  :focus ~ .bp3-control-indicator {
+    outline: none !important;
+  }
 }
 
 .breakTitle,
@@ -34,5 +39,5 @@
 }
 
 .endBreak {
-  margin: $pt-grid-size * 2
+  margin: $pt-grid-size * 2;
 }
