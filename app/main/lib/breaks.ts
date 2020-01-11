@@ -69,8 +69,9 @@ export function createBreak(isPostpone=false) {
 
   if (idleStart) {
     createIdleNotification()
+    idleStart = null
+    postponedCount = 0
   }
-  idleStart = null
 
   const freq = new Date(
     isPostpone ? settings.postponeLength : settings.breakFrequency
