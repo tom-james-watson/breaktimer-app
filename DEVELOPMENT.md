@@ -71,3 +71,39 @@ yarn package --[option]
 ```bash
 DEBUG_PROD=true yarn package
 ```
+
+## Publishing
+
+First, create a [personal access GitHub Token](https://github.com/settings/tokens) with the `repo` permission.
+
+To publish the linux snap build, you also must be logged into the snap store, which you do via the `snap` cli.
+
+#### macOS
+
+The macOS build must be published from a mac, with a valid code signing certificate available in your keychain. Then, simply:
+
+```bash
+GH_TOKEN=<github token> yarn publish-mac
+```
+
+This will push all relevant assets to a draft release on GitHub.
+
+#### Windows
+
+The Windows build can be built from a linux box. Simply run:
+
+```bash
+GH_TOKEN=<github token> yarn publish-win
+```
+
+This will push all relevant assets to a draft release on GitHub.
+
+#### Linux
+
+From a linux box, simply run:
+
+```bash
+GH_TOKEN=<github token> yarn publish-linux
+```
+
+This will push all relevant assets to a draft release on GitHub and push the new build to the snap store.
