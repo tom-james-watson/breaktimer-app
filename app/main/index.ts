@@ -15,12 +15,10 @@ if (!gotTheLock) {
   app.quit()
 }
 
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info'
-    autoUpdater.logger = log
-    autoUpdater.checkForUpdatesAndNotify()
-  }
+function checkForUpdates() {
+  log.info('Checking for updates...')
+  autoUpdater.logger = log
+  autoUpdater.checkForUpdatesAndNotify()
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -82,7 +80,6 @@ app.on('ready', async () => {
   createSoundsWindow()
 
   if (process.env.NODE_ENV !== 'development') {
-    // eslint-disable-next-line
-    new AppUpdater()
+    checkForUpdates()
   }
 })
