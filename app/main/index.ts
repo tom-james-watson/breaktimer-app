@@ -79,7 +79,7 @@ app.on('ready', async () => {
   initBreaks()
   createSoundsWindow()
 
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV !== 'development' && process.platform !== 'win32') {
     checkForUpdates()
   }
 })
