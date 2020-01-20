@@ -85,7 +85,7 @@ export default function Break() {
       <h1 className={styles.breakTitle}>{settings.breakTitle}</h1>
       <h3 className={styles.breakMessage}>{settings.breakMessage}</h3>
       <div className={styles.countdown}>
-        {`${pad(hoursRemaining)} : ${pad(minutesRemaining)}: ${pad(secondsRemaining)}`}
+        {`${pad(hoursRemaining)} : ${pad(minutesRemaining)} : ${pad(secondsRemaining)}`}
       </div>
       <ProgressBar value={progress} className={styles.progress} stripes={false} />
       {settings.endBreakEnabled && (
