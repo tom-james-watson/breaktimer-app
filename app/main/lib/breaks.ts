@@ -277,12 +277,12 @@ function tick(): void {
   }
 }
 
-setInterval(tick, 1000)
-
 export function initBreaks(): void {
   const settings: Settings = getSettings()
 
   if (settings.breaksEnabled) {
     createBreak()
   }
+
+  setInterval(tick, 1000)
 }
