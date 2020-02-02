@@ -27,7 +27,6 @@ if (!gotTheLock) {
 }
 
 function checkForUpdates() {
-  console.trace('checkForUpdates')
   log.info('Checking for updates...')
   autoUpdater.logger = log
   autoUpdater.checkForUpdatesAndNotify()
@@ -92,7 +91,6 @@ app.on('ready', async () => {
   createSoundsWindow()
 
   if (process.env.NODE_ENV !== 'development' && process.platform !== 'win32') {
-    console.log('run checkForUpdates')
     checkForUpdates()
   }
 })
