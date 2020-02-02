@@ -2,8 +2,8 @@ import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
 import {initBreaks} from './lib/breaks'
-import {getAppInitialized, setAppInitialized} from './lib/store'
-import {createSoundsWindow} from './lib/windows'
+import {getAppInitialized, setAppInitialized, setBreaksEnabled} from './lib/store'
+import {createSoundsWindow, createSettingsWindow} from './lib/windows'
 import {setAutoLauch} from './lib/auto-launch'
 import {showNotification} from './lib/notifications'
 import './lib/ipc'
@@ -12,10 +12,22 @@ import './lib/tray'
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
-  app.quit()
+  const cliArg = process.argv[process.argv.length - 1]
+
+  if (cliArg === 'disable') {
+    console.log('breaks disabled')
+    setBreaksEnabled(false)
+  } else if (cliArg === 'enable') {
+    console.log('breaks enabled')
+    setBreaksEnabled(true)
+  } else {
+    console.log('app already open, opening settings')
+  }
+  app.exit()
 }
 
 function checkForUpdates() {
+  console.trace('checkForUpdates')
   log.info('Checking for updates...')
   autoUpdater.logger = log
   autoUpdater.checkForUpdatesAndNotify()
@@ -80,6 +92,22 @@ app.on('ready', async () => {
   createSoundsWindow()
 
   if (process.env.NODE_ENV !== 'development' && process.platform !== 'win32') {
+    console.log('run checkForUpdates')
     checkForUpdates()
+  }
+})
+
+app.on('second-instance', (event: Event, argv: string[]) => {
+  const cliArg = argv[argv.length - 1]
+
+  if (cliArg === 'disable') {
+    log.info('Breaks disabled from cli')
+    setBreaksEnabled(false)
+  } else if (cliArg === 'enable') {
+    log.info('Breaks enabled from cli')
+    setBreaksEnabled(true)
+  } else {
+    log.info('App opened second time, opening settings')
+    createSettingsWindow()
   }
 })

@@ -49,7 +49,7 @@ export function getSettings(): Settings {
   return Object.assign(defaultSettings, store.get('settings')) as Settings
 }
 
-export function setSettings(settings: Settings): void {
+export function setSettings(settings: Settings, resetBreaks = true): void {
   const currentSettings = getSettings()
 
   if (currentSettings.autoLaunch !== settings.autoLaunch) {
@@ -57,7 +57,10 @@ export function setSettings(settings: Settings): void {
   }
 
   store.set({settings})
-  initBreaks()
+
+  if (resetBreaks) {
+    initBreaks()
+  }
 }
 
 export function getAppInitialized(): boolean {
@@ -66,4 +69,9 @@ export function getAppInitialized(): boolean {
 
 export function setAppInitialized(): void {
   store.set({appInitialized: true})
+}
+
+export function setBreaksEnabled(breaksEnabled: boolean): void {
+  const settings: Settings = getSettings()
+  setSettings({...settings, breaksEnabled}, false)
 }
