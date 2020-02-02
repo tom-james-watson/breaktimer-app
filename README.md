@@ -32,6 +32,28 @@ BreakTimer allows you to customize:
 ---
 ![notification](screenshots/notification.png)
 
+## FAQ
+
+### Why can't I see the app in the tray?
+
+Some operating systems, such as linux distributions running plain Gnome (e.g. Fedora) or Pantheon (e.g. Elementary OS), don't support system tray icons. In this case, simply re-run the app to open the settings window. You will lose access to certain functionality only available in the tray menu, but at least this workaround lets you use the app.
+
+### Is there a way to control the app via the commmand line?
+
+On linux, if you run the app via the command line there is some basic support for command line arguments:
+
+Disable breaks:
+
+```bash
+breaktimer disable
+```
+
+Enable breaks:
+
+```bash
+breaktimer enable
+```
+
 ## Development
 
 See [./DEVELOPMENT.md](DEVELOPMENT.md).
