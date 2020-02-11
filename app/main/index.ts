@@ -20,8 +20,10 @@ if (!gotTheLock) {
   } else if (cliArg === 'enable') {
     console.log('breaks enabled')
     setBreaksEnabled(true)
-  } else {
+  } else if (process.platform !== 'darwin') {
     console.log('app already open, opening settings')
+  } else {
+    log.info('app already running')
   }
   app.exit()
 }
@@ -104,7 +106,7 @@ app.on('second-instance', (event: Event, argv: string[]) => {
   } else if (cliArg === 'enable') {
     log.info('Breaks enabled from cli')
     setBreaksEnabled(true)
-  } else {
+  } else if (process.platform !== 'darwin') {
     log.info('App opened second time, opening settings')
     createSettingsWindow()
   }
