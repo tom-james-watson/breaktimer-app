@@ -229,7 +229,7 @@ export function checkIdle(): boolean {
     (idleResetLength.getHours() * 60 * 60) +
     (idleResetLength.getMinutes() * 60) +
     (idleResetLength.getSeconds())
-  )
+  ) || 1 // can't be 0
   const state: IdleState = powerMonitor.getSystemIdleState(idleSeconds) as IdleState
 
   return state === IdleState.Idle
