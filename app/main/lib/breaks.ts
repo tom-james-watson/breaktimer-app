@@ -232,7 +232,7 @@ export function checkIdle(): boolean {
   )
   const state: IdleState = powerMonitor.getSystemIdleState(idleSeconds) as IdleState
 
-  return !([IdleState.Active, IdleState.Unknown].includes(state))
+  return state === IdleState.Idle
 }
 
 function checkShouldHaveBreak(): boolean {
