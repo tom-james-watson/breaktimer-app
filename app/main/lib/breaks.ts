@@ -1,5 +1,6 @@
 import moment, {Moment} from 'moment'
 import {powerMonitor} from 'electron'
+import log from 'electron-log'
 import {Settings, NotificationType, NotificationClick} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
 import {IpcChannel} from '../../types/ipc'
@@ -13,6 +14,8 @@ let breakTime: BreakTime = null
 let havingBreak = false
 let postponedCount = 0
 let idleStart: Date = null
+let lockStart: Date = null
+let lastTick: Date = null
 
 export function getBreakTime(): BreakTime {
   return breakTime
@@ -37,12 +40,26 @@ function zeroPad(n) {
   return n.length === 1 ? `0${n}` : n
 }
 
-function createIdleNotification() {
+function getIdleResetSeconds(): number {
   const settings: Settings = getSettings()
 
-  const now = new Date()
+  const idleResetLength = new Date(settings.idleResetLength)
+  return (
+    (idleResetLength.getHours() * 60 * 60) +
+    (idleResetLength.getMinutes() * 60) +
+    (idleResetLength.getSeconds())
+  ) || 1 // can't be 0
+}
 
-  let idleSeconds = Number(((+now - +idleStart) / 1000).toFixed(0))
+function createIdleNotification() {
+  log.info('CREATE IDLE RESET NOTIF')
+  const settings: Settings = getSettings()
+
+  if (!settings.idleResetEnabled) {
+    return
+  }
+
+  let idleSeconds = Number(((+(new Date()) - +idleStart) / 1000).toFixed(0))
   let idleMinutes = 0
   let idleHours = 0
 
@@ -66,8 +83,10 @@ function createIdleNotification() {
 
 export function createBreak(isPostpone=false) {
   const settings: Settings = getSettings()
+  log.info('create break')
 
   if (idleStart) {
+    log.info('create break and idleStart')
     createIdleNotification()
     idleStart = null
     postponedCount = 0
@@ -224,13 +243,30 @@ enum IdleState {
 
 export function checkIdle(): boolean {
   const settings: Settings = getSettings()
-  const idleResetLength = new Date(settings.idleResetLength)
-  const idleSeconds = (
-    (idleResetLength.getHours() * 60 * 60) +
-    (idleResetLength.getMinutes() * 60) +
-    (idleResetLength.getSeconds())
-  ) || 1 // can't be 0
-  const state: IdleState = powerMonitor.getSystemIdleState(idleSeconds) as IdleState
+
+  const state: IdleState = powerMonitor.getSystemIdleState(
+    getIdleResetSeconds()
+  ) as IdleState
+
+  log.info({state})
+
+  if (state === IdleState.Locked) {
+    if (!lockStart) {
+      log.info('setting lockStart')
+      lockStart = new Date()
+      return false
+    } else {
+      const lockSeconds = Number(((+(new Date()) - +lockStart) / 1000).toFixed(0))
+      log.info({lockSeconds, isIdle: lockSeconds > getIdleResetSeconds()})
+      return lockSeconds > getIdleResetSeconds()
+    }
+  }
+
+  lockStart = null
+
+  if (!settings.idleResetEnabled) {
+    return false
+  }
 
   return state === IdleState.Idle
 }
@@ -256,24 +292,56 @@ export function startBreakNow(): void {
 }
 
 function tick(): void {
-  const shouldHaveBreak = checkShouldHaveBreak()
+  try {
+    const shouldHaveBreak = checkShouldHaveBreak()
 
-  if (!shouldHaveBreak && !havingBreak && breakTime) {
-    if (checkIdle()) {
-      idleStart = new Date()
+    // This can happen if the computer is put to sleep. In this case, we want
+    // to skip the break if the time the computer was unresponsive was greater
+    // than the idle reset.
+    const secondsSinceLastTick = lastTick ?
+      Number(((+(new Date()) - +lastTick) / 1000).toFixed(0)) :
+      0
+    log.info({
+      lastTick: lastTick && lastTick.toISOString(),
+      breakTime: breakTime && breakTime.toISOString(),
+      secondsSinceLastTick,
+      idleResetSeconds: getIdleResetSeconds()
+    })
+    if (secondsSinceLastTick > getIdleResetSeconds()) {
+      log.info('seconds since last tick more than idle reset secs')
+      //  If idleStart exists, it means we were idle before the computer slept.
+      //  If it doesn't exist, count the computer going unresponsive as the
+      //  start of the idle period.
+      if (!idleStart) {
+        log.info('and no idle start set')
+        lockStart = null
+        idleStart = lastTick
+      }
+      createBreak()
     }
-    breakTime = null
-    buildTray()
-    return
-  }
 
-  if (shouldHaveBreak && !breakTime) {
-    createBreak()
-    return
-  }
+    if (!shouldHaveBreak && !havingBreak && breakTime) {
+      log.info('!shouldHaveBreak && !havingBreak && breakTime')
+      if (checkIdle()) {
+        log.info('and is idle')
+        idleStart = new Date()
+      }
+      breakTime = null
+      buildTray()
+      return
+    }
 
-  if (shouldHaveBreak) {
-    checkBreak()
+    if (shouldHaveBreak && !breakTime) {
+      log.info('shouldHaveBreak && !breakTime')
+      createBreak()
+      return
+    }
+
+    if (shouldHaveBreak) {
+      checkBreak()
+    }
+  } finally {
+    lastTick = new Date()
   }
 }
 
