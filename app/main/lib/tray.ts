@@ -123,7 +123,7 @@ export function buildTray(): void {
   }
 }
 
-app.on('ready', () => {
+export function initTray() {
   buildTray()
   setInterval(() => {
     const breakTime = getBreakTime()
@@ -137,4 +137,4 @@ app.on('ready', () => {
       lastMinsLeft = minsLeft
     }
   }, 5000)
-})
+}

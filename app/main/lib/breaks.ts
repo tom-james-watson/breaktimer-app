@@ -1,5 +1,5 @@
 import moment, {Moment} from 'moment'
-import {powerMonitor} from 'electron'
+import {PowerMonitor} from 'electron'
 import log from 'electron-log'
 import {Settings, NotificationType, NotificationClick} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
@@ -10,6 +10,7 @@ import {buildTray} from './tray'
 import {showNotification} from './notifications'
 import {createBreakWindows} from './windows'
 
+let powerMonitor: PowerMonitor
 let breakTime: BreakTime = null
 let havingBreak = false
 let postponedCount = 0
@@ -369,6 +370,8 @@ function tick(): void {
 }
 
 export function initBreaks(): void {
+  powerMonitor = require('electron').powerMonitor
+
   const settings: Settings = getSettings()
 
   if (settings.breaksEnabled) {

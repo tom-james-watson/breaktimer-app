@@ -6,8 +6,8 @@ import {getAppInitialized, setAppInitialized, setBreaksEnabled} from './lib/stor
 import {createSoundsWindow, createSettingsWindow} from './lib/windows'
 import {setAutoLauch} from './lib/auto-launch'
 import {showNotification} from './lib/notifications'
+import {initTray} from './lib/tray'
 import './lib/ipc'
-import './lib/tray'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -89,6 +89,7 @@ app.on('ready', async () => {
     setAppInitialized()
   }
 
+  initTray()
   initBreaks()
   createSoundsWindow()
 
