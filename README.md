@@ -54,6 +54,20 @@ Enable breaks:
 breaktimer enable
 ```
 
+### How can I pass you my log files to help you debug an issue?
+
+You can find the log file for BreakTimer here:
+
+Linux: `/home/<USERNAME>/.config/BreakTimer/log.log`
+
+macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/log.log`
+
+Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\log.log`
+
+You can either upload this to a cloud service such as Dropbox or Google Drive and enable public sharing, or you can email the file as an attachment to contact@breaktimer.app. The log files do not contain any personally-indentifying information.
+
+Please try and include a timestamp for roughly when you have seen the issue so that I can find the relevant place in the log file.
+
 ## Development
 
 See [./DEVELOPMENT.md](DEVELOPMENT.md).
