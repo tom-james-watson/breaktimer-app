@@ -89,8 +89,8 @@ app.on('ready', async () => {
     setAppInitialized()
   }
 
-  initTray()
   initBreaks()
+  initTray()
   createSoundsWindow()
 
   if (process.env.NODE_ENV !== 'development' && process.platform !== 'win32') {
