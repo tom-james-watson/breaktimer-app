@@ -1,6 +1,5 @@
 import moment, {Moment} from 'moment'
 import {PowerMonitor} from 'electron'
-import log from 'electron-log'
 import {Settings, NotificationType, NotificationClick} from '../../types/settings'
 import {BreakTime} from '../../types/breaks'
 import {IpcChannel} from '../../types/ipc'
@@ -60,7 +59,6 @@ function getBreakSeconds(): number {
 }
 
 function createIdleNotification() {
-  log.info('CREATE IDLE RESET NOTIF')
   const settings: Settings = getSettings()
 
   if (!settings.idleResetEnabled) {
@@ -91,10 +89,8 @@ function createIdleNotification() {
 
 export function createBreak(isPostpone=false) {
   const settings: Settings = getSettings()
-  log.info('create break')
 
   if (idleStart) {
-    log.info('create break and idleStart')
     createIdleNotification()
     idleStart = null
     postponedCount = 0
@@ -256,16 +252,12 @@ export function checkIdle(): boolean {
     getIdleResetSeconds()
   ) as IdleState
 
-  log.info({state})
-
   if (state === IdleState.Locked) {
     if (!lockStart) {
-      log.info('setting lockStart')
       lockStart = new Date()
       return false
     } else {
       const lockSeconds = Number(((+(new Date()) - +lockStart) / 1000).toFixed(0))
-      log.info({lockSeconds, isIdle: lockSeconds > getIdleResetSeconds()})
       return lockSeconds > getIdleResetSeconds()
     }
   }
@@ -311,33 +303,23 @@ function tick(): void {
       0
     const breakSeconds = getBreakSeconds()
     const lockSeconds = lockStart && Number(((+(new Date()) - +lockStart) / 1000).toFixed(0))
-    log.info({
-      lastTick: lastTick && lastTick.toISOString(),
-      breakTime: breakTime && breakTime.toISOString(),
-      secondsSinceLastTick,
-      idleResetSeconds: getIdleResetSeconds(),
-      breakSeconds
-    })
+
     if (lockStart && lockSeconds > breakSeconds) {
       // The computer has been locked for longer than the break period. In this
       // case, it's not particularly helpful to show an idle reset
       // notification, so unset idle start
-      log.info('have been locked for more than break secs')
       idleStart = null
       lockStart = null
     } else if (secondsSinceLastTick > breakSeconds) {
-      log.info('seconds since last tick more than break secs')
       // The computer has been slept for longer than the break period. In this
       // case, it's not particularly helpful to show an idle reset
       // notification, so do nothing
       lockStart = null
     } else if (secondsSinceLastTick > getIdleResetSeconds()) {
-      log.info('seconds since last tick more than idle reset secs')
       //  If idleStart exists, it means we were idle before the computer slept.
       //  If it doesn't exist, count the computer going unresponsive as the
       //  start of the idle period.
       if (!idleStart) {
-        log.info('and no idle start set')
         lockStart = null
         idleStart = lastTick
       }
@@ -345,9 +327,7 @@ function tick(): void {
     }
 
     if (!shouldHaveBreak && !havingBreak && breakTime) {
-      log.info('!shouldHaveBreak && !havingBreak && breakTime')
       if (checkIdle()) {
-        log.info('and is idle')
         idleStart = new Date()
       }
       breakTime = null
@@ -356,7 +336,6 @@ function tick(): void {
     }
 
     if (shouldHaveBreak && !breakTime) {
-      log.info('shouldHaveBreak && !breakTime')
       createBreak()
       return
     }
