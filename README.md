@@ -1,7 +1,7 @@
 BreakTimer App - https://breaktimer.app
 ===========
 
-> 🔨 **Looking for contributors** 🔨 If you feel like getting involved, please get in contact!
+🔨 **Looking for contributors** 🔨 If you feel like getting involved, please get in contact!
 
 BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS and Linux.
 
