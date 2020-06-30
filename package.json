@@ -1,26 +1,26 @@
 {
   "name": "breaktimer",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "productName": "BreakTimer",
   "description": "Manage periodic breaks",
   "scripts": {
-    "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
+    "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
     "build-main": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.babel.js --colors",
     "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors",
-    "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
+    "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 npm run start-renderer-dev",
     "lint": "cross-env NODE_ENV=development eslint --cache --ext .js,.ts,.tsx .",
-    "package": "yarn build && electron-builder build --publish never",
-    "package-all": "yarn build && electron-builder build -mwl",
-    "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
-    "package-linux": "yarn build && electron-builder build --linux",
-    "package-mac": "yarn build && electron-builder build --mac",
-    "package-win": "yarn build && electron-builder build --win --x64",
-    "publish-linux": "yarn postinstall && yarn build && electron-builder build --linux --publish always",
-    "publish-mac": "yarn postinstall && yarn build && electron-builder build --mac --publish always",
-    "publish-win": "yarn postinstall && yarn build && electron-builder build --win --x64 --publish always",
-    "postinstall": "electron-builder install-app-deps && yarn build-dll && opencollective-postinstall",
-    "precommit": "yarn lint",
+    "package": "npm run build && electron-builder build --publish never",
+    "package-all": "npm run build && electron-builder build -mwl",
+    "package-ci": "npm run postinstall && npm run build && electron-builder --publish always",
+    "package-linux": "npm run build && electron-builder build --linux",
+    "package-mac": "npm run build && electron-builder build --mac",
+    "package-win": "npm run build && electron-builder build --win --x64",
+    "publish-linux": "npm run postinstall && npm run build && electron-builder build --linux --publish always",
+    "publish-mac": "npm run postinstall && npm run build && electron-builder build --mac --publish always",
+    "publish-win": "npm run postinstall && npm run build && electron-builder build --win --x64 --publish always",
+    "postinstall": "electron-builder install-app-deps && npm run build-dll && opencollective-postinstall",
+    "precommit": "npm run lint",
     "start": "cross-env NODE_ENV=production electron ./app/main/dist/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron ./app/main/main.dev.babel.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
@@ -115,7 +115,7 @@
     "@types/node": "^13.1.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.10.3",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/plugin-proposal-decorators": "^7.2.3",
     "@babel/plugin-proposal-do-expressions": "^7.2.0",
@@ -141,13 +141,12 @@
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "@types/react-router-dom": "^5.1.3",
-    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "babel-plugin-dev-expression": "^0.2.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.21",
     "chalk": "^2.4.1",
-    "concurrently": "^4.1.0",
+    "concurrently": "^5.2.0",
     "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
     "css-loader": "^2.1.0",
@@ -184,9 +183,8 @@
     "rimraf": "^2.6.3",
     "sass-loader": "^7.1.0",
     "sinon": "^7.2.2",
-    "spectron": "^5.0.0",
     "style-loader": "^0.23.1",
-    "stylelint": "^9.9.0",
+    "stylelint": "^13.6.1",
     "stylelint-config-prettier": "^4.0.0",
     "stylelint-config-standard": "^18.2.0",
     "terser-webpack-plugin": "^1.2.1",
@@ -197,8 +195,7 @@
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.2.0",
     "webpack-dev-server": "^3.1.14",
-    "webpack-merge": "^4.2.1",
-    "yarn": "^1.22.0"
+    "webpack-merge": "^4.2.1"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.17.1",
@@ -213,6 +210,7 @@
     "brace": "^0.11.1",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.1.0",
+    "core-js": "^3.6.5",
     "devtron": "^1.4.0",
     "electron-store": "^5.0.0",
     "eslint-config-structure": "^0.1.7",
@@ -231,7 +229,6 @@
   },
   "devEngines": {
     "node": ">=7.x",
-    "npm": ">=4.x",
-    "yarn": ">=0.21.3"
+    "npm": ">=4.x"
   }
 }

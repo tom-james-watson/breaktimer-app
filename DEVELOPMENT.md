@@ -6,32 +6,32 @@ Development
 Install dependencies:
 
 ```bash
-yarn
+npm i
 ```
 
 ## Run
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 If you don't need autofocus when your files was changed, then run `dev` with env `START_MINIMIZED=true`:
 
 ```bash
-START_MINIMIZED=true yarn dev
+START_MINIMIZED=true npm run dev
 ```
 
 To start the app in `production` environment:
 
 ```bash
-yarn build
-yarn start
+npm run build
+npm run start
 ```
 
 To start the app in `production` environment with debugging enabled:
 
 ```bash
-DEBUG_PROD=true yarn start
+DEBUG_PROD=true npm run start
 ```
 
 ## Testing
@@ -39,7 +39,7 @@ DEBUG_PROD=true yarn start
 Run normal tests:
 
 ```bash
-yarn test
+npm test
 ```
 
 ## Packaging
@@ -47,7 +47,7 @@ yarn test
 To package apps for the local platform:
 
 ```bash
-yarn package
+npm run package
 ```
 
 To package apps for all platforms:
@@ -57,19 +57,19 @@ First, refer to the [Multi Platform Build docs](https://www.electron.build/multi
 Then,
 
 ```bash
-yarn package-all
+npm run package-all
 ```
 
 To package apps with options:
 
 ```bash
-yarn package --[option]
+npm run package --[option]
 ```
 
 :bulb: You can debug your production build with devtools by simply setting the `DEBUG_PROD` env variable:
 
 ```bash
-DEBUG_PROD=true yarn package
+DEBUG_PROD=true npm run package
 ```
 
 ## Publishing
@@ -83,7 +83,7 @@ To publish the linux snap build, you also must be logged into the snap store, wh
 The macOS build must be published from a mac, with a valid code signing certificate available in your keychain. Then, simply:
 
 ```bash
-GH_TOKEN=<github token> yarn publish-mac
+GH_TOKEN=<github token> npm run publish-mac
 ```
 
 This will push all relevant assets to a draft release on GitHub.
@@ -93,7 +93,7 @@ This will push all relevant assets to a draft release on GitHub.
 The Windows build can be built from a linux box. Simply run:
 
 ```bash
-GH_TOKEN=<github token> yarn publish-win
+GH_TOKEN=<github token> npm run publish-win
 ```
 
 This will push all relevant assets to a draft release on GitHub.
@@ -103,7 +103,7 @@ This will push all relevant assets to a draft release on GitHub.
 From a linux box, simply run:
 
 ```bash
-GH_TOKEN=<github token> yarn publish-linux
+GH_TOKEN=<github token> npm run publish-linux
 ```
 
 This will push all relevant assets to a draft release on GitHub and push the new build to the snap store.
