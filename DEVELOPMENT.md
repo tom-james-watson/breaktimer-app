@@ -76,8 +76,6 @@ DEBUG_PROD=true npm run package
 
 First, create a [personal access GitHub Token](https://github.com/settings/tokens) with the `repo` permission.
 
-To publish the linux snap build, you also must be logged into the snap store, which you do via the `snap` cli.
-
 #### macOS
 
 The macOS build must be published from a mac, with a valid code signing certificate available in your keychain. Then, simply:
@@ -100,7 +98,27 @@ This will push all relevant assets to a draft release on GitHub.
 
 #### Linux
 
-From a linux box, simply run:
+The linux build must be built from a linux machine.
+
+You also must have installed the `snapcraft` cli tool:
+
+```bash
+sudo snap install snapcraft --classic
+```
+
+To publish the linux snap build, you also must be logged into snapcraft:
+
+```bash
+snapcraft login
+```
+
+And should also install the `review-tools` snap for enhanced checks before uploading the snap:
+
+```bash
+sudo snap install review-tools
+```
+
+Then run:
 
 ```bash
 GH_TOKEN=<github token> npm run publish-linux
