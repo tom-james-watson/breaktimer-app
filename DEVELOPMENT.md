@@ -88,7 +88,9 @@ This will push all relevant assets to a draft release on GitHub.
 
 #### Windows
 
-The Windows build can be built from a linux box. Simply run:
+The Windows build can be built from a linux box. There are a few dependencies requried, see https://www.electron.build/multi-platform-build#to-build-app-for-windows-on-linux.
+
+Then run:
 
 ```bash
 GH_TOKEN=<github token> npm run publish-win
