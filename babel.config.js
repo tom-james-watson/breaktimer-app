@@ -22,14 +22,18 @@ module.exports = api => {
     presets: [
       [
         require('@babel/preset-env'),
-        {
-          targets: { electron: require('electron/package.json').version }
-        }
       ],
       require('@babel/preset-typescript'),
       [require('@babel/preset-react'), { development }]
     ],
     plugins: [
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "regenerator": true,
+          "corejs": 3
+        }
+      ],
       // Stage 0
       require('@babel/plugin-proposal-function-bind'),
 

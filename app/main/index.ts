@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime"
+import "core-js/stable"
 import {app} from 'electron'
 import {autoUpdater} from 'electron-updater'
 import log from 'electron-log'
@@ -46,15 +48,15 @@ if (
   require('electron-debug')()
 }
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer')
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
-  const extensions = ['REACT_DEVELOPER_TOOLS']
-
-  return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
-  ).catch(console.log)
-}
+// function installExtensions() {
+//   const installer = require('electron-devtools-installer')
+//   const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+//   const extensions = ['REACT_DEVELOPER_TOOLS']
+//
+//   return Promise.all(
+//     extensions.map(name => installer.default(installer[name], forceDownload))
+//   ).catch(console.log)
+// }
 
 // Don't exit on close all windows - live in tray
 app.on('window-all-closed', e => e.preventDefault())
@@ -64,7 +66,8 @@ app.on('ready', async () => {
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
-    await installExtensions()
+    // Extensions are broken on electron 10
+    // await installExtensions()
   }
 
   // Required for notifications to work on windows
