@@ -82,7 +82,6 @@ export function createBreakWindows() {
     const breakWindow = new BrowserWindow({
       show: false,
       fullscreen: process.platform === 'darwin',
-      kiosk: process.platform !== 'darwin',
       alwaysOnTop: true,
       skipTaskbar: true,
       autoHideMenuBar: true,
@@ -108,6 +107,13 @@ export function createBreakWindows() {
       }
       breakWindow.show()
       breakWindow.focus()
+
+      // If we set this in the browser window options then we get a crash on
+      // Ubuntu 20.10. Setting kiosk once the window is ready seems to avoid
+      // this.
+      if (process.platform !== 'darwin') {
+        breakWindow.setKiosk(true)
+      }
     })
 
     breakWindow.on('closed', () => {
