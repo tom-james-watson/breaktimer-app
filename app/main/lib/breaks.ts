@@ -201,13 +201,13 @@ export function checkInWorkingHours(): boolean {
   const now = moment()
 
   const days = {
+    0: settings.workingHoursSunday,
     1: settings.workingHoursMonday,
     2: settings.workingHoursTuesday,
     3: settings.workingHoursWednesday,
     4: settings.workingHoursThursday,
     5: settings.workingHoursFriday,
     6: settings.workingHoursSaturday,
-    7: settings.workingHoursSunday,
   }
 
   const isWorkingDay = days[now.day()]
