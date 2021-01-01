@@ -298,11 +298,9 @@ function tick(): void {
     // This can happen if the computer is put to sleep. In this case, we want
     // to skip the break if the time the computer was unresponsive was greater
     // than the idle reset.
-    const secondsSinceLastTick = lastTick ?
-      Number(((+(new Date()) - +lastTick) / 1000).toFixed(0)) :
-      0
+    const secondsSinceLastTick = lastTick ? (Math.abs(+(new Date()) - +lastTick) / 1000) : 0
     const breakSeconds = getBreakSeconds()
-    const lockSeconds = lockStart && Number(((+(new Date()) - +lockStart) / 1000).toFixed(0))
+    const lockSeconds = lockStart && Math.abs(+(new Date()) - +lockStart) / 1000
 
     if (lockStart && lockSeconds > breakSeconds) {
       // The computer has been locked for longer than the break period. In this
@@ -313,8 +311,9 @@ function tick(): void {
     } else if (secondsSinceLastTick > breakSeconds) {
       // The computer has been slept for longer than the break period. In this
       // case, it's not particularly helpful to show an idle reset
-      // notification, so do nothing
+      // notification, so just reset the break
       lockStart = null
+      breakTime = null
     } else if (secondsSinceLastTick > getIdleResetSeconds()) {
       //  If idleStart exists, it means we were idle before the computer slept.
       //  If it doesn't exist, count the computer going unresponsive as the
