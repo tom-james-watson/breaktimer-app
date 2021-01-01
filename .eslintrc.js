@@ -20,6 +20,7 @@ module.exports = {
     }
   },
   "rules": {
+    "react/no-danger": 0,
     "import/extensions": 0,
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/interface-name-prefix": 0,

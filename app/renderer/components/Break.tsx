@@ -75,8 +75,8 @@ export default function Break() {
 
   return (
     <div className={styles.break} style={style}>
-      <h1 className={styles.breakTitle}>{settings.breakTitle}</h1>
-      <h3 className={styles.breakMessage}>{settings.breakMessage}</h3>
+      <h1 className={styles.breakTitle} dangerouslySetInnerHTML={{__html: settings.breakTitle}} />
+      <h3 className={styles.breakMessage} dangerouslySetInnerHTML={{__html: settings.breakMessage}} />
       <div className={styles.countdown}>
         {`${pad(hoursRemaining)} : ${pad(minutesRemaining)} : ${pad(secondsRemaining)}`}
       </div>
