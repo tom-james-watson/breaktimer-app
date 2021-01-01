@@ -347,6 +347,8 @@ function tick(): void {
   }
 }
 
+let tickInterval: NodeJS.Timeout
+
 export function initBreaks(): void {
   powerMonitor = require('electron').powerMonitor
 
@@ -356,5 +358,9 @@ export function initBreaks(): void {
     createBreak()
   }
 
-  setInterval(tick, 1000)
+  if (tickInterval) {
+    clearInterval(tickInterval)
+  }
+
+  tickInterval = setInterval(tick, 1000)
 }
