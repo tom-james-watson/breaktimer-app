@@ -27,6 +27,13 @@ export function buildTray(): void {
         path.join(process.resourcesPath, 'app/resources/tray/icon.png')
     }
     tray = new Tray(imgPath)
+
+    // On windows, context menu will not show on left click by default
+    if (process.platform === 'win32') {
+      tray.on('click', () => {
+        tray.popUpContextMenu()
+      })
+    }
   }
 
   let settings: Settings = getSettings()
@@ -114,13 +121,6 @@ export function buildTray(): void {
 
   // Call this again for Linux because we modified the context menu
   tray.setContextMenu(contextMenu)
-
-  // On windows, context menu will not show on left click by default
-  if (process.platform === 'win32') {
-    tray.on('click', () => {
-      tray.popUpContextMenu()
-    })
-  }
 }
 
 export function initTray() {
