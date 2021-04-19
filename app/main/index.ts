@@ -84,8 +84,8 @@ app.on('ready', async () => {
   if (!appInitialized) {
     setAutoLauch(true)
     showNotification(
-      'BreakTimer runs in the background',
-      'The app can be accessed via the system tray',
+      'BreakTimer s\'exécute en arrière-plan',
+      'L\'application est accessible via la barre d\'état système',
       null,
       false
     )

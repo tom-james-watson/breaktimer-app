@@ -88,7 +88,7 @@ export default function Break() {
           intent={Intent.PRIMARY}
           autoFocus={true}
         >
-          End Break
+          Terminer la pause
         </Button>
       )}
     </div>

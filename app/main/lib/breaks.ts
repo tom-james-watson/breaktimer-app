@@ -81,8 +81,8 @@ function createIdleNotification() {
 
   if (settings.idleResetNotification) {
     showNotification(
-      'Break countdown reset',
-      `Idle for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(idleSeconds)}`
+      'Réinitialiser le compte à rebours',
+      `Inactif pour ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(idleSeconds)}`
     )
   }
 }
@@ -167,13 +167,13 @@ function doBreak(): void {
     )
 
     if (allowSkip) {
-      body = 'Click to skip'
+      body = 'Cliquer pour passer'
     } else if (allowPostpone) {
-      body = 'Click to postpone'
+      body = 'Cliquer pour reporter'
     }
 
     showNotification(
-      'Break about to start...',
+      'Une pause sur le point de commencer ...',
       body,
       (): void => {
         if (allowSkip) {

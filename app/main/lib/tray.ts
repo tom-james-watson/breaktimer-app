@@ -75,11 +75,11 @@ export function buildTray(): void {
   let nextBreak: string
 
   if (minsLeft > 1) {
-    nextBreak = `Next break in ${minsLeft} minutes`
+    nextBreak = `Prochaine pause dans ${minsLeft} minutes`
   } else if (minsLeft === 1) {
-    nextBreak = `Next break in 1 minute`
+    nextBreak = `Prochaine pause dans 1 min`
   } else {
-    nextBreak = `Next break in less than a minute`
+    nextBreak = `Prochaine pause dans moins d'une minute`
   }
 
   const contextMenu = Menu.buildFromTemplate([
@@ -89,34 +89,34 @@ export function buildTray(): void {
       enabled: false
     },
     {
-      label: `Outside of working hours`,
+      label: `En dehors des heures de travail`,
       visible: !inWorkingHours,
       enabled: false
     },
     {
-      label: `Idle`,
+      label: `Inactif`,
       visible: idle,
       enabled: false
     },
     {type: 'separator'},
     {
-      label: breaksEnabled ? 'Disable' : 'Enable',
+      label: breaksEnabled ? 'Désactiver' : 'Activer',
       click: setBreaksEnabled.bind(null, !breaksEnabled)
     },
     {
-      label: 'Start break now',
+      label: 'Démarrer une pause',
       visible: breakTime !== null && inWorkingHours,
       click: startBreakNow
     },
     {
-      label: 'Restart break period',
+      label: 'Redémarrer la periode de travail',
       visible: breakTime !== null && inWorkingHours,
       click: createBreak.bind(null, false)
     },
     {type: 'separator'},
-    {label: 'Settings', click: createSettingsWindow},
-    {label: 'About', click: createAboutWindow},
-    {label: 'Quit', click: quit}
+    {label: 'Paramètres', click: createSettingsWindow},
+    {label: 'À propos', click: createAboutWindow},
+    {label: 'Quitter', click: quit}
   ])
 
   // Call this again for Linux because we modified the context menu

@@ -19,7 +19,7 @@ export default function SettingsEl() {
     })
 
     ipcRenderer.on(IpcChannel.SET_SETTINGS_SUCCESS, () => {
-      toast('Settings saved', Intent.PRIMARY)
+      toast('Paramètres sauvegardés', Intent.PRIMARY)
     })
 
     ipcRenderer.on(IpcChannel.ERROR, (event: IpcRendererEvent, error: string) => {
@@ -88,7 +88,7 @@ export default function SettingsEl() {
       <main className={styles.settings}>
         <FormGroup>
           <Switch
-            label="Breaks enabled"
+            label="Pauses activés"
             checked={settings.breaksEnabled}
             onChange={handleSwitchChange.bind(null, 'breaksEnabled')}
           />
@@ -96,21 +96,21 @@ export default function SettingsEl() {
         <Tabs defaultSelectedTabId="break-settings">
           <Tab
             id="break-settings"
-            title="Break Settings"
+            title="Paramètres de pause"
             panel={(
               <React.Fragment>
-                <FormGroup label="Notify me with">
+                <FormGroup label="Me notifier avec ">
                   <HTMLSelect
                     value={settings.notificationType}
                     options={[
-                      {value: NotificationType.Popup, label: "Fullscreen popup"},
+                      {value: NotificationType.Popup, label: "Popup plein écran"},
                       {value: NotificationType.Notification, label: "Simple notification"},
                     ]}
                     onChange={handleNotificationTypeChange}
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
+                <FormGroup label="Fréquence des pauses" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'breakFrequency')}
                     value={new Date(settings.breakFrequency)}
@@ -119,7 +119,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
+                <FormGroup label="Longueur des pauses" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'breakLength')}
                     value={new Date(settings.breakLength)}
@@ -128,19 +128,19 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Clicking break start notification should">
+                <FormGroup label="Cliquer sur début de pause devrait">
                   <HTMLSelect
                     value={settings.notificationClick}
                     options={[
-                      {value: NotificationClick.DoNothing, label: "Do nothing"},
-                      {value: NotificationClick.Skip, label: "Skip the break"},
-                      {value: NotificationClick.Postpone, label: "Postpone the break"},
+                      {value: NotificationClick.DoNothing, label: "Ne fais rien"},
+                      {value: NotificationClick.Skip, label: "Passer la pause"},
+                      {value: NotificationClick.Postpone, label: "Reportez la pause"},
                     ]}
                     onChange={handleNotificationClickChange}
                     disabled={!settings.breaksEnabled || settings.notificationType !== NotificationType.Popup}
                   />
                 </FormGroup>
-                <FormGroup label="Postpone length" labelInfo="(hh:mm:ss)">
+                <FormGroup label="Durée de report" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'postponeLength')}
                     value={new Date(settings.postponeLength)}
@@ -149,7 +149,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
                   />
                 </FormGroup>
-                <FormGroup label="Postpone limit">
+                <FormGroup label="Limite de report">
                   <HTMLSelect
                     value={settings.postponeLimit}
                     options={[
@@ -158,20 +158,20 @@ export default function SettingsEl() {
                       {value: 3, label: "3"},
                       {value: 4, label: "4"},
                       {value: 5, label: "5"},
-                      {value: 0, label: "No limit"}
+                      {value: 0, label: "Pas de limite"}
                     ]}
                     onChange={handlePostponeLimitChange}
                     disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
                   />
                 </FormGroup>
                 <Switch
-                  label="Play gong sound on break start/end"
+                  label="Joue le son du gong au début/à la fin de la pause"
                   checked={settings.gongEnabled}
                   onChange={handleSwitchChange.bind(null, 'gongEnabled')}
                   disabled={!settings.breaksEnabled}
                 />
                 <Switch
-                  label="Allow end break"
+                  label="Autoriser la fin de pause"
                   checked={settings.endBreakEnabled}
                   onChange={handleSwitchChange.bind(null, 'endBreakEnabled')}
                   disabled={!settings.breaksEnabled}
@@ -181,10 +181,10 @@ export default function SettingsEl() {
           />
           <Tab
             id="customization"
-            title="Customization"
+            title="Personnalisation"
             panel={(
               <React.Fragment>
-                <FormGroup label="Break title">
+                <FormGroup label="Titre de pause">
                   <InputGroup
                     id="break-title"
                     value={settings.breakTitle}
@@ -192,7 +192,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break message">
+                <FormGroup label="Message de pause">
                   <InputGroup
                     id="break-message"
                     value={settings.breakMessage}
@@ -200,7 +200,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Primary color">
+                <FormGroup label="Couleur primaire">
                   <InputGroup
                     id="primary-color"
                     className={styles.colorPicker}
@@ -210,7 +210,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Text color">
+                <FormGroup label="Couleur du texte">
                   <InputGroup
                     id="text-color"
                     className={styles.colorPicker}
@@ -221,25 +221,25 @@ export default function SettingsEl() {
                   />
                 </FormGroup>
                 <FormGroup>
-                  <Button onClick={handleResetColors}>Reset colors</Button>
+                  <Button onClick={handleResetColors}>Réinitialiser les couleurs</Button>
                 </FormGroup>
               </React.Fragment>
             )}
           />
           <Tab
             id="working-hours"
-            title="Working Hours"
+            title="Horaires de travail"
             panel={(
               <React.Fragment>
                 <FormGroup>
                   <Switch
-                    label="Enable working hours"
+                    label="Activer les heures de travail"
                     checked={settings.workingHoursEnabled}
                     onChange={handleSwitchChange.bind(null, 'workingHoursEnabled')}
                     disabled={!settings.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Breaks from">
+                <FormGroup label="À partir de">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'workingHoursFrom')}
                     value={new Date(settings.workingHoursFrom)}
@@ -247,7 +247,7 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Breaks to">
+                <FormGroup label="Jusqu'à">
                   <TimePicker
                     onChange={handleDateChange.bind(null, 'workingHoursTo')}
                     value={new Date(settings.workingHoursTo)}
@@ -255,45 +255,45 @@ export default function SettingsEl() {
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Breaks on">
+                <FormGroup label="Pauses le">
                   <Switch
-                    label="Monday"
+                    label="Lundi"
                     checked={settings.workingHoursMonday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursMonday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Tuesday"
+                    label="Mardi"
                     checked={settings.workingHoursTuesday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursTuesday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Wednesday"
+                    label="Mercredi"
                     checked={settings.workingHoursWednesday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursWednesday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Thursday"
+                    label="Jeudi"
                     checked={settings.workingHoursThursday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursThursday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Friday"
+                    label="Vendredi"
                     checked={settings.workingHoursFriday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursFriday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Saturday"
+                    label="Samedi"
                     checked={settings.workingHoursSaturday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursSaturday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
                   />
                   <Switch
-                    label="Sunday"
+                    label="Dimanche"
                     checked={settings.workingHoursSunday}
                     onChange={handleSwitchChange.bind(null, 'workingHoursSunday')}
                     disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
@@ -304,7 +304,7 @@ export default function SettingsEl() {
           />
           <Tab
             id="idle-reset"
-            title="Idle Reset"
+            title=""
             panel={(
               <React.Fragment>
                 <FormGroup>
@@ -336,12 +336,12 @@ export default function SettingsEl() {
           {process.env.SNAP === undefined && (
             <Tab
               id="system"
-              title="System"
+              title="Systeme"
               panel={(
                 <React.Fragment>
                   <FormGroup>
                     <Switch
-                      label="Start at login"
+                      label="Démarrer à la connexion"
                       checked={settings.autoLaunch}
                       onChange={handleSwitchChange.bind(null, 'autoLaunch')}
                     />
