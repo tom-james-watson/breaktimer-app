@@ -1,86 +1,116 @@
-import * as React from 'react'
-import {ipcRenderer, IpcRendererEvent} from 'electron'
-import moment from 'moment'
-import {ProgressBar, Button, Intent} from "@blueprintjs/core"
-import {IpcChannel} from "../../types/ipc"
-import {Settings} from "../../types/settings"
-import {toast} from "../toaster"
-const styles = require('./Break.scss')
+import * as React from "react";
+import { ipcRenderer, IpcRendererEvent } from "electron";
+import moment from "moment";
+import { ProgressBar, Button, Intent } from "@blueprintjs/core";
+import { IpcChannel } from "../../types/ipc";
+import { Settings } from "../../types/settings";
+import { toast } from "../toaster";
+const styles = require("./Break.scss");
 
-let rerenderInterval
+let rerenderInterval: NodeJS.Timeout;
 
 function pad(num: number): string {
-  let out = String(num)
+  let out = String(num);
   if (out.length === 1) {
-    out = `0${out}`
+    out = `0${out}`;
   }
-  return out
+  return out;
 }
 
-let startSecondsRemaining
+let startSecondsRemaining: number;
 
 export default function Break() {
-  const [settings, setSettings] = React.useState<Settings>(null)
-  const [hoursRemaining, setHoursRemaining] = React.useState<number | null>(null)
-  const [minutesRemaining, setMinutesRemaining] = React.useState<number | null>(null)
-  const [secondsRemaining, setSecondsRemaining] = React.useState<number | null>(null)
-  const [progress, setProgress] = React.useState<number | null>(null)
+  const [settings, setSettings] = React.useState<Settings | null>(null);
+  const [hoursRemaining, setHoursRemaining] = React.useState<number | null>(
+    null
+  );
+  const [minutesRemaining, setMinutesRemaining] = React.useState<number | null>(
+    null
+  );
+  const [secondsRemaining, setSecondsRemaining] = React.useState<number | null>(
+    null
+  );
+  const [progress, setProgress] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    ipcRenderer.on(IpcChannel.GET_SETTINGS_SUCCESS, (event: IpcRendererEvent, settings: Settings) => {
-      setSettings(settings)
-      ipcRenderer.send(IpcChannel.GET_BREAK_END_TIME)
-    })
+    ipcRenderer.on(
+      IpcChannel.GET_SETTINGS_SUCCESS,
+      (_event: IpcRendererEvent, settings: Settings) => {
+        setSettings(settings);
+        ipcRenderer.send(IpcChannel.GET_BREAK_END_TIME);
+      }
+    );
 
-    ipcRenderer.on(IpcChannel.GET_BREAK_END_TIME_SUCCESS, (event: IpcRendererEvent, breakEndTime: string) => {
-      startSecondsRemaining = moment(breakEndTime).diff(moment(), 'seconds')
+    ipcRenderer.on(
+      IpcChannel.GET_BREAK_END_TIME_SUCCESS,
+      (_event: IpcRendererEvent, breakEndTime: string) => {
+        startSecondsRemaining = moment(breakEndTime).diff(moment(), "seconds");
 
-      ipcRenderer.send(IpcChannel.SHOW_BREAK_WINDOW)
+        ipcRenderer.send(IpcChannel.SHOW_BREAK_WINDOW);
 
-      clearInterval(rerenderInterval)
-      rerenderInterval = setInterval(() => {
-        const now = moment()
+        clearInterval(rerenderInterval);
+        rerenderInterval = setInterval(() => {
+          const now = moment();
 
-        if (now > moment(breakEndTime)) {
-          window.close()
-        }
+          if (now > moment(breakEndTime)) {
+            window.close();
+          }
 
-        let secondsRemaining = moment(breakEndTime).diff(now, 'seconds')
-        setProgress(1 - (secondsRemaining / startSecondsRemaining))
-        setHoursRemaining(Math.floor(secondsRemaining / 3600))
-        secondsRemaining %= 3600
-        setMinutesRemaining(Math.floor(secondsRemaining / 60))
-        setSecondsRemaining(secondsRemaining % 60)
-      }, 1000)
-    })
+          let secondsRemaining = moment(breakEndTime).diff(now, "seconds");
+          setProgress(1 - secondsRemaining / startSecondsRemaining);
+          setHoursRemaining(Math.floor(secondsRemaining / 3600));
+          secondsRemaining %= 3600;
+          setMinutesRemaining(Math.floor(secondsRemaining / 60));
+          setSecondsRemaining(secondsRemaining % 60);
+        }, 1000);
+      }
+    );
 
-    ipcRenderer.on(IpcChannel.ERROR, (event: IpcRendererEvent, error: string) => {
-      toast(error, Intent.DANGER)
-    })
+    ipcRenderer.on(
+      IpcChannel.ERROR,
+      (_event: IpcRendererEvent, error: string) => {
+        toast(error, Intent.DANGER);
+      }
+    );
 
-    ipcRenderer.send(IpcChannel.GET_SETTINGS)
-  }, [])
+    ipcRenderer.send(IpcChannel.GET_SETTINGS);
+  }, []);
 
   if (
-    !settings || hoursRemaining === null || minutesRemaining === null ||
-    secondsRemaining === null || progress === null
+    !settings ||
+    hoursRemaining === null ||
+    minutesRemaining === null ||
+    secondsRemaining === null ||
+    progress === null
   ) {
-    return null
+    return null;
   }
 
   const style = {
     color: settings.textColor,
     backgroundColor: settings.backgroundColor
-  }
+  };
 
   return (
     <div className={styles.break} style={style}>
-      <h1 className={styles.breakTitle} dangerouslySetInnerHTML={{__html: settings.breakTitle}} />
-      <h3 className={styles.breakMessage} dangerouslySetInnerHTML={{__html: settings.breakMessage}} />
+      <h1
+        className={styles.breakTitle}
+        dangerouslySetInnerHTML={{ __html: settings.breakTitle }}
+      />
+      <h3
+        className={styles.breakMessage}
+        dangerouslySetInnerHTML={{ __html: settings.breakMessage }}
+      />
       <div className={styles.countdown}>
-        {`${pad(hoursRemaining)} : ${pad(minutesRemaining)} : ${pad(secondsRemaining)}`}
+        {`${pad(hoursRemaining)} : ${pad(minutesRemaining)} : ${pad(
+          secondsRemaining
+        )}`}
       </div>
-      <ProgressBar value={progress} className={styles.progress} stripes={false} />
+      <ProgressBar
+        value={progress}
+        className={styles.progress}
+        stripes={false}
+      />
       {settings.endBreakEnabled && (
         <Button
           className={styles.endBreak}
@@ -92,5 +122,5 @@ export default function Break() {
         </Button>
       )}
     </div>
-  )
+  );
 }

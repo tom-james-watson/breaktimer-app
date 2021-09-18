@@ -11,8 +11,8 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "lib": ["es2015", "dom"],
-    "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }

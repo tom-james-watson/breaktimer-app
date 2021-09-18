@@ -7,23 +7,23 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import chalk from 'chalk';
-import merge from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import path from "path";
+import fs from "fs";
+import webpack from "webpack";
+import chalk from "chalk";
+import merge from "webpack-merge";
+import { spawn, execSync } from "child_process";
+import baseConfig from "./webpack.config.base";
+import CheckNodeEnv from "../internals/scripts/CheckNodeEnv";
 
-CheckNodeEnv('development');
+CheckNodeEnv("development");
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/renderer/dist`;
-const dll = path.join(__dirname, '../app/renderer/dist/dll');
-const manifest = path.resolve(dll, 'renderer.json');
+const dll = path.join(__dirname, "../app/renderer/dist/dll");
+const manifest = path.resolve(dll, "renderer.json");
 const requiredByDLLConfig = module.parent.filename.includes(
-  'webpack.config.renderer.dev.dll'
+  "webpack.config.renderer.dev.dll"
 );
 
 /**
@@ -35,26 +35,26 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
       'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
     )
   );
-  execSync('npm run build-dll');
+  execSync("npm run build-dll");
 }
 
 export default merge.smart(baseConfig, {
-  devtool: 'inline-source-map',
+  devtool: "inline-source-map",
 
-  mode: 'development',
+  mode: "development",
 
-  target: 'electron-renderer',
+  target: "electron-renderer",
 
   entry: [
-    'react-hot-loader/patch',
+    "react-hot-loader/patch",
     `webpack-dev-server/client?http://localhost:${port}/`,
-    'webpack/hot/only-dev-server',
-    require.resolve('../app/renderer/index.tsx')
+    "webpack/hot/only-dev-server",
+    require.resolve("../app/renderer/index.tsx")
   ],
 
   output: {
     publicPath: `http://localhost:${port}/renderer/dist/`,
-    filename: 'renderer.dev.js'
+    filename: "renderer.dev.js"
   },
 
   module: {
@@ -63,10 +63,10 @@ export default merge.smart(baseConfig, {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader"
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
@@ -77,15 +77,15 @@ export default merge.smart(baseConfig, {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader"
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
+              localIdentName: "[name]__[local]__[hash:base64:5]"
             }
           }
         ]
@@ -95,16 +95,16 @@ export default merge.smart(baseConfig, {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader"
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader'
+            loader: "sass-loader"
           }
         ]
       },
@@ -113,19 +113,19 @@ export default merge.smart(baseConfig, {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader"
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
+              localIdentName: "[name]__[local]__[hash:base64:5]"
             }
           },
           {
-            loader: 'sass-loader'
+            loader: "sass-loader"
           }
         ]
       },
@@ -133,10 +133,10 @@ export default merge.smart(baseConfig, {
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
+            mimetype: "application/font-woff"
           }
         }
       },
@@ -144,10 +144,10 @@ export default merge.smart(baseConfig, {
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
+            mimetype: "application/font-woff"
           }
         }
       },
@@ -155,33 +155,33 @@ export default merge.smart(baseConfig, {
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/octet-stream'
+            mimetype: "application/octet-stream"
           }
         }
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
+        use: "file-loader"
       },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml'
+            mimetype: "image/svg+xml"
           }
         }
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: "url-loader"
       }
     ]
   },
@@ -190,9 +190,9 @@ export default merge.smart(baseConfig, {
     requiredByDLLConfig
       ? null
       : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '../app/renderer/dist/dll'),
+          context: path.join(__dirname, "../app/renderer/dist/dll"),
           manifest: require(manifest),
-          sourceType: 'var'
+          sourceType: "var"
         }),
 
     new webpack.HotModuleReplacementPlugin({
@@ -214,7 +214,7 @@ export default merge.smart(baseConfig, {
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: "development"
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -232,12 +232,12 @@ export default merge.smart(baseConfig, {
     publicPath,
     compress: true,
     noInfo: true,
-    stats: 'errors-only',
+    stats: "errors-only",
     inline: true,
     lazy: false,
     hot: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'renderer', 'dist'),
+    headers: { "Access-Control-Allow-Origin": "*" },
+    contentBase: path.join(__dirname, "renderer", "dist"),
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,
@@ -249,13 +249,12 @@ export default merge.smart(baseConfig, {
     },
     before() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...');
-        spawn('npm', ['run', 'start-main-dev'], {
+        console.log("Starting Main Process...");
+        spawn("npm", ["run", "start-main-dev"], {
           shell: true,
           env: process.env,
-          stdio: 'inherit'
-        })
-          .on('error', spawnError => console.error(spawnError));
+          stdio: "inherit"
+        }).on("error", spawnError => console.error(spawnError));
       }
     }
   }

@@ -1,7 +1,11 @@
-import Store from 'electron-store'
-import {Settings, NotificationType, NotificationClick} from '../../types/settings'
-import {setAutoLauch} from './auto-launch'
-import {initBreaks} from './breaks'
+import Store from "electron-store";
+import {
+  Settings,
+  NotificationType,
+  NotificationClick
+} from "../../types/settings";
+import { setAutoLauch } from "./auto-launch";
+import { initBreaks } from "./breaks";
 
 const defaultSettings: Settings = {
   autoLaunch: true,
@@ -26,52 +30,50 @@ const defaultSettings: Settings = {
   idleResetLength: new Date(0, 0, 0, 0, 5),
   idleResetNotification: false,
   gongEnabled: true,
-  breakTitle: 'Time for a break!',
-  breakMessage: 'Rest your eyes. Stretch your legs. Breathe. Relax.',
-  backgroundColor: '#16a085',
-  textColor: '#ffffff',
-  endBreakEnabled: true,
-}
+  breakTitle: "Time for a break!",
+  breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
+  backgroundColor: "#16a085",
+  textColor: "#ffffff",
+  endBreakEnabled: true
+};
 
-interface IStore {
-  settings: Settings
-  appInitialized: boolean
-}
-
-const store = new Store<IStore>({
+const store = new Store<{
+  settings: Settings;
+  appInitialized: boolean;
+}>({
   defaults: {
     settings: defaultSettings,
     appInitialized: false
   }
-})
+});
 
 export function getSettings(): Settings {
-  return Object.assign(defaultSettings, store.get('settings')) as Settings
+  return Object.assign(defaultSettings, store.get("settings")) as Settings;
 }
 
 export function setSettings(settings: Settings, resetBreaks = true): void {
-  const currentSettings = getSettings()
+  const currentSettings = getSettings();
 
   if (currentSettings.autoLaunch !== settings.autoLaunch) {
-    setAutoLauch(settings.autoLaunch)
+    setAutoLauch(settings.autoLaunch);
   }
 
-  store.set({settings})
+  store.set({ settings });
 
   if (resetBreaks) {
-    initBreaks()
+    initBreaks();
   }
 }
 
 export function getAppInitialized(): boolean {
-  return store.get('appInitialized') as boolean
+  return store.get("appInitialized") as boolean;
 }
 
 export function setAppInitialized(): void {
-  store.set({appInitialized: true})
+  store.set({ appInitialized: true });
 }
 
 export function setBreaksEnabled(breaksEnabled: boolean): void {
-  const settings: Settings = getSettings()
-  setSettings({...settings, breaksEnabled}, false)
+  const settings: Settings = getSettings();
+  setSettings({ ...settings, breaksEnabled }, false);
 }

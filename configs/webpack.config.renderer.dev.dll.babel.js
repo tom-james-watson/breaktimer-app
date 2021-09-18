@@ -4,48 +4,48 @@
  * Builds the DLL for development electron renderer process
  */
 
-import webpack from 'webpack';
-import path from 'path';
-import merge from 'webpack-merge';
-import baseConfig from './webpack.config.base';
-import { dependencies } from '../package.json';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import webpack from "webpack";
+import path from "path";
+import merge from "webpack-merge";
+import baseConfig from "./webpack.config.base";
+import { dependencies } from "../package.json";
+import CheckNodeEnv from "../internals/scripts/CheckNodeEnv";
 
-CheckNodeEnv('development');
+CheckNodeEnv("development");
 
-const dist = path.join(__dirname, '../app/renderer/dist/dll');
+const dist = path.join(__dirname, "../app/renderer/dist/dll");
 
 export default merge.smart(baseConfig, {
-  context: path.join(__dirname, '..'),
+  context: path.join(__dirname, ".."),
 
-  devtool: 'eval',
+  devtool: "eval",
 
-  mode: 'development',
+  mode: "development",
 
-  target: 'electron-renderer',
+  target: "electron-renderer",
 
-  externals: ['fsevents', 'crypto-browserify'],
+  externals: ["fsevents", "crypto-browserify"],
 
   /**
    * Use `module` from `webpack.config.renderer.dev.js`
    */
-  module: require('./webpack.config.renderer.dev.babel').default.module,
+  module: require("./webpack.config.renderer.dev.babel").default.module,
 
   entry: {
     renderer: Object.keys(dependencies || {})
   },
 
   output: {
-    library: 'renderer',
+    library: "renderer",
     path: dist,
-    filename: '[name].dev.dll.js',
-    libraryTarget: 'var'
+    filename: "[name].dev.dll.js",
+    libraryTarget: "var"
   },
 
   plugins: [
     new webpack.DllPlugin({
-      path: path.join(dist, '[name].json'),
-      name: '[name]'
+      path: path.join(dist, "[name].json"),
+      name: "[name]"
     }),
 
     /**
@@ -58,15 +58,15 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: "development"
     }),
 
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
-        context: path.join(__dirname, '..', 'app'),
+        context: path.join(__dirname, "..", "app"),
         output: {
-          path: path.join(__dirname, '../renderer/dist/dll')
+          path: path.join(__dirname, "../renderer/dist/dll")
         }
       }
     })

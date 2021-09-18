@@ -2,30 +2,30 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import merge from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import path from "path";
+import webpack from "webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import OptimizeCSSAssetsPlugin from "optimize-css-assets-webpack-plugin";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import merge from "webpack-merge";
+import TerserPlugin from "terser-webpack-plugin";
+import baseConfig from "./webpack.config.base";
+import CheckNodeEnv from "../internals/scripts/CheckNodeEnv";
 
-CheckNodeEnv('production');
+CheckNodeEnv("production");
 export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+  devtool: "source-map",
 
-  mode: 'production',
+  mode: "production",
 
-  target: 'electron-renderer',
+  target: "electron-renderer",
 
-  entry: path.join(__dirname, '..', 'app/renderer/index'),
+  entry: path.join(__dirname, "..", "app/renderer/index"),
 
   output: {
-    path: path.join(__dirname, '..', 'app/renderer/dist'),
-    publicPath: './renderer/dist/',
-    filename: 'renderer.prod.js'
+    path: path.join(__dirname, "..", "app/renderer/dist"),
+    publicPath: "./renderer/dist/",
+    filename: "renderer.prod.js"
   },
 
   module: {
@@ -37,11 +37,11 @@ export default merge.smart(baseConfig, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: './'
+              publicPath: "./"
             }
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
@@ -56,10 +56,10 @@ export default merge.smart(baseConfig, {
             loader: MiniCssExtractPlugin.loader
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: "[name]__[local]__[hash:base64:5]",
               sourceMap: true
             }
           }
@@ -73,14 +73,14 @@ export default merge.smart(baseConfig, {
             loader: MiniCssExtractPlugin.loader
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true,
               importLoaders: 1
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               sourceMap: true
             }
@@ -95,16 +95,16 @@ export default merge.smart(baseConfig, {
             loader: MiniCssExtractPlugin.loader
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              localIdentName: "[name]__[local]__[hash:base64:5]",
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               sourceMap: true
             }
@@ -115,10 +115,10 @@ export default merge.smart(baseConfig, {
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
+            mimetype: "application/font-woff"
           }
         }
       },
@@ -126,10 +126,10 @@ export default merge.smart(baseConfig, {
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
+            mimetype: "application/font-woff"
           }
         }
       },
@@ -137,33 +137,33 @@ export default merge.smart(baseConfig, {
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'application/octet-stream'
+            mimetype: "application/octet-stream"
           }
         }
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
+        use: "file-loader"
       },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml'
+            mimetype: "image/svg+xml"
           }
         }
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: "url-loader"
       }
     ]
   },
@@ -199,17 +199,17 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: "production"
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css'
+      filename: "style.css"
     }),
 
     new BundleAnalyzerPlugin({
       analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true'
+        process.env.OPEN_ANALYZER === "true" ? "server" : "disabled",
+      openAnalyzer: process.env.OPEN_ANALYZER === "true"
     })
   ]
 });
