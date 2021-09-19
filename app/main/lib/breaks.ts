@@ -3,7 +3,7 @@ import { PowerMonitor } from "electron";
 import {
   Settings,
   NotificationType,
-  NotificationClick
+  NotificationClick,
 } from "../../types/settings";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
@@ -91,7 +91,7 @@ function createIdleNotification() {
   }
 }
 
-export function createBreak(isPostpone = false) {
+export function createBreak(isPostpone = false): void {
   const settings: Settings = getSettings();
 
   if (idleStart) {
@@ -213,7 +213,7 @@ export function checkInWorkingHours(): boolean {
     3: settings.workingHoursWednesday,
     4: settings.workingHoursThursday,
     5: settings.workingHoursFriday,
-    6: settings.workingHoursSaturday
+    6: settings.workingHoursSaturday,
   };
 
   const isWorkingDay = days[now.day() as keyof Days];
@@ -248,7 +248,7 @@ enum IdleState {
   Active = "active",
   Idle = "idle",
   Locked = "locked",
-  Unknown = "unknown"
+  Unknown = "unknown",
 }
 
 export function checkIdle(): boolean {

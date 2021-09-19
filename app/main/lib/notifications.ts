@@ -6,7 +6,7 @@ export function showNotification(
   body: string,
   onClick?: (e: Event) => void,
   forceClose = true
-) {
+): void {
   let imgPath;
   if (process.platform !== "darwin") {
     imgPath =
@@ -19,7 +19,7 @@ export function showNotification(
     title,
     body,
     icon: imgPath,
-    silent: process.platform !== "win32"
+    silent: process.platform !== "win32",
   });
 
   if (forceClose) {

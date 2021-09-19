@@ -10,7 +10,7 @@ import {
   checkInWorkingHours,
   checkIdle,
   startBreakNow,
-  createBreak
+  createBreak,
 } from "./breaks";
 
 let tray: Tray;
@@ -24,9 +24,9 @@ export function buildTray(): void {
         process.env.NODE_ENV === "development"
           ? "resources/tray/tray-IconTemplate.png"
           : path.join(
-              process.resourcesPath,
-              "app/resources/tray/tray-IconTemplate.png"
-            );
+            process.resourcesPath,
+            "app/resources/tray/tray-IconTemplate.png"
+          );
     } else {
       imgPath =
         process.env.NODE_ENV === "development"
@@ -54,21 +54,18 @@ export function buildTray(): void {
 
   const createAboutWindow = (): void => {
     openAboutWindow({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       icon_path:
         process.env.NODE_ENV === "development"
           ? path.join(__dirname, "../../../resources/icon.png")
           : path.join(process.resourcesPath, "app/resources/icon.png"),
-      // eslint-disable-next-line @typescript-eslint/camelcase
       package_json_dir: path.join(__dirname, "../../.."),
-      // eslint-disable-next-line @typescript-eslint/camelcase
       win_options: {
         icon:
           process.env.NODE_ENV === "development"
             ? path.join(__dirname, "../../../resources/tray/icon.png")
             : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
-        autoHideMenuBar: true
-      }
+        autoHideMenuBar: true,
+      },
     });
   };
 
@@ -99,44 +96,44 @@ export function buildTray(): void {
     {
       label: nextBreak,
       visible: breakTime !== null && inWorkingHours,
-      enabled: false
+      enabled: false,
     },
     {
       label: `Outside of working hours`,
       visible: !inWorkingHours,
-      enabled: false
+      enabled: false,
     },
     {
       label: `Idle`,
       visible: idle,
-      enabled: false
+      enabled: false,
     },
     { type: "separator" },
     {
       label: breaksEnabled ? "Disable" : "Enable",
-      click: setBreaksEnabled.bind(null, !breaksEnabled)
+      click: setBreaksEnabled.bind(null, !breaksEnabled),
     },
     {
       label: "Start break now",
       visible: breakTime !== null && inWorkingHours,
-      click: startBreakNow
+      click: startBreakNow,
     },
     {
       label: "Restart break period",
       visible: breakTime !== null && inWorkingHours,
-      click: createBreak.bind(null, false)
+      click: createBreak.bind(null, false),
     },
     { type: "separator" },
     { label: "Settings", click: createSettingsWindow },
     { label: "About", click: createAboutWindow },
-    { label: "Quit", click: quit }
+    { label: "Quit", click: quit },
   ]);
 
   // Call this again for Linux because we modified the context menu
   tray.setContextMenu(contextMenu);
 }
 
-export function initTray() {
+export function initTray(): void {
   buildTray();
   setInterval(() => {
     const breakTime = getBreakTime();

@@ -32,7 +32,8 @@ export default function Break() {
   React.useEffect(() => {
     (async () => {
       setSettings((await ipcRenderer.invokeGetSettings()) as Settings);
-      const breakEndTime: string = (await ipcRenderer.invokeGetBreakEndTime()) as string;
+      const breakEndTime: string =
+        (await ipcRenderer.invokeGetBreakEndTime()) as string;
       startSecondsRemaining = moment(breakEndTime).diff(moment(), "seconds");
 
       clearInterval(rerenderInterval);
@@ -65,7 +66,7 @@ export default function Break() {
 
   const style = {
     color: settings.textColor,
-    backgroundColor: settings.backgroundColor
+    backgroundColor: settings.backgroundColor,
   };
 
   return (

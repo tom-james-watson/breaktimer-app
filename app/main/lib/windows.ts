@@ -27,7 +27,7 @@ export function getWindows(): BrowserWindow[] {
   return windows;
 }
 
-export function createSettingsWindow() {
+export function createSettingsWindow(): void {
   if (settingsWindow) {
     settingsWindow.show();
     return;
@@ -46,8 +46,8 @@ export function createSettingsWindow() {
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "./preload.js"),
-      nativeWindowOpen: true
-    }
+      nativeWindowOpen: true,
+    },
   });
 
   settingsWindow.loadURL(getBrowserWindowUrl("settings"));
@@ -65,20 +65,20 @@ export function createSettingsWindow() {
   });
 }
 
-export function createSoundsWindow() {
+export function createSoundsWindow(): void {
   soundsWindow = new BrowserWindow({
     show: false,
     skipTaskbar: true,
     webPreferences: {
       preload: path.join(__dirname, "./preload.js"),
-      nativeWindowOpen: true
-    }
+      nativeWindowOpen: true,
+    },
   });
 
   soundsWindow.loadURL(getBrowserWindowUrl("sounds"));
 }
 
-export function createBreakWindows() {
+export function createBreakWindows(): void {
   const displays = screen.getAllDisplays();
   const settings: Settings = getSettings();
 
@@ -96,8 +96,8 @@ export function createBreakWindows() {
       backgroundColor: settings.backgroundColor,
       webPreferences: {
         preload: path.join(__dirname, "./preload.js"),
-        nativeWindowOpen: true
-      }
+        nativeWindowOpen: true,
+      },
     });
 
     breakWindow.loadURL(getBrowserWindowUrl("break"));
