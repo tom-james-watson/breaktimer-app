@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "typeRoots": ["app/types"],
+    "target": "es2019",
     "baseUrl": "./",
     "rootDir": "./",
     "jsx": "react",
-    "module": "es2015",
+    "module": "esnext",
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "pretty": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "lib": ["es2015", "dom"],
+    "lib": ["es2020", "dom"],
     "esModuleInterop": true,
     "strict": true
   },
-  "exclude": ["node_modules", "**/node_modules/*"]
+  "exclude": ["node_modules"]
 }

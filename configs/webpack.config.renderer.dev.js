@@ -1,5 +1,3 @@
-/* eslint global-require: off, import/no-dynamic-require: off */
-
 /**
  * Build config for development electron renderer process that uses
  * Hot-Module-Replacement
@@ -7,53 +5,28 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-import path from "path";
-import fs from "fs";
-import webpack from "webpack";
-import chalk from "chalk";
-import merge from "webpack-merge";
-import { spawn, execSync } from "child_process";
-import baseConfig from "./webpack.config.base";
-import CheckNodeEnv from "../internals/scripts/CheckNodeEnv";
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const { spawn } = require("child_process");
+const baseConfig = require("./webpack.config.base.js");
+const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv.js");
 
 CheckNodeEnv("development");
 
-const port = process.env.PORT || 1212;
+const port = 1212;
 const publicPath = `http://localhost:${port}/renderer/dist`;
-const dll = path.join(__dirname, "../app/renderer/dist/dll");
-const manifest = path.resolve(dll, "renderer.json");
-const requiredByDLLConfig = module.parent.filename.includes(
-  "webpack.config.renderer.dev.dll"
-);
 
-/**
- * Warn if the DLL is not built
- */
-if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-    )
-  );
-  execSync("npm run build-dll");
-}
-
-export default merge.smart(baseConfig, {
+module.exports = merge.smart(baseConfig, {
   devtool: "inline-source-map",
 
   mode: "development",
 
-  target: "electron-renderer",
+  target: "web",
 
-  entry: [
-    "react-hot-loader/patch",
-    `webpack-dev-server/client?http://localhost:${port}/`,
-    "webpack/hot/only-dev-server",
-    require.resolve("../app/renderer/index.tsx")
-  ],
+  entry: ["react-hot-loader/patch", "./app/renderer/index"],
 
   output: {
-    publicPath: `http://localhost:${port}/renderer/dist/`,
+    publicPath: `${publicPath}/`,
     filename: "renderer.dev.js"
   },
 
@@ -187,14 +160,6 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
-    requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, "../app/renderer/dist/dll"),
-          manifest: require(manifest),
-          sourceType: "var"
-        }),
-
     new webpack.HotModuleReplacementPlugin({
       multiStep: true
     }),
@@ -219,6 +184,12 @@ export default merge.smart(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
+    }),
+
+    new webpack.DefinePlugin({
+      // https://github.com/palantir/blueprint/issues/3739.
+      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
+      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp3")
     })
   ],
 
@@ -229,32 +200,25 @@ export default merge.smart(baseConfig, {
 
   devServer: {
     port,
-    publicPath,
-    compress: true,
-    noInfo: true,
-    stats: "errors-only",
-    inline: true,
-    lazy: false,
-    hot: true,
+    static: {
+      publicPath
+    },
+    client: {
+      logging: "warn"
+    },
+    devMiddleware: {
+      stats: "errors-only"
+    },
     headers: { "Access-Control-Allow-Origin": "*" },
-    contentBase: path.join(__dirname, "renderer", "dist"),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100
-    },
-    historyApiFallback: {
-      verbose: true,
-      disableDotRule: false
-    },
-    before() {
+    onBeforeSetupMiddleware: () => {
       if (process.env.START_HOT) {
-        console.log("Starting Main Process...");
-        spawn("npm", ["run", "start-main-dev"], {
+        spawn("yarn", ["start-main-dev"], {
           shell: true,
           env: process.env,
           stdio: "inherit"
-        }).on("error", spawnError => console.error(spawnError));
+        })
+          .on("close", code => process.exit(code))
+          .on("error", spawnError => console.error(spawnError));
       }
     }
   }

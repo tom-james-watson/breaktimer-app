@@ -24,3 +24,5 @@ if ((module as any).hot) {
     );
   });
 }
+
+console.log({ processEnv });

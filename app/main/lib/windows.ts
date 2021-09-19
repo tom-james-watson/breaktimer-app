@@ -8,6 +8,13 @@ let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
+const getBrowserWindowUrl = (page: "settings" | "sounds" | "break"): string => {
+  return `file://${path.join(
+    __dirname,
+    `../views/${process.env.NODE_ENV}.html?page=${page}`
+  )}`;
+};
+
 export function getWindows(): BrowserWindow[] {
   const windows = [];
   if (settingsWindow !== null) {
@@ -38,21 +45,12 @@ export function createSettingsWindow() {
         ? path.join(__dirname, "../../../resources/tray/icon.png")
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
-      // This effectively disables the sandbox inside the renderer process and
-      // is now turned off by default as of v5. Without this, we cannot access
-      // node APIs such as `process` inside the renderer process.
-      // In the future, we can use a preload script to pass what we need into
-      // the renderer process and turn this setting back off. I haven't done
-      // that for now as the webpack build will require some tweaking.
-      nodeIntegration: true
+      preload: path.join(__dirname, "./preload.js"),
+      nativeWindowOpen: true
     }
   });
 
-  settingsWindow.loadURL(
-    process.env.NODE_ENV === "development"
-      ? `file://${__dirname}/../views/app.html?page=settings`
-      : `file://${path.join(__dirname, "../views/app.html?page=settings")}`
-  );
+  settingsWindow.loadURL(getBrowserWindowUrl("settings"));
 
   settingsWindow.on("ready-to-show", () => {
     if (!settingsWindow) {
@@ -72,15 +70,12 @@ export function createSoundsWindow() {
     show: false,
     skipTaskbar: true,
     webPreferences: {
-      nodeIntegration: true
+      preload: path.join(__dirname, "./preload.js"),
+      nativeWindowOpen: true
     }
   });
 
-  soundsWindow.loadURL(
-    process.env.NODE_ENV === "development"
-      ? `file://${__dirname}/../views/app.html?page=sounds`
-      : `file://${path.join(__dirname, "../views/app.html?page=sounds")}`
-  );
+  soundsWindow.loadURL(getBrowserWindowUrl("sounds"));
 }
 
 export function createBreakWindows() {
@@ -100,15 +95,12 @@ export function createBreakWindows() {
       height: display.size.height,
       backgroundColor: settings.backgroundColor,
       webPreferences: {
-        nodeIntegration: true
+        preload: path.join(__dirname, "./preload.js"),
+        nativeWindowOpen: true
       }
     });
 
-    breakWindow.loadURL(
-      process.env.NODE_ENV === "development"
-        ? `file://${__dirname}/../views/app.html?page=break`
-        : `file://${path.join(__dirname, "../views/app.html?page=break")}`
-    );
+    breakWindow.loadURL(getBrowserWindowUrl("break"));
 
     breakWindow.on("ready-to-show", () => {
       if (!breakWindow) {

@@ -3,8 +3,6 @@ import moment from "moment";
 import { app, Menu, Tray } from "electron";
 import openAboutWindow from "about-window";
 import { Settings } from "../../types/settings";
-import { IpcChannel } from "../../types/ipc";
-import { sendIpc } from "./ipc";
 import { getSettings, setSettings } from "./store";
 import { createSettingsWindow } from "./windows";
 import {
@@ -26,9 +24,9 @@ export function buildTray(): void {
         process.env.NODE_ENV === "development"
           ? "resources/tray/tray-IconTemplate.png"
           : path.join(
-            process.resourcesPath,
-            "app/resources/tray/tray-IconTemplate.png"
-          );
+              process.resourcesPath,
+              "app/resources/tray/tray-IconTemplate.png"
+            );
     } else {
       imgPath =
         process.env.NODE_ENV === "development"
@@ -51,7 +49,6 @@ export function buildTray(): void {
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
     settings = getSettings();
     setSettings({ ...settings, breaksEnabled });
-    sendIpc(IpcChannel.GET_SETTINGS_SUCCESS, settings);
     buildTray();
   };
 

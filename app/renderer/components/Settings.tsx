@@ -1,5 +1,4 @@
 import * as React from "react";
-import { ipcRenderer, IpcRendererEvent } from "electron";
 import {
   Tabs,
   Tab,
@@ -16,7 +15,6 @@ import {
   NotificationType,
   NotificationClick
 } from "../../types/settings";
-import { IpcChannel } from "../../types/ipc";
 import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
 const styles = require("./Settings.scss");
@@ -25,25 +23,9 @@ export default function SettingsEl() {
   const [settings, setSettings] = React.useState<Settings | null>(null);
 
   React.useEffect(() => {
-    ipcRenderer.on(
-      IpcChannel.GET_SETTINGS_SUCCESS,
-      (_event: IpcRendererEvent, settings: Settings) => {
-        setSettings(settings);
-      }
-    );
-
-    ipcRenderer.on(IpcChannel.SET_SETTINGS_SUCCESS, () => {
-      toast("Settings saved", Intent.PRIMARY);
-    });
-
-    ipcRenderer.on(
-      IpcChannel.ERROR,
-      (_event: IpcRendererEvent, error: string) => {
-        toast(error, Intent.DANGER);
-      }
-    );
-
-    ipcRenderer.send(IpcChannel.GET_SETTINGS);
+    (async () => {
+      setSettings((await ipcRenderer.invokeGetSettings()) as Settings);
+    })();
   }, []);
 
   if (!settings) {
@@ -112,8 +94,9 @@ export default function SettingsEl() {
     });
   };
 
-  const handleSave = (): void => {
-    ipcRenderer.send(IpcChannel.SET_SETTINGS, settings);
+  const handleSave = async () => {
+    await ipcRenderer.invokeSetSettings(settings);
+    toast("Settings saved", Intent.PRIMARY);
   };
 
   return (
@@ -447,7 +430,7 @@ export default function SettingsEl() {
               </React.Fragment>
             }
           />
-          {process.env.SNAP === undefined && (
+          {processEnv.SNAP === undefined && (
             <Tab
               id="system"
               title="System"

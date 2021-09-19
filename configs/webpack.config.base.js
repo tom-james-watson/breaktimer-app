@@ -2,35 +2,23 @@
  * Base webpack config used across other specific configs
  */
 
-import path from "path";
-import webpack from "webpack";
-import { dependencies } from "../package.json";
+const path = require("path");
+const webpack = require("webpack");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-export default {
-  externals: [...Object.keys(dependencies || {})],
-
+module.exports = {
   module: {
     rules: [
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "babel-loader",
-            options: {
-              cacheDirectory: true
-            }
-          },
-          "ts-loader"
-        ]
+        loader: "esbuild-loader",
+        options: {
+          loader: "tsx",
+          target: "es2019"
+        }
       }
     ]
-  },
-
-  output: {
-    path: path.join(__dirname, "..", "app"),
-    // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: "commonjs2"
   },
 
   /**
@@ -45,6 +33,6 @@ export default {
       NODE_ENV: "production"
     }),
 
-    new webpack.NamedModulesPlugin()
+    new ForkTsCheckerWebpackPlugin()
   ]
 };

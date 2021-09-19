@@ -54,6 +54,8 @@ export function getSettings(): Settings {
 export function setSettings(settings: Settings, resetBreaks = true): void {
   const currentSettings = getSettings();
 
+  console.log({ settings, currentSettings });
+
   if (currentSettings.autoLaunch !== settings.autoLaunch) {
     setAutoLauch(settings.autoLaunch);
   }

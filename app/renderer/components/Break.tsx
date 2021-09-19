@@ -1,10 +1,7 @@
 import * as React from "react";
-import { ipcRenderer, IpcRendererEvent } from "electron";
 import moment from "moment";
 import { ProgressBar, Button, Intent } from "@blueprintjs/core";
-import { IpcChannel } from "../../types/ipc";
 import { Settings } from "../../types/settings";
-import { toast } from "../toaster";
 const styles = require("./Break.scss");
 
 let rerenderInterval: NodeJS.Timeout;
@@ -33,47 +30,27 @@ export default function Break() {
   const [progress, setProgress] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    ipcRenderer.on(
-      IpcChannel.GET_SETTINGS_SUCCESS,
-      (_event: IpcRendererEvent, settings: Settings) => {
-        setSettings(settings);
-        ipcRenderer.send(IpcChannel.GET_BREAK_END_TIME);
-      }
-    );
+    (async () => {
+      setSettings((await ipcRenderer.invokeGetSettings()) as Settings);
+      const breakEndTime: string = (await ipcRenderer.invokeGetBreakEndTime()) as string;
+      startSecondsRemaining = moment(breakEndTime).diff(moment(), "seconds");
 
-    ipcRenderer.on(
-      IpcChannel.GET_BREAK_END_TIME_SUCCESS,
-      (_event: IpcRendererEvent, breakEndTime: string) => {
-        startSecondsRemaining = moment(breakEndTime).diff(moment(), "seconds");
+      clearInterval(rerenderInterval);
+      rerenderInterval = setInterval(() => {
+        const now = moment();
 
-        ipcRenderer.send(IpcChannel.SHOW_BREAK_WINDOW);
+        if (now > moment(breakEndTime)) {
+          window.close();
+        }
 
-        clearInterval(rerenderInterval);
-        rerenderInterval = setInterval(() => {
-          const now = moment();
-
-          if (now > moment(breakEndTime)) {
-            window.close();
-          }
-
-          let secondsRemaining = moment(breakEndTime).diff(now, "seconds");
-          setProgress(1 - secondsRemaining / startSecondsRemaining);
-          setHoursRemaining(Math.floor(secondsRemaining / 3600));
-          secondsRemaining %= 3600;
-          setMinutesRemaining(Math.floor(secondsRemaining / 60));
-          setSecondsRemaining(secondsRemaining % 60);
-        }, 1000);
-      }
-    );
-
-    ipcRenderer.on(
-      IpcChannel.ERROR,
-      (_event: IpcRendererEvent, error: string) => {
-        toast(error, Intent.DANGER);
-      }
-    );
-
-    ipcRenderer.send(IpcChannel.GET_SETTINGS);
+        let secondsRemaining = moment(breakEndTime).diff(now, "seconds");
+        setProgress(1 - secondsRemaining / startSecondsRemaining);
+        setHoursRemaining(Math.floor(secondsRemaining / 3600));
+        secondsRemaining %= 3600;
+        setMinutesRemaining(Math.floor(secondsRemaining / 60));
+        setSecondsRemaining(secondsRemaining % 60);
+      }, 1000);
+    })();
   }, []);
 
   if (
