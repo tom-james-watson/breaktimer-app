@@ -25,24 +25,24 @@ module.exports = merge.smart(baseConfig, {
     path: path.join(__dirname, ".."),
     filename: "./app/main/dist/main.prod.js",
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: "commonjs2"
+    libraryTarget: "commonjs2",
   },
 
   optimization: {
     minimizer: [
       new TerserPlugin({
-        parallel: true,
-        sourceMap: true,
-        cache: true
-      })
-    ]
+        terserOptions: {
+          compress: true,
+        },
+      }),
+    ],
   },
 
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode:
         process.env.OPEN_ANALYZER === "true" ? "server" : "disabled",
-      openAnalyzer: process.env.OPEN_ANALYZER === "true"
+      openAnalyzer: process.env.OPEN_ANALYZER === "true",
     }),
 
     /**
@@ -57,8 +57,8 @@ module.exports = merge.smart(baseConfig, {
     new webpack.EnvironmentPlugin({
       NODE_ENV: "production",
       DEBUG_PROD: false,
-      START_MINIMIZED: false
-    })
+      START_MINIMIZED: false,
+    }),
   ],
 
   /**
@@ -68,6 +68,6 @@ module.exports = merge.smart(baseConfig, {
    */
   node: {
     __dirname: false,
-    __filename: false
-  }
+    __filename: false,
+  },
 });

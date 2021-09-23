@@ -45,7 +45,7 @@ export function createSettingsWindow(): void {
         ? path.join(__dirname, "../../../resources/tray/icon.png")
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
-      preload: path.join(__dirname, "./preload.js"),
+      preload: path.join(__dirname, "../../renderer/preload.js"),
       nativeWindowOpen: true,
     },
   });
@@ -70,7 +70,7 @@ export function createSoundsWindow(): void {
     show: false,
     skipTaskbar: true,
     webPreferences: {
-      preload: path.join(__dirname, "./preload.js"),
+      preload: path.join(__dirname, "../../renderer/preload.js"),
       nativeWindowOpen: true,
     },
   });
@@ -95,7 +95,7 @@ export function createBreakWindows(): void {
       height: display.size.height,
       backgroundColor: settings.backgroundColor,
       webPreferences: {
-        preload: path.join(__dirname, "./preload.js"),
+        preload: path.join(__dirname, "../../renderer/preload.js"),
         nativeWindowOpen: true,
       },
     });

@@ -7,13 +7,13 @@ import {
   FormGroup,
   InputGroup,
   Intent,
-  Button
+  Button,
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
 import {
   Settings,
   NotificationType,
-  NotificationClick
+  NotificationClick,
 } from "../../types/settings";
 import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
@@ -50,7 +50,7 @@ export default function SettingsEl() {
     if (settings !== null) {
       setSettings({
         ...settings,
-        [field]: newVal
+        [field]: newVal,
       });
     }
   };
@@ -69,7 +69,7 @@ export default function SettingsEl() {
     if (settings !== null) {
       setSettings({
         ...settings,
-        [field]: e.target.value
+        [field]: e.target.value,
       });
     }
   };
@@ -81,7 +81,7 @@ export default function SettingsEl() {
     if (settings !== null) {
       setSettings({
         ...settings,
-        [field]: e.target.checked
+        [field]: e.target.checked,
       });
     }
   };
@@ -90,7 +90,7 @@ export default function SettingsEl() {
     setSettings({
       ...settings,
       textColor: "#ffffff",
-      backgroundColor: "#16a085"
+      backgroundColor: "#16a085",
     });
   };
 
@@ -126,12 +126,12 @@ export default function SettingsEl() {
                     options={[
                       {
                         value: NotificationType.Popup,
-                        label: "Fullscreen popup"
+                        label: "Fullscreen popup",
                       },
                       {
                         value: NotificationType.Notification,
-                        label: "Simple notification"
-                      }
+                        label: "Simple notification",
+                      },
                     ]}
                     onChange={handleNotificationTypeChange}
                     disabled={!settings.breaksEnabled}
@@ -161,16 +161,16 @@ export default function SettingsEl() {
                     options={[
                       {
                         value: NotificationClick.DoNothing,
-                        label: "Do nothing"
+                        label: "Do nothing",
                       },
                       {
                         value: NotificationClick.Skip,
-                        label: "Skip the break"
+                        label: "Skip the break",
                       },
                       {
                         value: NotificationClick.Postpone,
-                        label: "Postpone the break"
-                      }
+                        label: "Postpone the break",
+                      },
                     ]}
                     onChange={handleNotificationClickChange}
                     disabled={
@@ -200,7 +200,7 @@ export default function SettingsEl() {
                       { value: 3, label: "3" },
                       { value: 4, label: "4" },
                       { value: 5, label: "5" },
-                      { value: 0, label: "No limit" }
+                      { value: 0, label: "No limit" },
                     ]}
                     onChange={handlePostponeLimitChange}
                     disabled={

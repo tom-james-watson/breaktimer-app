@@ -7,7 +7,7 @@ import { initBreaks } from "./lib/breaks";
 import {
   getAppInitialized,
   setAppInitialized,
-  setBreaksEnabled
+  setBreaksEnabled,
 } from "./lib/store";
 import { createSoundsWindow, createSettingsWindow } from "./lib/windows";
 import { setAutoLauch } from "./lib/auto-launch";

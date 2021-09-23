@@ -15,24 +15,24 @@ module.exports = {
         loader: "esbuild-loader",
         options: {
           loader: "tsx",
-          target: "es2019"
-        }
-      }
-    ]
+          target: "es2019",
+        },
+      },
+    ],
   },
 
   /**
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".json"]
+    extensions: [".js", ".ts", ".tsx", ".json", ".scss"],
   },
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "production"
+      NODE_ENV: "production",
     }),
 
-    new ForkTsCheckerWebpackPlugin()
-  ]
+    new ForkTsCheckerWebpackPlugin(),
+  ],
 };

@@ -1,12 +1,12 @@
 export enum NotificationType {
   Notification = "NOTIFICATION",
-  Popup = "POPUP"
+  Popup = "POPUP",
 }
 
 export enum NotificationClick {
   DoNothing = "DO_NOTHING",
   Skip = "SKIP",
-  Postpone = "POSTPONE"
+  Postpone = "POSTPONE",
 }
 
 export interface Settings {

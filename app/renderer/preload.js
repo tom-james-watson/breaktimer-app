@@ -20,14 +20,14 @@ process.once("loaded", () => {
     invokeGetSettings: () => {
       return ipcRenderer.invoke("GET_SETTINGS");
     },
-    invokeSetSettings: settings => {
+    invokeSetSettings: (settings) => {
       return ipcRenderer.invoke("SET_SETTINGS", settings);
     },
-    onPlayEndGong: cb => {
+    onPlayEndGong: (cb) => {
       ipcRenderer.on("PLAY_END_GONG", cb);
     },
-    onPlayStartGong: cb => {
+    onPlayStartGong: (cb) => {
       ipcRenderer.on("PLAY_START_GONG", cb);
-    }
+    },
   });
 });

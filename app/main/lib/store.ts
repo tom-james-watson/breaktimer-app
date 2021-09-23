@@ -2,7 +2,7 @@ import Store from "electron-store";
 import {
   Settings,
   NotificationType,
-  NotificationClick
+  NotificationClick,
 } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
@@ -34,7 +34,7 @@ const defaultSettings: Settings = {
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",
   textColor: "#ffffff",
-  endBreakEnabled: true
+  endBreakEnabled: true,
 };
 
 const store = new Store<{
@@ -43,8 +43,8 @@ const store = new Store<{
 }>({
   defaults: {
     settings: defaultSettings,
-    appInitialized: false
-  }
+    appInitialized: false,
+  },
 });
 
 export function getSettings(): Settings {

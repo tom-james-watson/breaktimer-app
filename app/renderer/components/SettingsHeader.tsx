@@ -13,7 +13,7 @@ export default function SettingsHeader(props: Props) {
 
   const style = {
     color: textColor,
-    backgroundColor
+    backgroundColor,
   };
 
   return (

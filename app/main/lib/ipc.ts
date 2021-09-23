@@ -20,13 +20,10 @@ export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   }
 }
 
-ipcMain.handle(
-  IpcChannel.GET_SETTINGS,
-  (): Settings => {
-    log.info(IpcChannel.GET_SETTINGS);
-    return getSettings();
-  }
-);
+ipcMain.handle(IpcChannel.GET_SETTINGS, (): Settings => {
+  log.info(IpcChannel.GET_SETTINGS);
+  return getSettings();
+});
 
 ipcMain.handle(
   IpcChannel.SET_SETTINGS,

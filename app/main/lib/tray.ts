@@ -24,9 +24,9 @@ export function buildTray(): void {
         process.env.NODE_ENV === "development"
           ? "resources/tray/tray-IconTemplate.png"
           : path.join(
-            process.resourcesPath,
-            "app/resources/tray/tray-IconTemplate.png"
-          );
+              process.resourcesPath,
+              "app/resources/tray/tray-IconTemplate.png"
+            );
     } else {
       imgPath =
         process.env.NODE_ENV === "development"

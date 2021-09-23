@@ -13,6 +13,6 @@ exports.default = async function notarizing(context) {
     appBundleId: "com.tomjwatson.breaktimer",
     appPath: `release/mac/BreakTimer.app`,
     appleId: process.env.APPLE_ID,
-    appleIdPassword: process.env.APPLE_ID_PASS
+    appleIdPassword: process.env.APPLE_ID_PASS,
   });
 };

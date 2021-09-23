@@ -26,6 +26,6 @@
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/indent": ["error", 2]
+    "@typescript-eslint/indent": 0,
   }
 }
