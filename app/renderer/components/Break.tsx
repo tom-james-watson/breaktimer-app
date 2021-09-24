@@ -269,41 +269,45 @@ export default function Break() {
   }
 
   return (
-    <animated.div
-      className={styles.break}
-      style={{
-        width: anim.width,
-        height: anim.height,
-        color: settings.textColor,
-      }}
-    >
+    <div className={styles.breakContainer}>
       <animated.div
-        className={styles.background}
+        className={styles.break}
         style={{
           width: anim.width,
           height: anim.height,
-          opacity: anim.backgroundOpacity,
-          backgroundColor: settings.backgroundColor,
+          color: settings.textColor,
         }}
-      />
-      {countingDown ? (
-        <BreakCountdown
-          breakTitle={settings.breakTitle}
-          onCountdownOver={handleCountdownOver}
-          onPostponeBreak={handlePostponeBreak}
-          onSkipBreak={handleSkipBreak}
-          postponeBreakEnabled={settings.postponeBreakEnabled && allowPostpone}
-          skipBreakEnabled={settings.skipBreakEnabled}
-          textColor={settings.textColor}
+      >
+        <animated.div
+          className={styles.background}
+          style={{
+            width: anim.width,
+            height: anim.height,
+            opacity: anim.backgroundOpacity,
+            backgroundColor: settings.backgroundColor,
+          }}
         />
-      ) : (
-        <BreakProgress
-          breakMessage={settings.breakMessage}
-          endBreakEnabled={settings.endBreakEnabled}
-          onEndBreak={handleEndBreak}
-          textColor={settings.textColor}
-        />
-      )}
-    </animated.div>
+        {countingDown ? (
+          <BreakCountdown
+            breakTitle={settings.breakTitle}
+            onCountdownOver={handleCountdownOver}
+            onPostponeBreak={handlePostponeBreak}
+            onSkipBreak={handleSkipBreak}
+            postponeBreakEnabled={
+              settings.postponeBreakEnabled && allowPostpone
+            }
+            skipBreakEnabled={settings.skipBreakEnabled}
+            textColor={settings.textColor}
+          />
+        ) : (
+          <BreakProgress
+            breakMessage={settings.breakMessage}
+            endBreakEnabled={settings.endBreakEnabled}
+            onEndBreak={handleEndBreak}
+            textColor={settings.textColor}
+          />
+        )}
+      </animated.div>
+    </div>
   );
 }
