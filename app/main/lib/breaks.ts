@@ -134,20 +134,6 @@ function doBreak(): void {
 
   if (settings.notificationType === NotificationType.Popup) {
     createBreakWindows();
-
-    // TODO - implement postponed count
-    // showNotification("Break about to start...", body, (): void => {
-    //   if (allowSkip) {
-    //     clearTimeout(breakTimeout);
-    //     breakTime = null;
-    //     havingBreak = false;
-    //   } else if (allowPostpone) {
-    //     postponedCount++;
-    //     clearTimeout(breakTimeout);
-    //     havingBreak = false;
-    //     createBreak(true);
-    //   }
-    // });
   }
 }
 
