@@ -9,3 +9,8 @@ declare const ipcRenderer: {
 declare const processEnv: {
   [key: string]: string;
 };
+
+declare module "*.scss" {
+  const content: { [className: string]: string };
+  export = content;
+}

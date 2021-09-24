@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Navbar, Button, Alignment, Intent } from "@blueprintjs/core";
-const styles = require("./SettingsHeader.scss");
+import styles from "./SettingsHeader.scss";
 
 interface Props {
   textColor: string;

@@ -25,7 +25,7 @@ module.exports = {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".json", ".scss"],
+    extensions: [".js", ".ts", ".tsx", ".json"],
   },
 
   plugins: [

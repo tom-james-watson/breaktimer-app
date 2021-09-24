@@ -2,7 +2,7 @@ import * as React from "react";
 import moment from "moment";
 import { ProgressBar, Button, Intent } from "@blueprintjs/core";
 import { Settings } from "../../types/settings";
-const styles = require("./Break.scss");
+import styles from "./Break.scss";
 
 let rerenderInterval: NodeJS.Timeout;
 

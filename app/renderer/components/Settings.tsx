@@ -17,7 +17,7 @@ import {
 } from "../../types/settings";
 import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
-const styles = require("./Settings.scss");
+import styles from "./Settings.scss";
 
 export default function SettingsEl() {
   const [settings, setSettings] = React.useState<Settings | null>(null);
