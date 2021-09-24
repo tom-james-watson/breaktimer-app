@@ -8,10 +8,7 @@
 
 const { contextBridge, ipcRenderer } = require("electron");
 
-console.log("preload");
-
 process.once("loaded", () => {
-  console.log("preload loaded");
   contextBridge.exposeInMainWorld("processEnv", { ...process.env });
   contextBridge.exposeInMainWorld("ipcRenderer", {
     invokeGetBreakEndTime: () => {
