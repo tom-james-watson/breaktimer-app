@@ -99,6 +99,7 @@ export function createBreakWindows(): void {
       },
     });
 
+    breakWindow.setVisibleOnAllWorkspaces(true);
     breakWindow.loadURL(getBrowserWindowUrl("break"));
 
     breakWindow.on("ready-to-show", () => {
