@@ -1,5 +1,6 @@
 import path from "path";
 import { screen, BrowserWindow } from "electron";
+import log from "electron-log";
 import { Settings } from "../../types/settings";
 import { getSettings } from "./store";
 import { endPopupBreak } from "./breaks";
@@ -70,6 +71,7 @@ export function createSoundsWindow(): void {
     show: false,
     skipTaskbar: true,
     webPreferences: {
+      devTools: false,
       preload: path.join(__dirname, "../../renderer/preload.js"),
       nativeWindowOpen: true,
     },
@@ -83,16 +85,18 @@ export function createBreakWindows(): void {
   const settings: Settings = getSettings();
 
   for (const display of displays) {
+    const width = display.workArea.width / 4;
+    const height = display.workArea.height / 3;
     const breakWindow = new BrowserWindow({
       show: false,
-      fullscreen: process.platform === "darwin",
       alwaysOnTop: true,
-      skipTaskbar: true,
       autoHideMenuBar: true,
-      x: display.bounds.x,
-      y: display.bounds.y,
-      width: display.size.width,
-      height: display.size.height,
+      frame: false,
+      x: display.workArea.x + display.workArea.width - width - 50,
+      y: display.workArea.y + display.workArea.height - height - 50,
+      width,
+      height,
+      focusable: false,
       backgroundColor: settings.backgroundColor,
       webPreferences: {
         preload: path.join(__dirname, "../../renderer/preload.js"),
@@ -108,13 +112,6 @@ export function createBreakWindows(): void {
       }
       breakWindow.show();
       breakWindow.focus();
-
-      // If we set this in the browser window options then we get a crash on
-      // Ubuntu 20.10. Setting kiosk once the window is ready seems to avoid
-      // this.
-      if (process.platform !== "darwin") {
-        breakWindow.setKiosk(true);
-      }
     });
 
     breakWindow.on("closed", () => {
@@ -123,7 +120,7 @@ export function createBreakWindows(): void {
           try {
             win.close();
           } catch (err) {
-            console.warn(err);
+            log.warn(err);
           }
         }
       }
