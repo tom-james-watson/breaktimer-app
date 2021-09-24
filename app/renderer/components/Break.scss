@@ -8,7 +8,6 @@
   justify-content: center;
   align-items: center;
   padding: 25px;
-  border-radius: 50%;
   text-align: center;
   position: relative;
 
@@ -16,6 +15,16 @@
   :focus ~ .bp3-control-indicator {
     outline: none !important;
   }
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 50%;
+  z-index: -1;
 }
 
 .breakTitle,

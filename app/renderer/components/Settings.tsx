@@ -120,7 +120,7 @@ export default function SettingsEl() {
                     options={[
                       {
                         value: NotificationType.Popup,
-                        label: "Fullscreen popup",
+                        label: "Popup break",
                       },
                       {
                         value: NotificationType.Notification,

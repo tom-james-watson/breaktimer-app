@@ -97,6 +97,7 @@ function BreakProgress(props: BreakProgressProps) {
     to: { opacity: 1 },
     from: { opacity: 0 },
     config: config.slow,
+    delay: 500,
   });
 
   if (timeRemaining === null || progress === null) {
@@ -176,7 +177,7 @@ function BreakCountdown(props: BreakCountdownProps) {
 
   return (
     <>
-      <h1
+      <h2
         className={styles.breakTitle}
         dangerouslySetInnerHTML={{ __html: breakTitle }}
       />
@@ -218,6 +219,11 @@ export default function Break() {
   const [allowPostpone, setAllowPostpone] = React.useState<boolean | null>(
     null
   );
+  const [anim, animApi] = useSpring(() => ({
+    width: 250,
+    height: 250,
+    backgroundOpacity: 0,
+  }));
 
   React.useEffect(() => {
     (async () => {
@@ -234,12 +240,14 @@ export default function Break() {
 
       setAllowPostpone(await ipcRenderer.invokeGetAllowPostpone());
       setSettings(settings);
+      animApi({ backgroundOpacity: 0.6 });
     })();
-  }, []);
+  }, [animApi]);
 
   const handleCountdownOver = React.useCallback(() => {
     setCountingDown(false);
-  }, []);
+    animApi({ backgroundOpacity: 1, width: 400, height: 400 });
+  }, [animApi]);
 
   const handlePostponeBreak = React.useCallback(async () => {
     await ipcRenderer.invokeBreakPostpone();
@@ -256,24 +264,28 @@ export default function Break() {
     window.close();
   }, []);
 
-  const fadeIn = useSpring({
-    to: { opacity: 1 },
-    from: { opacity: 0 },
-    delay: 300,
-    config: config.molasses,
-  });
-
   if (settings === null || allowPostpone === null) {
     return null;
   }
 
-  const style = {
-    color: settings.textColor,
-    backgroundColor: settings.backgroundColor,
-  };
-
   return (
-    <animated.div className={styles.break} style={{ ...fadeIn, ...style }}>
+    <animated.div
+      className={styles.break}
+      style={{
+        width: anim.width,
+        height: anim.height,
+        color: settings.textColor,
+      }}
+    >
+      <animated.div
+        className={styles.background}
+        style={{
+          width: anim.width,
+          height: anim.height,
+          opacity: anim.backgroundOpacity,
+          backgroundColor: settings.backgroundColor,
+        }}
+      />
       {countingDown ? (
         <BreakCountdown
           breakTitle={settings.breakTitle}
