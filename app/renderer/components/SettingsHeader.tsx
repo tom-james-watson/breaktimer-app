@@ -3,13 +3,14 @@ import { Navbar, Button, Alignment, Intent } from "@blueprintjs/core";
 import styles from "./SettingsHeader.scss";
 
 interface Props {
-  textColor: string;
   backgroundColor: string;
   handleSave: () => void;
+  showSave: boolean;
+  textColor: string;
 }
 
 export default function SettingsHeader(props: Props) {
-  const { textColor, backgroundColor, handleSave } = props;
+  const { backgroundColor, handleSave, showSave, textColor } = props;
 
   const style = {
     color: textColor,
@@ -23,11 +24,13 @@ export default function SettingsHeader(props: Props) {
           <strong>Settings</strong>
         </Navbar.Heading>
       </Navbar.Group>
-      <Navbar.Group align={Alignment.RIGHT}>
-        <Button intent={Intent.PRIMARY} onClick={handleSave}>
-          Save
-        </Button>
-      </Navbar.Group>
+      {showSave && (
+        <Navbar.Group align={Alignment.RIGHT}>
+          <Button intent={Intent.PRIMARY} onClick={handleSave}>
+            Save
+          </Button>
+        </Navbar.Group>
+      )}
     </Navbar>
   );
 }
