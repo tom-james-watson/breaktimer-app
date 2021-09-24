@@ -20,21 +20,21 @@ export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   }
 }
 
-ipcMain.handle(IpcChannel.GET_SETTINGS, (): Settings => {
-  log.info(IpcChannel.GET_SETTINGS);
+ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
+  log.info(IpcChannel.SettingsGet);
   return getSettings();
 });
 
 ipcMain.handle(
-  IpcChannel.SET_SETTINGS,
+  IpcChannel.SettingsSet,
   (_event: IpcMainInvokeEvent, settings: Settings): void => {
-    log.info(IpcChannel.SET_SETTINGS);
+    log.info(IpcChannel.SettingsSet);
     setSettings(settings);
   }
 );
 
-ipcMain.handle(IpcChannel.GET_BREAK_END_TIME, (): string => {
-  log.info(IpcChannel.GET_BREAK_END_TIME);
+ipcMain.handle(IpcChannel.BreakEndTimeGet, (): string => {
+  log.info(IpcChannel.BreakEndTimeGet);
 
   const breakEndTime = getBreakEndTime();
 

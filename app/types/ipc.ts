@@ -1,8 +1,8 @@
 export enum IpcChannel {
-  ERROR = "ERROR",
-  GET_BREAK_END_TIME = "GET_BREAK_END_TIME",
-  GET_SETTINGS = "GET_SETTINGS",
-  PLAY_END_GONG = "PLAY_END_GONG",
-  PLAY_START_GONG = "PLAY_START_GONG",
-  SET_SETTINGS = "SET_SETTINGS",
+  BreakEndTimeGet = "BREAK_END_TIME_GET",
+  Error = "ERROR",
+  GongEndPlay = "GONG_END_PLAY",
+  GongStartPlay = "GONG_START_PLAY",
+  SettingsGet = "SETTINGS_GET",
+  SettingsSet = "SETTINGS_SET",
 }

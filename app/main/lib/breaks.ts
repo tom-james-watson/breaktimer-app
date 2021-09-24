@@ -121,7 +121,7 @@ function beginPopupBreak(): void {
   createBreakWindows();
 
   if (settings.gongEnabled) {
-    sendIpc(IpcChannel.PLAY_START_GONG);
+    sendIpc(IpcChannel.GongStartPlay);
   }
 }
 
@@ -137,7 +137,7 @@ export function endPopupBreak(): void {
       // For some reason the end gong sounds completely distorted on macOS.
       // Let's just play the start gong again as a workaround for now.
       // sendIpc(IpcChannel.PLAY_END_GONG)
-      sendIpc(IpcChannel.PLAY_START_GONG);
+      sendIpc(IpcChannel.GongStartPlay);
     }
   }
 }
@@ -150,7 +150,7 @@ function doBreak(): void {
   if (settings.notificationType === NotificationType.Notification) {
     showNotification(settings.breakTitle, settings.breakMessage);
     if (settings.gongEnabled) {
-      sendIpc(IpcChannel.PLAY_START_GONG);
+      sendIpc(IpcChannel.GongStartPlay);
     }
     havingBreak = false;
     createBreak();

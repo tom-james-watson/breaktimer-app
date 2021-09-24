@@ -15,19 +15,19 @@ process.once("loaded", () => {
   contextBridge.exposeInMainWorld("processEnv", { ...process.env });
   contextBridge.exposeInMainWorld("ipcRenderer", {
     invokeGetBreakEndTime: () => {
-      return ipcRenderer.invoke("GET_BREAK_END_TIME");
+      return ipcRenderer.invoke("BREAK_END_TIME_GET");
     },
     invokeGetSettings: () => {
-      return ipcRenderer.invoke("GET_SETTINGS");
+      return ipcRenderer.invoke("SETTINGS_GET");
     },
     invokeSetSettings: (settings) => {
-      return ipcRenderer.invoke("SET_SETTINGS", settings);
+      return ipcRenderer.invoke("SETTINGS_SET", settings);
     },
     onPlayEndGong: (cb) => {
-      ipcRenderer.on("PLAY_END_GONG", cb);
+      ipcRenderer.on("GONG_END_PLAY", cb);
     },
     onPlayStartGong: (cb) => {
-      ipcRenderer.on("PLAY_START_GONG", cb);
+      ipcRenderer.on("GONG_START_PLAY", cb);
     },
   });
 });
