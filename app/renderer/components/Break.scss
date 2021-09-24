@@ -14,7 +14,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 25px;
+  padding: $pt-grid-size * 3;
   text-align: center;
   position: relative;
 
@@ -42,17 +42,6 @@
 
 .countdown {
   margin: $pt-grid-size * 2;
-}
-
-.progress {
-  max-width: 400px;
-  margin: $pt-grid-size;
-
-  :global {
-    .bp3-progress-meter {
-      background-color: #ffffff !important;
-    }
-  }
 }
 
 .progressContent {
