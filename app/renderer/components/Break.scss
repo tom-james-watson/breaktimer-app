@@ -7,7 +7,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 60px;
+  padding: 25px;
   border-radius: 50%;
   text-align: center;
   position: relative;
@@ -52,9 +52,7 @@
 }
 
 :global {
-  :not(.outerSpinner) {
-    .bp3-spinner-head {
-      stroke: #ffffff !important;
-    }
+  .bp3-spinner-head {
+    stroke: #ffffff !important;
   }
 }

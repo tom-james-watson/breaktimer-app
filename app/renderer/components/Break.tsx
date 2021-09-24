@@ -28,14 +28,15 @@ function OuterSpinner(props: SpinnerProps) {
         <path
           className="bp3-spinner-track"
           d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
+          style={{ stroke: "none" }}
         ></path>
         <path
           className="bp3-spinner-head"
-          style={{ stroke: textColor }}
           d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
           pathLength="100"
           strokeDasharray="100 100"
           strokeDashoffset={100 - 100 * value}
+          style={{ stroke: textColor }}
         ></path>
       </svg>
     </div>
@@ -92,12 +93,18 @@ function BreakProgress(props: BreakProgressProps) {
     })();
   }, [onEndBreak]);
 
+  const fadeIn = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: 0 },
+    config: config.slow,
+  });
+
   if (timeRemaining === null || progress === null) {
     return null;
   }
 
   return (
-    <>
+    <animated.div className={styles.break} style={fadeIn}>
       <OuterSpinner value={progress} textColor={textColor} />
       <div className={styles.progressContent}>
         <h1
@@ -116,7 +123,7 @@ function BreakProgress(props: BreakProgressProps) {
           </Button>
         )}
       </div>
-    </>
+    </animated.div>
   );
 }
 
@@ -245,7 +252,7 @@ export default function Break() {
     to: { opacity: 1 },
     from: { opacity: 0 },
     delay: 300,
-    config: config.slow,
+    config: config.molasses,
   });
 
   if (settings === null) {
