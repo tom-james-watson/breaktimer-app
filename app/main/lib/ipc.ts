@@ -3,7 +3,7 @@ import log from "electron-log";
 import { Settings } from "../../types/settings";
 import { IpcChannel } from "../../types/ipc";
 import { getWindows } from "./windows";
-import { getBreakLength } from "./breaks";
+import { getBreakLength, getAllowPostpone, postponeBreak } from "./breaks";
 import { getSettings, setSettings } from "./store";
 
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
@@ -19,6 +19,16 @@ export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
     window.webContents.send(channel, ...args);
   }
 }
+
+ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
+  log.info(IpcChannel.AllowPostponeGet);
+  return getAllowPostpone();
+});
+
+ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
+  log.info(IpcChannel.BreakPostpone);
+  postponeBreak();
+});
 
 ipcMain.handle(IpcChannel.GongStartPlay, (): void => {
   log.info(IpcChannel.GongStartPlay);

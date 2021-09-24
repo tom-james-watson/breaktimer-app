@@ -12,7 +12,7 @@ import { createBreakWindows } from "./windows";
 let powerMonitor: PowerMonitor;
 let breakTime: BreakTime = null;
 let havingBreak = false;
-// let postponedCount = 0;
+let postponedCount = 0;
 let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
@@ -84,7 +84,7 @@ export function createBreak(isPostpone = false): void {
   if (idleStart) {
     createIdleNotification();
     idleStart = null;
-    // postponedCount = 0;
+    postponedCount = 0;
   }
 
   const freq = new Date(
@@ -100,11 +100,22 @@ export function createBreak(isPostpone = false): void {
 }
 
 export function endPopupBreak(): void {
-  if (breakTime) {
+  if (breakTime !== null && breakTime < moment()) {
     breakTime = null;
     havingBreak = false;
-    // postponedCount = 0;
+    postponedCount = 0;
   }
+}
+
+export function getAllowPostpone(): boolean {
+  const settings = getSettings();
+  return !settings.postponeLimit || postponedCount < settings.postponeLimit;
+}
+
+export function postponeBreak(): void {
+  postponedCount++;
+  havingBreak = false;
+  createBreak(true);
 }
 
 function doBreak(): void {

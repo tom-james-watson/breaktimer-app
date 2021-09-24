@@ -215,16 +215,24 @@ function BreakCountdown(props: BreakCountdownProps) {
 export default function Break() {
   const [settings, setSettings] = React.useState<Settings | null>(null);
   const [countingDown, setCountingDown] = React.useState(true);
+  const [allowPostpone, setAllowPostpone] = React.useState<boolean | null>(
+    null
+  );
 
   React.useEffect(() => {
     (async () => {
+      const allowPostpone = await ipcRenderer.invokeGetAllowPostpone();
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
 
       // Skip the countdown if these are disabled
-      if (!settings.skipBreakEnabled && !settings.postponeBreakEnabled) {
+      if (
+        !settings.skipBreakEnabled &&
+        !(settings.postponeBreakEnabled && allowPostpone)
+      ) {
         setCountingDown(false);
       }
 
+      setAllowPostpone(await ipcRenderer.invokeGetAllowPostpone());
       setSettings(settings);
     })();
   }, []);
@@ -233,9 +241,9 @@ export default function Break() {
     setCountingDown(false);
   }, []);
 
-  const handlePostponeBreak = React.useCallback(() => {
-    // TODO - implement
-    console.log("postpone break");
+  const handlePostponeBreak = React.useCallback(async () => {
+    await ipcRenderer.invokeBreakPostpone();
+    window.close();
   }, []);
 
   const handleSkipBreak = React.useCallback(() => {
@@ -255,7 +263,7 @@ export default function Break() {
     config: config.molasses,
   });
 
-  if (settings === null) {
+  if (settings === null || allowPostpone === null) {
     return null;
   }
 
@@ -272,7 +280,7 @@ export default function Break() {
           onCountdownOver={handleCountdownOver}
           onPostponeBreak={handlePostponeBreak}
           onSkipBreak={handleSkipBreak}
-          postponeBreakEnabled={settings.postponeBreakEnabled}
+          postponeBreakEnabled={settings.postponeBreakEnabled && allowPostpone}
           skipBreakEnabled={settings.skipBreakEnabled}
           textColor={settings.textColor}
         />

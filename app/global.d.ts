@@ -1,4 +1,6 @@
 declare const ipcRenderer: {
+  invokeBreakPostpone: () => Promise<void>;
+  invokeGetAllowPostpone: () => Promise<boolean>;
   invokeGetBreakLength: () => Promise<Date>;
   invokeGetSettings: () => Promise<unknown>;
   invokeGongEndPlay: () => Promise<unknown>;
