@@ -4,8 +4,6 @@ import { ProgressBar, Button, Intent } from "@blueprintjs/core";
 import { Settings } from "../../types/settings";
 import styles from "./Break.scss";
 
-let rerenderInterval: NodeJS.Timeout;
-
 function pad(num: number): string {
   let out = String(num);
   if (out.length === 1) {
@@ -16,17 +14,16 @@ function pad(num: number): string {
 
 let startSecondsRemaining: number;
 
+interface TimeRemaining {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
 export default function Break() {
   const [settings, setSettings] = React.useState<Settings | null>(null);
-  const [hoursRemaining, setHoursRemaining] = React.useState<number | null>(
-    null
-  );
-  const [minutesRemaining, setMinutesRemaining] = React.useState<number | null>(
-    null
-  );
-  const [secondsRemaining, setSecondsRemaining] = React.useState<number | null>(
-    null
-  );
+  const [timeRemaining, setTimeRemaining] =
+    React.useState<TimeRemaining | null>(null);
   const [progress, setProgress] = React.useState<number | null>(null);
 
   React.useEffect(() => {
@@ -43,12 +40,13 @@ export default function Break() {
           window.close();
         }
 
-        let secondsRemaining = moment(breakEndTime).diff(now, "seconds");
+        const secondsRemaining = moment(breakEndTime).diff(now, "seconds");
         setProgress(1 - secondsRemaining / startSecondsRemaining);
-        setHoursRemaining(Math.floor(secondsRemaining / 3600));
-        secondsRemaining %= 3600;
-        setMinutesRemaining(Math.floor(secondsRemaining / 60));
-        setSecondsRemaining(secondsRemaining % 60);
+        setTimeRemaining({
+          hours: Math.floor(secondsRemaining / 3600),
+          minutes: Math.floor(secondsRemaining / 60),
+          seconds: secondsRemaining % 60,
+        });
         setTimeout(tick, 1000);
       };
 
@@ -56,13 +54,7 @@ export default function Break() {
     })();
   }, []);
 
-  if (
-    !settings ||
-    hoursRemaining === null ||
-    minutesRemaining === null ||
-    secondsRemaining === null ||
-    progress === null
-  ) {
+  if (settings === null || timeRemaining === null || progress === null) {
     return null;
   }
 
@@ -81,11 +73,11 @@ export default function Break() {
         className={styles.breakMessage}
         dangerouslySetInnerHTML={{ __html: settings.breakMessage }}
       />
-      <div className={styles.countdown}>
-        {`${pad(hoursRemaining)} : ${pad(minutesRemaining)} : ${pad(
-          secondsRemaining
+      <h1 className={styles.countdown}>
+        {`${pad(timeRemaining.hours)} : ${pad(timeRemaining.minutes)} : ${pad(
+          timeRemaining.seconds
         )}`}
-      </div>
+      </h1>
       <ProgressBar
         value={progress}
         className={styles.progress}
@@ -95,7 +87,7 @@ export default function Break() {
         <Button
           className={styles.endBreak}
           onClick={window.close}
-          intent={Intent.PRIMARY}
+          intent={Intent.NONE}
           autoFocus={true}
         >
           End Break
