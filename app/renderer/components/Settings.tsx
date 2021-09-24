@@ -157,7 +157,10 @@ export default function SettingsEl() {
                     value={new Date(settingsDraft.breakLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settingsDraft.breaksEnabled}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      settingsDraft.notificationType !== NotificationType.Popup
+                    }
                   />
                 </FormGroup>
                 <FormGroup label="Clicking break start notification should">
