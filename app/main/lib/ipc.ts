@@ -3,7 +3,7 @@ import log from "electron-log";
 import { Settings } from "../../types/settings";
 import { IpcChannel } from "../../types/ipc";
 import { getWindows } from "./windows";
-import { getBreakEndTime } from "./breaks";
+import { getBreakLength } from "./breaks";
 import { getSettings, setSettings } from "./store";
 
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
@@ -20,6 +20,16 @@ export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   }
 }
 
+ipcMain.handle(IpcChannel.GongStartPlay, (): void => {
+  log.info(IpcChannel.GongStartPlay);
+  sendIpc(IpcChannel.GongStartPlay);
+});
+
+ipcMain.handle(IpcChannel.GongEndPlay, (): void => {
+  log.info(IpcChannel.GongEndPlay);
+  sendIpc(IpcChannel.GongEndPlay);
+});
+
 ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
   log.info(IpcChannel.SettingsGet);
   return getSettings();
@@ -33,14 +43,7 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle(IpcChannel.BreakEndTimeGet, (): string => {
-  log.info(IpcChannel.BreakEndTimeGet);
-
-  const breakEndTime = getBreakEndTime();
-
-  if (breakEndTime === null) {
-    throw new Error("Got null breakEndTime");
-  }
-
-  return breakEndTime.toISOString();
+ipcMain.handle(IpcChannel.BreakLengthGet, (): Date => {
+  log.info(IpcChannel.BreakLengthGet);
+  return getBreakLength();
 });

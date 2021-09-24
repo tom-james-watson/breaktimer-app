@@ -3,17 +3,10 @@ export enum NotificationType {
   Popup = "POPUP",
 }
 
-export enum NotificationClick {
-  DoNothing = "DO_NOTHING",
-  Skip = "SKIP",
-  Postpone = "POSTPONE",
-}
-
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  notificationClick: NotificationClick;
   breakFrequency: Date;
   breakLength: Date;
   postponeLength: Date;
@@ -37,4 +30,6 @@ export interface Settings {
   backgroundColor: string;
   textColor: string;
   endBreakEnabled: boolean;
+  skipBreakEnabled: boolean;
+  postponeBreakEnabled: boolean;
 }

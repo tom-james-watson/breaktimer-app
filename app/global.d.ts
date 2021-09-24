@@ -1,6 +1,8 @@
 declare const ipcRenderer: {
-  invokeGetBreakEndTime: () => Promise<string | null>;
+  invokeGetBreakLength: () => Promise<Date>;
   invokeGetSettings: () => Promise<unknown>;
+  invokeGongEndPlay: () => Promise<unknown>;
+  invokeGongStartPlay: () => Promise<unknown>;
   invokeSetSettings: (settings: unknown) => Promise<void>;
   onPlayEndGong: (cb: () => void) => Promise<void>;
   onPlayStartGong: (cb: () => void) => Promise<void>;

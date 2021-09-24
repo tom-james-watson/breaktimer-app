@@ -1,10 +1,6 @@
 import moment, { Moment } from "moment";
 import { PowerMonitor } from "electron";
-import {
-  Settings,
-  NotificationType,
-  NotificationClick,
-} from "../../types/settings";
+import { Settings, NotificationType } from "../../types/settings";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
 import { sendIpc } from "./ipc";
@@ -16,7 +12,7 @@ import { createBreakWindows } from "./windows";
 let powerMonitor: PowerMonitor;
 let breakTime: BreakTime = null;
 let havingBreak = false;
-let postponedCount = 0;
+// let postponedCount = 0;
 let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
@@ -25,18 +21,9 @@ export function getBreakTime(): BreakTime {
   return breakTime;
 }
 
-export function getBreakEndTime(): BreakTime {
-  if (!breakTime) {
-    return null;
-  }
-
+export function getBreakLength(): Date {
   const settings: Settings = getSettings();
-  const length = new Date(settings.breakLength);
-
-  return moment(breakTime)
-    .add(length.getHours(), "hours")
-    .add(length.getMinutes(), "minutes")
-    .add(length.getSeconds(), "seconds");
+  return settings.breakLength;
 }
 
 function zeroPad(n: number) {
@@ -97,7 +84,7 @@ export function createBreak(isPostpone = false): void {
   if (idleStart) {
     createIdleNotification();
     idleStart = null;
-    postponedCount = 0;
+    // postponedCount = 0;
   }
 
   const freq = new Date(
@@ -112,33 +99,11 @@ export function createBreak(isPostpone = false): void {
   buildTray();
 }
 
-function beginPopupBreak(): void {
-  const settings: Settings = getSettings();
-
-  // Reset breakTime to now to adjust for the time the warning notification
-  // was open
-  breakTime = moment();
-  createBreakWindows();
-
-  if (settings.gongEnabled) {
-    sendIpc(IpcChannel.GongStartPlay);
-  }
-}
-
 export function endPopupBreak(): void {
   if (breakTime) {
     breakTime = null;
     havingBreak = false;
-    postponedCount = 0;
-
-    const settings: Settings = getSettings();
-
-    if (settings.gongEnabled) {
-      // For some reason the end gong sounds completely distorted on macOS.
-      // Let's just play the start gong again as a workaround for now.
-      // sendIpc(IpcChannel.PLAY_END_GONG)
-      sendIpc(IpcChannel.GongStartPlay);
-    }
+    // postponedCount = 0;
   }
 }
 
@@ -157,33 +122,21 @@ function doBreak(): void {
   }
 
   if (settings.notificationType === NotificationType.Popup) {
-    const breakTimeout = setTimeout(beginPopupBreak, 5000);
+    createBreakWindows();
 
-    let body = "";
-
-    const allowSkip = settings.notificationClick === NotificationClick.Skip;
-    const allowPostpone =
-      settings.notificationClick === NotificationClick.Postpone &&
-      (!settings.postponeLimit || postponedCount < settings.postponeLimit);
-
-    if (allowSkip) {
-      body = "Click to skip";
-    } else if (allowPostpone) {
-      body = "Click to postpone";
-    }
-
-    showNotification("Break about to start...", body, (): void => {
-      if (allowSkip) {
-        clearTimeout(breakTimeout);
-        breakTime = null;
-        havingBreak = false;
-      } else if (allowPostpone) {
-        postponedCount++;
-        clearTimeout(breakTimeout);
-        havingBreak = false;
-        createBreak(true);
-      }
-    });
+    // TODO - implement postponed count
+    // showNotification("Break about to start...", body, (): void => {
+    //   if (allowSkip) {
+    //     clearTimeout(breakTimeout);
+    //     breakTime = null;
+    //     havingBreak = false;
+    //   } else if (allowPostpone) {
+    //     postponedCount++;
+    //     clearTimeout(breakTimeout);
+    //     havingBreak = false;
+    //     createBreak(true);
+    //   }
+    // });
   }
 }
 

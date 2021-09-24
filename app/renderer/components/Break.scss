@@ -7,8 +7,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: transparent;
-  color: white;
+  padding: 60px;
+  border-radius: 50%;
+  text-align: center;
+  position: relative;
 
   :focus,
   :focus ~ .bp3-control-indicator {
@@ -18,18 +20,17 @@
 
 .breakTitle,
 .breakMessage {
-  margin-bottom: 0;
+  margin-top: 0;
+  margin-bottom: $pt-grid-size * 2;
 }
 
 .countdown {
-  font-size: 80px;
-  margin: $pt-grid-size * 4;
-  margin-bottom: $pt-grid-size * 2;
+  margin: $pt-grid-size * 2;
 }
 
 .progress {
   max-width: 400px;
-  margin-bottom: $pt-grid-size * 4;
+  margin: $pt-grid-size;
 
   :global {
     .bp3-progress-meter {
@@ -38,6 +39,22 @@
   }
 }
 
-.endBreak {
-  margin: $pt-grid-size * 2;
+.progressContent {
+  z-index: 1;
+}
+
+.outerSpinner {
+  position: absolute;
+}
+
+.actionButton {
+  margin: $pt-grid-size;
+}
+
+:global {
+  :not(.outerSpinner) {
+    .bp3-spinner-head {
+      stroke: #ffffff !important;
+    }
+  }
 }

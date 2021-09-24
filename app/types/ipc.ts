@@ -1,5 +1,5 @@
 export enum IpcChannel {
-  BreakEndTimeGet = "BREAK_END_TIME_GET",
+  BreakLengthGet = "BREAK_LENGTH_GET",
   Error = "ERROR",
   GongEndPlay = "GONG_END_PLAY",
   GongStartPlay = "GONG_START_PLAY",

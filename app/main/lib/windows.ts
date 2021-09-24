@@ -1,8 +1,6 @@
 import path from "path";
 import { screen, BrowserWindow } from "electron";
 import log from "electron-log";
-import { Settings } from "../../types/settings";
-import { getSettings } from "./store";
 import { endPopupBreak } from "./breaks";
 
 let settingsWindow: BrowserWindow | null = null;
@@ -82,22 +80,19 @@ export function createSoundsWindow(): void {
 
 export function createBreakWindows(): void {
   const displays = screen.getAllDisplays();
-  const settings: Settings = getSettings();
-
   for (const display of displays) {
-    const width = display.workArea.width / 4;
-    const height = display.workArea.height / 3;
+    const size = 400;
     const breakWindow = new BrowserWindow({
       show: false,
       alwaysOnTop: true,
       autoHideMenuBar: true,
       frame: false,
-      x: display.workArea.x + display.workArea.width - width - 50,
-      y: display.workArea.y + display.workArea.height - height - 50,
-      width,
-      height,
+      x: display.workArea.x + display.workArea.width - size - 50,
+      y: display.workArea.y + display.workArea.height - size - 50,
+      width: size,
+      height: size,
       focusable: false,
-      backgroundColor: settings.backgroundColor,
+      transparent: true,
       webPreferences: {
         preload: path.join(__dirname, "../../renderer/preload.js"),
         nativeWindowOpen: true,

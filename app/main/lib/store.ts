@@ -1,9 +1,5 @@
 import Store from "electron-store";
-import {
-  Settings,
-  NotificationType,
-  NotificationClick,
-} from "../../types/settings";
+import { Settings, NotificationType } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
 
@@ -11,7 +7,6 @@ const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  notificationClick: NotificationClick.Skip,
   breakFrequency: new Date(0, 0, 0, 0, 28),
   breakLength: new Date(0, 0, 0, 0, 2),
   postponeLength: new Date(0, 0, 0, 0, 3),
@@ -35,6 +30,8 @@ const defaultSettings: Settings = {
   backgroundColor: "#16a085",
   textColor: "#ffffff",
   endBreakEnabled: true,
+  skipBreakEnabled: false,
+  postponeBreakEnabled: true,
 };
 
 const store = new Store<{

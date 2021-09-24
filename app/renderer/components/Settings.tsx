@@ -10,11 +10,7 @@ import {
   Button,
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
-import {
-  Settings,
-  NotificationType,
-  NotificationClick,
-} from "../../types/settings";
+import { Settings, NotificationType } from "../../types/settings";
 import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
 import styles from "./Settings.scss";
@@ -46,13 +42,6 @@ export default function SettingsEl() {
   ): void => {
     const notificationType = e.target.value as NotificationType;
     setSettingsDraft({ ...settingsDraft, notificationType });
-  };
-
-  const handleNotificationClickChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ): void => {
-    const notificationClick = e.target.value as NotificationClick;
-    setSettingsDraft({ ...settingsDraft, notificationClick });
   };
 
   const handleDateChange = (field: keyof Settings, newVal: Date): void => {
@@ -163,30 +152,21 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Clicking break start notification should">
-                  <HTMLSelect
-                    value={settingsDraft.notificationClick}
-                    options={[
-                      {
-                        value: NotificationClick.DoNothing,
-                        label: "Do nothing",
-                      },
-                      {
-                        value: NotificationClick.Skip,
-                        label: "Skip the break",
-                      },
-                      {
-                        value: NotificationClick.Postpone,
-                        label: "Postpone the break",
-                      },
-                    ]}
-                    onChange={handleNotificationClickChange}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      settingsDraft.notificationType !== NotificationType.Popup
-                    }
-                  />
-                </FormGroup>
+                <Switch
+                  label="Allow skip break"
+                  checked={settingsDraft.skipBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, "skipBreakEnabled")}
+                  disabled={!settingsDraft.breaksEnabled}
+                />
+                <Switch
+                  label="Allow postpone break"
+                  checked={settingsDraft.postponeBreakEnabled}
+                  onChange={handleSwitchChange.bind(
+                    null,
+                    "postponeBreakEnabled"
+                  )}
+                  disabled={!settingsDraft.breaksEnabled}
+                />
                 <FormGroup label="Postpone length" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "postponeLength")}
@@ -195,8 +175,7 @@ export default function SettingsEl() {
                     precision={TimePrecision.SECOND}
                     disabled={
                       !settingsDraft.breaksEnabled ||
-                      settingsDraft.notificationClick !==
-                        NotificationClick.Postpone
+                      !settingsDraft.postponeBreakEnabled
                     }
                   />
                 </FormGroup>
@@ -214,8 +193,7 @@ export default function SettingsEl() {
                     onChange={handlePostponeLimitChange}
                     disabled={
                       !settingsDraft.breaksEnabled ||
-                      settingsDraft.notificationClick !==
-                        NotificationClick.Postpone
+                      !settingsDraft.postponeBreakEnabled
                     }
                   />
                 </FormGroup>
