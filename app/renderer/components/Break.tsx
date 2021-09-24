@@ -1,6 +1,7 @@
 import * as React from "react";
 import moment from "moment";
 import { Button, Spinner } from "@blueprintjs/core";
+import { useSpring, animated, config } from "react-spring";
 import { Settings } from "../../types/settings";
 import styles from "./Break.scss";
 
@@ -23,7 +24,7 @@ function OuterSpinner(props: SpinnerProps) {
 
   return (
     <div className={`bp3-spinner ${styles.outerSpinner}`}>
-      <svg width="400" height="400" strokeWidth="2" viewBox="4 4 92 92">
+      <svg width="400" height="400" strokeWidth="2" viewBox="2 2 96 96">
         <path
           className="bp3-spinner-track"
           d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
@@ -240,6 +241,13 @@ export default function Break() {
     window.close();
   }, []);
 
+  const fadeIn = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: 0 },
+    delay: 300,
+    config: config.slow,
+  });
+
   if (settings === null) {
     return null;
   }
@@ -250,7 +258,7 @@ export default function Break() {
   };
 
   return (
-    <div className={styles.break} style={style}>
+    <animated.div className={styles.break} style={{ ...fadeIn, ...style }}>
       {countingDown ? (
         <BreakCountdown
           breakTitle={settings.breakTitle}
@@ -269,6 +277,6 @@ export default function Break() {
           textColor={settings.textColor}
         />
       )}
-    </div>
+    </animated.div>
   );
 }
