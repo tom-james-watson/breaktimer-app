@@ -36,8 +36,7 @@ export default function Break() {
         (await ipcRenderer.invokeGetBreakEndTime()) as string;
       startSecondsRemaining = moment(breakEndTime).diff(moment(), "seconds");
 
-      clearInterval(rerenderInterval);
-      rerenderInterval = setInterval(() => {
+      const tick = () => {
         const now = moment();
 
         if (now > moment(breakEndTime)) {
@@ -50,7 +49,10 @@ export default function Break() {
         secondsRemaining %= 3600;
         setMinutesRemaining(Math.floor(secondsRemaining / 60));
         setSecondsRemaining(secondsRemaining % 60);
-      }, 1000);
+        setTimeout(tick, 1000);
+      };
+
+      tick();
     })();
   }, []);
 
