@@ -1,7 +1,7 @@
 import path from "path";
 import moment from "moment";
-import { app, Menu, Tray } from "electron";
-import openAboutWindow from "about-window";
+import { app, dialog, Menu, Tray } from "electron";
+import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import { getSettings, setSettings } from "./store";
 import { createSettingsWindow } from "./windows";
@@ -53,19 +53,11 @@ export function buildTray(): void {
   };
 
   const createAboutWindow = (): void => {
-    openAboutWindow({
-      icon_path:
-        process.env.NODE_ENV === "development"
-          ? path.join(__dirname, "../../../resources/icon.png")
-          : path.join(process.resourcesPath, "app/resources/icon.png"),
-      package_json_dir: path.join(__dirname, "../../.."),
-      win_options: {
-        icon:
-          process.env.NODE_ENV === "development"
-            ? path.join(__dirname, "../../../resources/tray/icon.png")
-            : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
-        autoHideMenuBar: true,
-      },
+    dialog.showMessageBox({
+      title: "About",
+      type: "info",
+      message: `BreakTimer`,
+      detail: `Build: ${packageJson.version}\n\nDistributed under GLP-3.0-or-later license`,
     });
   };
 
@@ -124,8 +116,8 @@ export function buildTray(): void {
       click: createBreak.bind(null, false),
     },
     { type: "separator" },
-    { label: "Settings", click: createSettingsWindow },
-    { label: "About", click: createAboutWindow },
+    { label: "Settings...", click: createSettingsWindow },
+    { label: "About...", click: createAboutWindow },
     { label: "Quit", click: quit },
   ]);
 
