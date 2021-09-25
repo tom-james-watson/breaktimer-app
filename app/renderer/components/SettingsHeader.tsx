@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Navbar, Button, Alignment, Intent } from "@blueprintjs/core";
+import { Navbar, Button, Alignment } from "@blueprintjs/core";
 import styles from "./SettingsHeader.scss";
 
 interface Props {
@@ -26,7 +26,7 @@ export default function SettingsHeader(props: Props) {
       </Navbar.Group>
       {showSave && (
         <Navbar.Group align={Alignment.RIGHT}>
-          <Button intent={Intent.PRIMARY} onClick={handleSave}>
+          <Button outlined onClick={handleSave}>
             Save
           </Button>
         </Navbar.Group>

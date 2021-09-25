@@ -159,7 +159,7 @@ export default function SettingsEl() {
                   disabled={!settingsDraft.breaksEnabled}
                 />
                 <Switch
-                  label="Allow postpone break"
+                  label="Allow snooze break"
                   checked={settingsDraft.postponeBreakEnabled}
                   onChange={handleSwitchChange.bind(
                     null,
@@ -167,7 +167,7 @@ export default function SettingsEl() {
                   )}
                   disabled={!settingsDraft.breaksEnabled}
                 />
-                <FormGroup label="Postpone length" labelInfo="(hh:mm:ss)">
+                <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "postponeLength")}
                     value={new Date(settingsDraft.postponeLength)}
@@ -179,7 +179,7 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Postpone limit">
+                <FormGroup label="Snooze limit">
                   <HTMLSelect
                     value={settingsDraft.postponeLimit}
                     options={[

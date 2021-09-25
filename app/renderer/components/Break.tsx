@@ -1,6 +1,6 @@
 import * as React from "react";
 import moment from "moment";
-import { Button, Spinner } from "@blueprintjs/core";
+import { Button, Spinner, ControlGroup, ButtonGroup } from "@blueprintjs/core";
 import { useSpring, animated, config } from "react-spring";
 import { Settings } from "../../types/settings";
 import styles from "./Break.scss";
@@ -116,7 +116,7 @@ function BreakProgress(props: BreakProgressProps) {
           <Button
             className={styles.actionButton}
             onClick={onEndBreak}
-            minimal
+            outlined
             autoFocus={true}
             style={{ color: textColor }}
           >
@@ -182,32 +182,34 @@ function BreakCountdown(props: BreakCountdownProps) {
         dangerouslySetInnerHTML={{ __html: breakTitle }}
       />
       {(skipBreakEnabled || postponeBreakEnabled) && (
-        <div>
-          {skipBreakEnabled && (
-            <Button
-              className={styles.actionButton}
-              onClick={onSkipBreak}
-              minimal
-              autoFocus={true}
-              style={{ color: textColor }}
-              icon={<Spinner value={1 - progress} size={16} />}
-            >
-              Skip
-            </Button>
-          )}
-          {postponeBreakEnabled && (
-            <Button
-              className={styles.actionButton}
-              onClick={onPostponeBreak}
-              autoFocus={true}
-              minimal
-              style={{ color: textColor }}
-              icon={<Spinner value={1 - progress} size={16} />}
-            >
-              Postpone
-            </Button>
-          )}
-        </div>
+        <ControlGroup>
+          <ButtonGroup>
+            {skipBreakEnabled && (
+              <Button
+                className={styles.actionButton}
+                onClick={onSkipBreak}
+                icon={<Spinner value={1 - progress} size={16} />}
+                outlined
+                autoFocus={true}
+                style={{ color: textColor }}
+              >
+                Skip
+              </Button>
+            )}
+            {postponeBreakEnabled && (
+              <Button
+                className={styles.actionButton}
+                onClick={onPostponeBreak}
+                icon={<Spinner value={1 - progress} size={16} />}
+                outlined
+                autoFocus={true}
+                style={{ color: textColor }}
+              >
+                Snooze
+              </Button>
+            )}
+          </ButtonGroup>
+        </ControlGroup>
       )}
     </>
   );
@@ -269,7 +271,7 @@ export default function Break() {
   }
 
   return (
-    <div className={styles.breakContainer}>
+    <div className={`bp3-dark ${styles.breakContainer}`}>
       <animated.div
         className={styles.break}
         style={{
