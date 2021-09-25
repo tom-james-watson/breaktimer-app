@@ -229,6 +229,7 @@ export default function Break() {
 
   React.useEffect(() => {
     (async () => {
+      animApi({ backgroundOpacity: 0.6 });
       const allowPostpone = await ipcRenderer.invokeGetAllowPostpone();
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
 
@@ -242,14 +243,18 @@ export default function Break() {
 
       setAllowPostpone(await ipcRenderer.invokeGetAllowPostpone());
       setSettings(settings);
-      animApi({ backgroundOpacity: 0.6 });
     })();
   }, [animApi]);
 
   const handleCountdownOver = React.useCallback(() => {
     setCountingDown(false);
-    animApi({ backgroundOpacity: 1, width: 400, height: 400 });
-  }, [animApi]);
+  }, []);
+
+  React.useEffect(() => {
+    if (!countingDown) {
+      animApi({ backgroundOpacity: 1, width: 400, height: 400 });
+    }
+  }, [countingDown, animApi]);
 
   const handlePostponeBreak = React.useCallback(async () => {
     await ipcRenderer.invokeBreakPostpone();
