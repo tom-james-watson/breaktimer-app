@@ -229,6 +229,7 @@ export default function Break() {
     null
   );
   const [ready, setReady] = React.useState(false);
+  const [closing, setClosing] = React.useState(false);
   const [anim, animApi] = useSpring(() => ({
     width: 0,
     height: 0,
@@ -265,19 +266,28 @@ export default function Break() {
     }
   }, [countingDown, animApi]);
 
+  React.useEffect(() => {
+    if (closing) {
+      animApi({ backgroundOpacity: 0, width: 0, height: 0 });
+      setTimeout(() => {
+        window.close();
+      }, 500);
+    }
+  }, [animApi, closing]);
+
   const handlePostponeBreak = React.useCallback(async () => {
     await ipcRenderer.invokeBreakPostpone();
-    window.close();
+    setClosing(true);
   }, []);
 
   const handleSkipBreak = React.useCallback(() => {
-    window.close();
+    setClosing(true);
   }, []);
 
   const handleEndBreak = React.useCallback(() => {
     // For some reason the end gong sometimes sounds very distorted.
     ipcRenderer.invokeGongStartPlay();
-    window.close();
+    setClosing(true);
   }, []);
 
   if (settings === null || allowPostpone === null) {
@@ -303,7 +313,7 @@ export default function Break() {
             backgroundColor: settings.backgroundColor,
           }}
         />
-        {ready && (
+        {ready && !closing && (
           <>
             {countingDown ? (
               <BreakCountdown

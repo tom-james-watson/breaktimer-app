@@ -12,7 +12,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: $pt-grid-size * 3;
   text-align: center;
   position: relative;
 
@@ -22,14 +21,7 @@
   }
 }
 
-.breakCountdown {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
+.breakCountdown,
 .breakProgress {
   display: flex;
   flex-direction: column;
@@ -37,6 +29,10 @@
   align-items: center;
   text-align: center;
   padding: $pt-grid-size * 3;
+
+  &.breakProgress {
+    margin: $pt-grid-size * 3;
+  }
 }
 
 .background {
