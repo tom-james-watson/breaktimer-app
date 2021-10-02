@@ -105,7 +105,7 @@ function BreakProgress(props: BreakProgressProps) {
   }
 
   return (
-    <animated.div className={styles.break} style={fadeIn}>
+    <animated.div className={styles.breakProgress} style={fadeIn}>
       <OuterSpinner value={progress} textColor={textColor} />
       <div className={styles.progressContent}>
         <h1
@@ -171,12 +171,19 @@ function BreakCountdown(props: BreakCountdownProps) {
     })();
   }, [onCountdownOver]);
 
+  const fadeIn = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: 0 },
+    config: config.slow,
+    delay: 500,
+  });
+
   if (progress === null) {
     return null;
   }
 
   return (
-    <>
+    <animated.div className={styles.breakCountdown} style={fadeIn}>
       <h2
         className={styles.breakTitle}
         dangerouslySetInnerHTML={{ __html: breakTitle }}
@@ -211,7 +218,7 @@ function BreakCountdown(props: BreakCountdownProps) {
           </ButtonGroup>
         </ControlGroup>
       )}
-    </>
+    </animated.div>
   );
 }
 
@@ -221,15 +228,16 @@ export default function Break() {
   const [allowPostpone, setAllowPostpone] = React.useState<boolean | null>(
     null
   );
+  const [ready, setReady] = React.useState(false);
   const [anim, animApi] = useSpring(() => ({
-    width: 250,
-    height: 250,
+    width: 0,
+    height: 0,
     backgroundOpacity: 0,
   }));
 
   React.useEffect(() => {
-    (async () => {
-      animApi({ backgroundOpacity: 0.6 });
+    setTimeout(async () => {
+      animApi({ backgroundOpacity: 0.8, width: 250, height: 250 });
       const allowPostpone = await ipcRenderer.invokeGetAllowPostpone();
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
 
@@ -243,7 +251,8 @@ export default function Break() {
 
       setAllowPostpone(await ipcRenderer.invokeGetAllowPostpone());
       setSettings(settings);
-    })();
+      setReady(true);
+    }, 1000);
   }, [animApi]);
 
   const handleCountdownOver = React.useCallback(() => {
@@ -294,25 +303,29 @@ export default function Break() {
             backgroundColor: settings.backgroundColor,
           }}
         />
-        {countingDown ? (
-          <BreakCountdown
-            breakTitle={settings.breakTitle}
-            onCountdownOver={handleCountdownOver}
-            onPostponeBreak={handlePostponeBreak}
-            onSkipBreak={handleSkipBreak}
-            postponeBreakEnabled={
-              settings.postponeBreakEnabled && allowPostpone
-            }
-            skipBreakEnabled={settings.skipBreakEnabled}
-            textColor={settings.textColor}
-          />
-        ) : (
-          <BreakProgress
-            breakMessage={settings.breakMessage}
-            endBreakEnabled={settings.endBreakEnabled}
-            onEndBreak={handleEndBreak}
-            textColor={settings.textColor}
-          />
+        {ready && (
+          <>
+            {countingDown ? (
+              <BreakCountdown
+                breakTitle={settings.breakTitle}
+                onCountdownOver={handleCountdownOver}
+                onPostponeBreak={handlePostponeBreak}
+                onSkipBreak={handleSkipBreak}
+                postponeBreakEnabled={
+                  settings.postponeBreakEnabled && allowPostpone
+                }
+                skipBreakEnabled={settings.skipBreakEnabled}
+                textColor={settings.textColor}
+              />
+            ) : (
+              <BreakProgress
+                breakMessage={settings.breakMessage}
+                endBreakEnabled={settings.endBreakEnabled}
+                onEndBreak={handleEndBreak}
+                textColor={settings.textColor}
+              />
+            )}
+          </>
         )}
       </animated.div>
     </div>

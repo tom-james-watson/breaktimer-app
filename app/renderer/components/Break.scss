@@ -9,8 +9,6 @@
 
 .break {
   display: flex;
-  height: 100%;
-  width: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -22,6 +20,23 @@
   :focus ~ .bp3-control-indicator {
     outline: none !important;
   }
+}
+
+.breakCountdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.breakProgress {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: $pt-grid-size * 3;
 }
 
 .background {
