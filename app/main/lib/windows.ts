@@ -80,7 +80,14 @@ export function createSoundsWindow(): void {
 
 export function createBreakWindows(): void {
   const displays = screen.getAllDisplays();
+  let created = 0;
   for (const display of displays) {
+    // BrowserWindows on a second monitor seem to be created with the wrong
+    // size and colour space on windows for some reason. For now, just create
+    // the break popup on the first screen.
+    if (process.platform === "win32" && created === 1) {
+      break;
+    }
     const size = 400;
     const breakWindow = new BrowserWindow({
       show: false,
@@ -126,5 +133,6 @@ export function createBreakWindows(): void {
     });
 
     breakWindows.push(breakWindow);
+    created++;
   }
 }
