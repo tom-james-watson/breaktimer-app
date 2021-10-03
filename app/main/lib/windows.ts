@@ -93,6 +93,7 @@ export function createBreakWindows(): void {
       height: size,
       focusable: false,
       transparent: true,
+      hasShadow: false,
       webPreferences: {
         preload: path.join(__dirname, "../../renderer/preload.js"),
         nativeWindowOpen: true,
