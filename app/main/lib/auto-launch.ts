@@ -1,13 +1,13 @@
-import AutoLaunch from 'auto-launch'
+import AutoLaunch from "auto-launch";
 
-const AppLauncher = new AutoLaunch({name: 'BreakTimer'})
+const AppLauncher = new AutoLaunch({ name: "BreakTimer" });
 
-export function setAutoLauch(autoLaunch: boolean) {
-  if (process.env.NODE_ENV !== 'development') {
+export function setAutoLauch(autoLaunch: boolean): void {
+  if (process.env.NODE_ENV !== "development") {
     if (autoLaunch) {
-      AppLauncher.enable()
+      AppLauncher.enable();
     } else {
-      AppLauncher.disable()
+      AppLauncher.disable();
     }
   }
 }

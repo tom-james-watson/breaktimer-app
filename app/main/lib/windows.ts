@@ -1,135 +1,138 @@
-import path from 'path'
-import {screen, BrowserWindow} from 'electron'
-import {Settings} from '../../types/settings'
-import {getSettings} from './store'
-import {endPopupBreak} from './breaks'
+import path from "path";
+import { screen, BrowserWindow } from "electron";
+import log from "electron-log";
+import { endPopupBreak } from "./breaks";
 
-let settingsWindow: BrowserWindow = null
-let soundsWindow: BrowserWindow = null
-let breakWindows: BrowserWindow[] = []
+let settingsWindow: BrowserWindow | null = null;
+let soundsWindow: BrowserWindow | null = null;
+let breakWindows: BrowserWindow[] = [];
+
+const getBrowserWindowUrl = (page: "settings" | "sounds" | "break"): string => {
+  return `file://${path.join(
+    __dirname,
+    `../views/${process.env.NODE_ENV}.html?page=${page}`
+  )}`;
+};
 
 export function getWindows(): BrowserWindow[] {
-  return [settingsWindow, soundsWindow, ...breakWindows]
+  const windows = [];
+  if (settingsWindow !== null) {
+    windows.push(settingsWindow);
+  }
+  if (soundsWindow !== null) {
+    windows.push(soundsWindow);
+  }
+  windows.push(...breakWindows);
+  return windows;
 }
 
-export function createSettingsWindow() {
+export function createSettingsWindow(): void {
   if (settingsWindow) {
-    settingsWindow.show()
-    return
+    settingsWindow.show();
+    return;
   }
 
   settingsWindow = new BrowserWindow({
     show: false,
     width: 507,
     minWidth: 507,
-    height: process.platform === 'win32' ? 700 : 660,
-    minHeight: process.platform === 'win32' ? 700 : 660,
+    height: process.platform === "win32" ? 700 : 660,
+    minHeight: process.platform === "win32" ? 700 : 660,
     autoHideMenuBar: true,
-    icon: process.env.NODE_ENV === 'development' ?
-      path.join(__dirname, '../../../resources/tray/icon.png') :
-      path.join(process.resourcesPath, 'app/resources/tray/icon.png'),
+    icon:
+      process.env.NODE_ENV === "development"
+        ? path.join(__dirname, "../../../resources/tray/icon.png")
+        : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
-      // This effectively disables the sandbox inside the renderer process and
-      // is now turned off by default as of v5. Without this, we cannot access
-      // node APIs such as `process` inside the renderer process.
-      // In the future, we can use a preload script to pass what we need into
-      // the renderer process and turn this setting back off. I haven't done
-      // that for now as the webpack build will require some tweaking.
-      nodeIntegration: true
+      preload: path.join(__dirname, "../../renderer/preload.js"),
+      nativeWindowOpen: true,
     },
-  })
+  });
 
-  settingsWindow.loadURL(
-    process.env.NODE_ENV === 'development' ?
-      `file://${__dirname}/../views/app.html?page=settings` :
-      `file://${path.join(__dirname, '../views/app.html?page=settings')}`
-  )
+  settingsWindow.loadURL(getBrowserWindowUrl("settings"));
 
-  settingsWindow.on('ready-to-show', () => {
+  settingsWindow.on("ready-to-show", () => {
     if (!settingsWindow) {
-      throw new Error('"settingsWindow" is not defined')
+      throw new Error('"settingsWindow" is not defined');
     }
-    settingsWindow.show()
-    settingsWindow.focus()
-  })
+    settingsWindow.show();
+    settingsWindow.focus();
+  });
 
-  settingsWindow.on('closed', () => {
-    settingsWindow = null
-  })
+  settingsWindow.on("closed", () => {
+    settingsWindow = null;
+  });
 }
 
-export function createSoundsWindow() {
+export function createSoundsWindow(): void {
   soundsWindow = new BrowserWindow({
     show: false,
     skipTaskbar: true,
     webPreferences: {
-      nodeIntegration: true
+      devTools: false,
+      preload: path.join(__dirname, "../../renderer/preload.js"),
+      nativeWindowOpen: true,
     },
-  })
+  });
 
-  soundsWindow.loadURL(
-    process.env.NODE_ENV === 'development' ?
-      `file://${__dirname}/../views/app.html?page=sounds` :
-      `file://${path.join(__dirname, '../views/app.html?page=sounds')}`
-  )
+  soundsWindow.loadURL(getBrowserWindowUrl("sounds"));
 }
 
-export function createBreakWindows() {
-  const displays = screen.getAllDisplays()
-  const settings: Settings = getSettings()
-
+export function createBreakWindows(): void {
+  const displays = screen.getAllDisplays();
+  let created = 0;
   for (const display of displays) {
+    // BrowserWindows on a second monitor seem to be created with the wrong
+    // size and colour space on windows for some reason. For now, just create
+    // the break popup on the first screen.
+    if (process.platform === "win32" && created === 1) {
+      break;
+    }
+    const size = 400;
     const breakWindow = new BrowserWindow({
       show: false,
-      fullscreen: process.platform === 'darwin',
       alwaysOnTop: true,
-      skipTaskbar: true,
       autoHideMenuBar: true,
-      x: display.bounds.x,
-      y: display.bounds.y,
-      width: display.size.width,
-      height: display.size.height,
-      backgroundColor: settings.backgroundColor,
+      frame: false,
+      x: display.bounds.x + display.bounds.width / 2 - size / 2,
+      y: display.bounds.y + display.bounds.height / 2 - size / 2,
+      width: size,
+      height: size,
+      focusable: false,
+      transparent: true,
+      hasShadow: false,
       webPreferences: {
-        nodeIntegration: true
+        preload: path.join(__dirname, "../../renderer/preload.js"),
+        nativeWindowOpen: true,
       },
-    })
+    });
 
-    breakWindow.loadURL(
-      process.env.NODE_ENV === 'development' ?
-        `file://${__dirname}/../views/app.html?page=break` :
-        `file://${path.join(__dirname, '../views/app.html?page=break')}`
-    )
+    breakWindow.setVisibleOnAllWorkspaces(true);
+    breakWindow.loadURL(getBrowserWindowUrl("break"));
 
-    breakWindow.on('ready-to-show', () => {
+    breakWindow.on("ready-to-show", () => {
       if (!breakWindow) {
-        throw new Error('"breakWindow" is not defined')
+        throw new Error('"breakWindow" is not defined');
       }
-      breakWindow.show()
-      breakWindow.focus()
+      breakWindow.show();
+      breakWindow.focus();
+    });
 
-      // If we set this in the browser window options then we get a crash on
-      // Ubuntu 20.10. Setting kiosk once the window is ready seems to avoid
-      // this.
-      if (process.platform !== 'darwin') {
-        breakWindow.setKiosk(true)
-      }
-    })
-
-    breakWindow.on('closed', () => {
+    breakWindow.on("closed", () => {
       for (const win of breakWindows) {
         if (!win.isDestroyed()) {
           try {
-            win.close()
+            win.close();
           } catch (err) {
-            console.warn(err)
+            log.warn(err);
           }
         }
       }
-      breakWindows = []
-      endPopupBreak()
-    })
+      breakWindows = [];
+      endPopupBreak();
+    });
 
-    breakWindows.push(breakWindow)
+    breakWindows.push(breakWindow);
+    created++;
   }
 }

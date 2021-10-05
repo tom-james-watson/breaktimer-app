@@ -1,203 +1,236 @@
-import * as React from 'react'
-import {ipcRenderer, IpcRendererEvent} from 'electron'
+import * as React from "react";
 import {
-  Tabs, Tab, Switch, HTMLSelect, FormGroup, InputGroup, Intent, Button
-} from "@blueprintjs/core"
-import {TimePicker, TimePrecision} from "@blueprintjs/datetime"
-import {Settings, NotificationType, NotificationClick} from "../../types/settings"
-import {IpcChannel} from "../../types/ipc"
-import {toast} from "../toaster"
-import SettingsHeader from './SettingsHeader'
-const styles = require('./Settings.scss')
+  Tabs,
+  Tab,
+  Switch,
+  HTMLSelect,
+  FormGroup,
+  InputGroup,
+  Intent,
+  Button,
+} from "@blueprintjs/core";
+import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
+import { Settings, NotificationType } from "../../types/settings";
+import { toast } from "../toaster";
+import SettingsHeader from "./SettingsHeader";
+import styles from "./Settings.scss";
 
 export default function SettingsEl() {
-  const [settings, setSettings] = React.useState<Settings>(null)
+  const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
+    null
+  );
+  const [settings, setSettings] = React.useState<Settings | null>(null);
 
   React.useEffect(() => {
-    ipcRenderer.on(IpcChannel.GET_SETTINGS_SUCCESS, (event: IpcRendererEvent, settings: Settings) => {
-      setSettings(settings)
-    })
+    (async () => {
+      const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
+      setSettingsDraft(settings);
+      setSettings(settings);
+    })();
+  }, []);
 
-    ipcRenderer.on(IpcChannel.SET_SETTINGS_SUCCESS, () => {
-      toast('Settings saved', Intent.PRIMARY)
-    })
+  const dirty = React.useMemo(() => {
+    return JSON.stringify(settingsDraft) !== JSON.stringify(settings);
+  }, [settings, settingsDraft]);
 
-    ipcRenderer.on(IpcChannel.ERROR, (event: IpcRendererEvent, error: string) => {
-      toast(error, Intent.DANGER)
-    })
-
-    ipcRenderer.send(IpcChannel.GET_SETTINGS)
-  }, [])
-
-  if (!settings) {
-    return null
+  if (settings === null || settingsDraft === null) {
+    return null;
   }
 
-  const handleNotificationTypeChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const notificationType = e.target.value as NotificationType
-    setSettings({...settings, notificationType})
-  }
+  const handleNotificationTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    const notificationType = e.target.value as NotificationType;
+    setSettingsDraft({ ...settingsDraft, notificationType });
+  };
 
-  const handleNotificationClickChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const notificationClick = e.target.value as NotificationClick
-    setSettings({...settings, notificationClick})
-  }
+  const handleDateChange = (field: keyof Settings, newVal: Date): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      [field]: newVal,
+    });
+  };
 
-  const handleDateChange = (field: string, newVal: Date): void => {
-    const newSettings = {...settings}
-    newSettings[field] = newVal
-    setSettings(newSettings)
-  }
+  const handlePostponeLimitChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    const postponeLimit = Number(e.target.value);
+    setSettingsDraft({ ...settingsDraft, postponeLimit });
+  };
 
-  const handlePostponeLimitChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const postponeLimit = Number(e.target.value)
-    setSettings({...settings, postponeLimit})
-  }
+  const handleTextChange = (
+    field: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      [field]: e.target.value,
+    });
+  };
 
-  const handleTextChange = (field: string, e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newSettings = {...settings}
-    newSettings[field] = e.target.value
-    setSettings(newSettings)
-  }
-
-  const handleSwitchChange = (field: string, e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newSettings = {...settings}
-    newSettings[field] = e.target.checked
-    setSettings(newSettings)
-  }
+  const handleSwitchChange = (
+    field: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      [field]: e.target.checked,
+    });
+  };
 
   const handleResetColors = (): void => {
-    setSettings({
-      ...settings,
-      textColor: '#ffffff',
-      backgroundColor: '#16a085',
-    })
-  }
+    setSettingsDraft({
+      ...settingsDraft,
+      textColor: "#ffffff",
+      backgroundColor: "#16a085",
+    });
+  };
 
-  const handleSave = (): void => {
-    ipcRenderer.send(IpcChannel.SET_SETTINGS, settings)
-  }
+  const handleSave = async () => {
+    await ipcRenderer.invokeSetSettings(settingsDraft);
+    toast("Settings saved", Intent.PRIMARY);
+    setSettings(settingsDraft);
+  };
 
   return (
     <React.Fragment>
       <SettingsHeader
-        textColor={settings.textColor}
-        backgroundColor={settings.backgroundColor}
+        backgroundColor={settingsDraft.backgroundColor}
         handleSave={handleSave}
+        showSave={dirty}
+        textColor={settingsDraft.textColor}
       />
       <main className={styles.settings}>
         <FormGroup>
           <Switch
             label="Breaks enabled"
-            checked={settings.breaksEnabled}
-            onChange={handleSwitchChange.bind(null, 'breaksEnabled')}
+            checked={settingsDraft.breaksEnabled}
+            onChange={handleSwitchChange.bind(null, "breaksEnabled")}
           />
         </FormGroup>
         <Tabs defaultSelectedTabId="break-settings">
           <Tab
             id="break-settings"
             title="Break Settings"
-            panel={(
+            panel={
               <React.Fragment>
                 <FormGroup label="Notify me with">
                   <HTMLSelect
-                    value={settings.notificationType}
+                    value={settingsDraft.notificationType}
                     options={[
-                      {value: NotificationType.Popup, label: "Fullscreen popup"},
-                      {value: NotificationType.Notification, label: "Simple notification"},
+                      {
+                        value: NotificationType.Popup,
+                        label: "Popup break",
+                      },
+                      {
+                        value: NotificationType.Notification,
+                        label: "Simple notification",
+                      },
                     ]}
                     onChange={handleNotificationTypeChange}
-                    disabled={!settings.breaksEnabled}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'breakFrequency')}
-                    value={new Date(settings.breakFrequency)}
+                    onChange={handleDateChange.bind(null, "breakFrequency")}
+                    value={new Date(settingsDraft.breakFrequency)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settings.breaksEnabled}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'breakLength')}
-                    value={new Date(settings.breakLength)}
+                    onChange={handleDateChange.bind(null, "breakLength")}
+                    value={new Date(settingsDraft.breakLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settings.breaksEnabled}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      settingsDraft.notificationType !== NotificationType.Popup
+                    }
                   />
                 </FormGroup>
-                <FormGroup label="Clicking break start notification should">
-                  <HTMLSelect
-                    value={settings.notificationClick}
-                    options={[
-                      {value: NotificationClick.DoNothing, label: "Do nothing"},
-                      {value: NotificationClick.Skip, label: "Skip the break"},
-                      {value: NotificationClick.Postpone, label: "Postpone the break"},
-                    ]}
-                    onChange={handleNotificationClickChange}
-                    disabled={!settings.breaksEnabled || settings.notificationType !== NotificationType.Popup}
-                  />
-                </FormGroup>
-                <FormGroup label="Postpone length" labelInfo="(hh:mm:ss)">
+                <Switch
+                  label="Allow skip break"
+                  checked={settingsDraft.skipBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, "skipBreakEnabled")}
+                  disabled={!settingsDraft.breaksEnabled}
+                />
+                <Switch
+                  label="Allow snooze break"
+                  checked={settingsDraft.postponeBreakEnabled}
+                  onChange={handleSwitchChange.bind(
+                    null,
+                    "postponeBreakEnabled"
+                  )}
+                  disabled={!settingsDraft.breaksEnabled}
+                />
+                <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'postponeLength')}
-                    value={new Date(settings.postponeLength)}
+                    onChange={handleDateChange.bind(null, "postponeLength")}
+                    value={new Date(settingsDraft.postponeLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.postponeBreakEnabled
+                    }
                   />
                 </FormGroup>
-                <FormGroup label="Postpone limit">
+                <FormGroup label="Snooze limit">
                   <HTMLSelect
-                    value={settings.postponeLimit}
+                    value={settingsDraft.postponeLimit}
                     options={[
-                      {value: 1, label: "1"},
-                      {value: 2, label: "2"},
-                      {value: 3, label: "3"},
-                      {value: 4, label: "4"},
-                      {value: 5, label: "5"},
-                      {value: 0, label: "No limit"}
+                      { value: 1, label: "1" },
+                      { value: 2, label: "2" },
+                      { value: 3, label: "3" },
+                      { value: 4, label: "4" },
+                      { value: 5, label: "5" },
+                      { value: 0, label: "No limit" },
                     ]}
                     onChange={handlePostponeLimitChange}
-                    disabled={!settings.breaksEnabled || settings.notificationClick !== NotificationClick.Postpone}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.postponeBreakEnabled
+                    }
                   />
                 </FormGroup>
                 <Switch
                   label="Play gong sound on break start/end"
-                  checked={settings.gongEnabled}
-                  onChange={handleSwitchChange.bind(null, 'gongEnabled')}
-                  disabled={!settings.breaksEnabled}
+                  checked={settingsDraft.gongEnabled}
+                  onChange={handleSwitchChange.bind(null, "gongEnabled")}
+                  disabled={!settingsDraft.breaksEnabled}
                 />
                 <Switch
                   label="Allow end break"
-                  checked={settings.endBreakEnabled}
-                  onChange={handleSwitchChange.bind(null, 'endBreakEnabled')}
-                  disabled={!settings.breaksEnabled}
+                  checked={settingsDraft.endBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, "endBreakEnabled")}
+                  disabled={!settingsDraft.breaksEnabled}
                 />
               </React.Fragment>
-            )}
+            }
           />
           <Tab
             id="customization"
             title="Customization"
-            panel={(
+            panel={
               <React.Fragment>
                 <FormGroup label="Break title">
                   <InputGroup
                     id="break-title"
-                    value={settings.breakTitle}
-                    onChange={handleTextChange.bind(null, 'breakTitle')}
-                    disabled={!settings.breaksEnabled}
+                    value={settingsDraft.breakTitle}
+                    onChange={handleTextChange.bind(null, "breakTitle")}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Break message">
                   <InputGroup
                     id="break-message"
-                    value={settings.breakMessage}
-                    onChange={handleTextChange.bind(null, 'breakMessage')}
-                    disabled={!settings.breaksEnabled}
+                    value={settingsDraft.breakMessage}
+                    onChange={handleTextChange.bind(null, "breakMessage")}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Primary color">
@@ -205,9 +238,9 @@ export default function SettingsEl() {
                     id="primary-color"
                     className={styles.colorPicker}
                     type="color"
-                    value={settings.backgroundColor}
-                    onChange={handleTextChange.bind(null, 'backgroundColor')}
-                    disabled={!settings.breaksEnabled}
+                    value={settingsDraft.backgroundColor}
+                    onChange={handleTextChange.bind(null, "backgroundColor")}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Text color">
@@ -215,143 +248,206 @@ export default function SettingsEl() {
                     id="text-color"
                     className={styles.colorPicker}
                     type="color"
-                    value={settings.textColor}
-                    onChange={handleTextChange.bind(null, 'textColor')}
-                    disabled={!settings.breaksEnabled}
+                    value={settingsDraft.textColor}
+                    onChange={handleTextChange.bind(null, "textColor")}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup>
                   <Button onClick={handleResetColors}>Reset colors</Button>
                 </FormGroup>
               </React.Fragment>
-            )}
+            }
           />
           <Tab
             id="working-hours"
             title="Working Hours"
-            panel={(
+            panel={
               <React.Fragment>
                 <FormGroup>
                   <Switch
                     label="Enable working hours"
-                    checked={settings.workingHoursEnabled}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursEnabled')}
-                    disabled={!settings.breaksEnabled}
+                    checked={settingsDraft.workingHoursEnabled}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursEnabled"
+                    )}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup label="Breaks from">
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'workingHoursFrom')}
-                    value={new Date(settings.workingHoursFrom)}
+                    onChange={handleDateChange.bind(null, "workingHoursFrom")}
+                    value={new Date(settingsDraft.workingHoursFrom)}
                     selectAllOnFocus
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                 </FormGroup>
                 <FormGroup label="Breaks to">
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'workingHoursTo')}
-                    value={new Date(settings.workingHoursTo)}
+                    onChange={handleDateChange.bind(null, "workingHoursTo")}
+                    value={new Date(settingsDraft.workingHoursTo)}
                     selectAllOnFocus
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                 </FormGroup>
                 <FormGroup label="Breaks on">
                   <Switch
                     label="Monday"
-                    checked={settings.workingHoursMonday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursMonday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursMonday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursMonday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Tuesday"
-                    checked={settings.workingHoursTuesday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursTuesday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursTuesday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursTuesday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Wednesday"
-                    checked={settings.workingHoursWednesday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursWednesday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursWednesday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursWednesday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Thursday"
-                    checked={settings.workingHoursThursday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursThursday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursThursday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursThursday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Friday"
-                    checked={settings.workingHoursFriday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursFriday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursFriday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursFriday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Saturday"
-                    checked={settings.workingHoursSaturday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursSaturday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursSaturday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursSaturday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                   <Switch
                     label="Sunday"
-                    checked={settings.workingHoursSunday}
-                    onChange={handleSwitchChange.bind(null, 'workingHoursSunday')}
-                    disabled={!settings.breaksEnabled || !settings.workingHoursEnabled}
+                    checked={settingsDraft.workingHoursSunday}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "workingHoursSunday"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.workingHoursEnabled
+                    }
                   />
                 </FormGroup>
               </React.Fragment>
-            )}
+            }
           />
           <Tab
             id="idle-reset"
             title="Idle Reset"
-            panel={(
+            panel={
               <React.Fragment>
                 <FormGroup>
                   <Switch
                     label="Enable idle reset"
-                    checked={settings.idleResetEnabled}
-                    onChange={handleSwitchChange.bind(null, 'idleResetEnabled')}
-                    disabled={!settings.breaksEnabled}
+                    checked={settingsDraft.idleResetEnabled}
+                    onChange={handleSwitchChange.bind(null, "idleResetEnabled")}
+                    disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Reset break countdown when idle for" labelInfo="(hh:mm:ss)">
+                <FormGroup
+                  label="Reset break countdown when idle for"
+                  labelInfo="(hh:mm:ss)"
+                >
                   <TimePicker
-                    onChange={handleDateChange.bind(null, 'idleResetLength')}
-                    value={new Date(settings.idleResetLength)}
+                    onChange={handleDateChange.bind(null, "idleResetLength")}
+                    value={new Date(settingsDraft.idleResetLength)}
                     selectAllOnFocus
                     precision={TimePrecision.SECOND}
-                    disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.idleResetEnabled
+                    }
                   />
                 </FormGroup>
                 <Switch
                   label="Show notification on idle reset"
-                  checked={settings.idleResetNotification}
-                  onChange={handleSwitchChange.bind(null, 'idleResetNotification')}
-                  disabled={!settings.breaksEnabled || !settings.idleResetEnabled}
+                  checked={settingsDraft.idleResetNotification}
+                  onChange={handleSwitchChange.bind(
+                    null,
+                    "idleResetNotification"
+                  )}
+                  disabled={
+                    !settingsDraft.breaksEnabled ||
+                    !settingsDraft.idleResetEnabled
+                  }
                 />
               </React.Fragment>
-            )}
+            }
           />
-          {process.env.SNAP === undefined && (
+          {processEnv.SNAP === undefined && (
             <Tab
               id="system"
               title="System"
-              panel={(
+              panel={
                 <React.Fragment>
                   <FormGroup>
                     <Switch
                       label="Start at login"
-                      checked={settings.autoLaunch}
-                      onChange={handleSwitchChange.bind(null, 'autoLaunch')}
+                      checked={settingsDraft.autoLaunch}
+                      onChange={handleSwitchChange.bind(null, "autoLaunch")}
                     />
                   </FormGroup>
                 </React.Fragment>
-              )}
+              }
             />
           )}
         </Tabs>
       </main>
     </React.Fragment>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import {Position, Toaster, Intent} from "@blueprintjs/core"
+import { Position, Toaster, Intent } from "@blueprintjs/core";
 
 const AppToaster: Toaster = Toaster.create({
   position: Position.BOTTOM,
-}) as Toaster
+}) as Toaster;
 
 export function toast(message: string, intent: Intent = Intent.NONE) {
-  AppToaster.show({message, intent})
+  AppToaster.show({ message, intent });
 }

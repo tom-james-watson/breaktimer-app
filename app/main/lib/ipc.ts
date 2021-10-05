@@ -1,56 +1,59 @@
-import {ipcMain, IpcMainEvent, BrowserWindow} from 'electron'
-import log from 'electron-log'
-import {Settings} from '../../types/settings'
-import {IpcChannel} from '../../types/ipc'
-import {BreakTime} from '../../types/breaks'
-import {getWindows} from './windows'
-import {getBreakEndTime} from './breaks'
-import {getSettings, setSettings} from './store'
+import { ipcMain, IpcMainInvokeEvent, BrowserWindow } from "electron";
+import log from "electron-log";
+import { Settings } from "../../types/settings";
+import { IpcChannel } from "../../types/ipc";
+import { getWindows } from "./windows";
+import { getBreakLength, getAllowPostpone, postponeBreak } from "./breaks";
+import { getSettings, setSettings } from "./store";
 
-export function sendIpc(channel: IpcChannel, ...args: any[]): void {
-  const windows: BrowserWindow[] = getWindows()
+export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
+  const windows: BrowserWindow[] = getWindows();
 
-  log.info(`Send event ${channel}`, args)
+  log.info(`Send event ${channel}`, args);
 
   for (const window of windows) {
     if (!window) {
-      continue
+      continue;
     }
 
-    window.webContents.send(channel, ...args)
+    window.webContents.send(channel, ...args);
   }
 }
 
-ipcMain.on(IpcChannel.GET_SETTINGS, (event: IpcMainEvent): void => {
-  log.info(IpcChannel.GET_SETTINGS)
+ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
+  log.info(IpcChannel.AllowPostponeGet);
+  return getAllowPostpone();
+});
 
-  try {
-    const settings: Settings = getSettings()
-    event.reply(IpcChannel.GET_SETTINGS_SUCCESS, settings)
-  } catch (err)  {
-    log.error(err)
-    event.reply(IpcChannel.ERROR, err.message)
-  }
-})
+ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
+  log.info(IpcChannel.BreakPostpone);
+  postponeBreak();
+});
 
-ipcMain.on(IpcChannel.SET_SETTINGS, (event: IpcMainEvent, settings: Settings): void => {
-  log.info(IpcChannel.SET_SETTINGS, {settings})
-  try {
-    setSettings(settings)
-    event.reply(IpcChannel.SET_SETTINGS_SUCCESS, settings)
-  } catch (err)  {
-    log.error(err)
-    event.reply(IpcChannel.ERROR, err.message)
-  }
-})
+ipcMain.handle(IpcChannel.GongStartPlay, (): void => {
+  log.info(IpcChannel.GongStartPlay);
+  sendIpc(IpcChannel.GongStartPlay);
+});
 
-ipcMain.on(IpcChannel.GET_BREAK_END_TIME, (event: IpcMainEvent): void => {
-  log.info(IpcChannel.GET_BREAK_END_TIME)
-  try {
-    const breakTime: BreakTime = getBreakEndTime()
-    event.reply(IpcChannel.GET_BREAK_END_TIME_SUCCESS, breakTime ? breakTime.toISOString() : null)
-  } catch (err)  {
-    log.error(err)
-    event.reply(IpcChannel.ERROR, err.message)
+ipcMain.handle(IpcChannel.GongEndPlay, (): void => {
+  log.info(IpcChannel.GongEndPlay);
+  sendIpc(IpcChannel.GongEndPlay);
+});
+
+ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
+  log.info(IpcChannel.SettingsGet);
+  return getSettings();
+});
+
+ipcMain.handle(
+  IpcChannel.SettingsSet,
+  (_event: IpcMainInvokeEvent, settings: Settings): void => {
+    log.info(IpcChannel.SettingsSet);
+    setSettings(settings);
   }
-})
+);
+
+ipcMain.handle(IpcChannel.BreakLengthGet, (): Date => {
+  log.info(IpcChannel.BreakLengthGet);
+  return getBreakLength();
+});

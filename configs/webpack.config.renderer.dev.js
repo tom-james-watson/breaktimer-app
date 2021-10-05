@@ -1,59 +1,56 @@
 /**
- * Build config for electron renderer process
+ * Build config for development electron renderer process that uses
+ * Hot-Module-Replacement
+ *
+ * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-const path = require("path");
 const webpack = require("webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const merge = require("webpack-merge");
-const TerserPlugin = require("terser-webpack-plugin");
-const baseConfig = require("./webpack.config.base");
-const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv");
+const { spawn } = require("child_process");
+const baseConfig = require("./webpack.config.base.js");
+const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv.js");
 
-CheckNodeEnv("production");
+CheckNodeEnv("development");
+
+const port = 1212;
+const publicPath = `http://localhost:${port}/renderer/dist`;
+
 module.exports = merge.smart(baseConfig, {
-  devtool: "source-map",
+  devtool: "inline-source-map",
 
-  mode: "production",
+  mode: "development",
 
   target: "web",
 
-  entry: path.join(__dirname, "..", "app/renderer/index"),
+  entry: ["react-hot-loader/patch", "./app/renderer/index"],
 
   output: {
-    path: path.join(__dirname, "..", "app/renderer/dist"),
-    publicPath: "./renderer/dist/",
-    filename: "renderer.prod.js",
+    publicPath: `${publicPath}/`,
+    filename: "renderer.dev.js",
   },
 
   module: {
     rules: [
-      // Extract all .global.css to style.css as is
       {
         test: /\.global\.css$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: "./",
-            },
+            loader: "style-loader",
           },
           {
             loader: "css-loader",
+            options: {
+              sourceMap: true,
+            },
           },
         ],
       },
-      // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: "./",
-            },
+            loader: "style-loader",
           },
           {
             loader: "css-loader",
@@ -61,38 +58,35 @@ module.exports = merge.smart(baseConfig, {
               modules: {
                 localIdentName: "[name]__[local]__[hash:base64:5]",
               },
+              sourceMap: true,
             },
           },
         ],
       },
-      // Add SASS support  - compile all .global.scss files and pipe it to style.css
+      // SASS support - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: "./",
-            },
+            loader: "style-loader",
           },
           {
             loader: "css-loader",
-            options: {},
+            options: {
+              sourceMap: true,
+            },
           },
           {
             loader: "sass-loader",
           },
         ],
       },
-      // Add SASS support  - compile all other .scss files and pipe it to style.css
+      // SASS support - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: "./",
-            },
+            loader: "style-loader",
           },
           {
             loader: "css-loader",
@@ -100,6 +94,7 @@ module.exports = merge.smart(baseConfig, {
               modules: {
                 localIdentName: "[name]__[local]__[hash:base64:5]",
               },
+              sourceMap: true,
             },
           },
           {
@@ -164,19 +159,13 @@ module.exports = merge.smart(baseConfig, {
     ],
   },
 
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          compress: true,
-        },
-      }),
-      new OptimizeCSSAssetsPlugin(),
-    ],
-  },
-
   plugins: [
+    new webpack.HotModuleReplacementPlugin({
+      multiStep: true,
+    }),
+
+    new webpack.NoEmitOnErrorsPlugin(),
+
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -185,9 +174,16 @@ module.exports = merge.smart(baseConfig, {
      *
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
+     *
+     * By default, use 'development' as NODE_ENV. This can be overriden with
+     * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "production",
+      NODE_ENV: "development",
+    }),
+
+    new webpack.LoaderOptionsPlugin({
+      debug: true,
     }),
 
     new webpack.DefinePlugin({
@@ -195,15 +191,35 @@ module.exports = merge.smart(baseConfig, {
       "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
       "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
     }),
-
-    new MiniCssExtractPlugin({
-      filename: "style.css",
-    }),
-
-    new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === "true" ? "server" : "disabled",
-      openAnalyzer: process.env.OPEN_ANALYZER === "true",
-    }),
   ],
+
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+
+  devServer: {
+    port,
+    static: {
+      publicPath,
+    },
+    client: {
+      logging: "warn",
+    },
+    devMiddleware: {
+      stats: "errors-only",
+    },
+    headers: { "Access-Control-Allow-Origin": "*" },
+    onBeforeSetupMiddleware: () => {
+      if (process.env.START_HOT) {
+        spawn("yarn", ["start-main-dev"], {
+          shell: true,
+          env: process.env,
+          stdio: "inherit",
+        })
+          .on("close", (code) => process.exit(code))
+          .on("error", (spawnError) => console.error(spawnError));
+      }
+    },
+  },
 });

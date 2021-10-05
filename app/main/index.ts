@@ -1,51 +1,55 @@
-import "regenerator-runtime/runtime"
-import "core-js/stable"
-import {app} from 'electron'
-import {autoUpdater} from 'electron-updater'
-import log from 'electron-log'
-import {initBreaks} from './lib/breaks'
-import {getAppInitialized, setAppInitialized, setBreaksEnabled} from './lib/store'
-import {createSoundsWindow, createSettingsWindow} from './lib/windows'
-import {setAutoLauch} from './lib/auto-launch'
-import {showNotification} from './lib/notifications'
-import {initTray} from './lib/tray'
-import './lib/ipc'
+import "regenerator-runtime/runtime";
+import "core-js/stable";
+import { app } from "electron";
+import { autoUpdater } from "electron-updater";
+import log from "electron-log";
+import { initBreaks } from "./lib/breaks";
+import {
+  getAppInitialized,
+  setAppInitialized,
+  setBreaksEnabled,
+} from "./lib/store";
+import { createSoundsWindow, createSettingsWindow } from "./lib/windows";
+import { setAutoLauch } from "./lib/auto-launch";
+import { showNotification } from "./lib/notifications";
+import { initTray } from "./lib/tray";
+import "./lib/ipc";
 
-const gotTheLock = app.requestSingleInstanceLock()
+const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
-  const cliArg = process.argv[process.argv.length - 1]
+  const cliArg = process.argv[process.argv.length - 1];
 
-  if (cliArg === 'disable') {
-    console.log('breaks disabled')
-    setBreaksEnabled(false)
-  } else if (cliArg === 'enable') {
-    console.log('breaks enabled')
-    setBreaksEnabled(true)
-  } else if (process.platform !== 'darwin') {
-    console.log('app already open, opening settings')
+  if (cliArg === "disable") {
+    console.log("breaks disabled");
+    setBreaksEnabled(false);
+  } else if (cliArg === "enable") {
+    console.log("breaks enabled");
+    setBreaksEnabled(true);
+  } else if (process.platform !== "darwin") {
+    console.log("app already open, opening settings");
   } else {
-    log.info('app already running')
+    log.info("app already running");
   }
-  app.exit()
+  app.exit();
 }
 
-function checkForUpdates() {
-  log.info('Checking for updates...')
-  autoUpdater.logger = log
-  autoUpdater.checkForUpdatesAndNotify()
+function checkForUpdates(): void {
+  log.info("Checking for updates...");
+  autoUpdater.logger = log;
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support')
-  sourceMapSupport.install()
+if (process.env.NODE_ENV === "production") {
+  const sourceMapSupport = require("source-map-support");
+  sourceMapSupport.install();
 }
 
 if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
+  process.env.NODE_ENV === "development" ||
+  process.env.DEBUG_PROD === "true"
 ) {
-  require('electron-debug')()
+  require("electron-debug")();
 }
 
 // function installExtensions() {
@@ -59,59 +63,59 @@ if (
 // }
 
 // Don't exit on close all windows - live in tray
-app.on('window-all-closed', e => e.preventDefault())
+app.on("window-all-closed", (e: Event) => e.preventDefault());
 
-app.on('ready', async () => {
+app.on("ready", async () => {
   if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
+    process.env.NODE_ENV === "development" ||
+    process.env.DEBUG_PROD === "true"
   ) {
     // Extensions are broken on electron 10
     // await installExtensions()
   }
 
   // Required for notifications to work on windows
-  if (process.platform === 'win32') {
-    app.setAppUserModelId('com.tomjwatson.breaktimer')
+  if (process.platform === "win32") {
+    app.setAppUserModelId("com.tomjwatson.breaktimer");
   }
 
-  if (process.platform === 'darwin') {
-    app.dock.hide()
+  if (process.platform === "darwin") {
+    app.dock.hide();
   }
 
-  const appInitialized = getAppInitialized()
+  const appInitialized = getAppInitialized();
 
   if (!appInitialized) {
-    setAutoLauch(true)
+    setAutoLauch(true);
     showNotification(
-      'BreakTimer runs in the background',
-      'The app can be accessed via the system tray',
-      null,
+      "BreakTimer runs in the background",
+      "The app can be accessed via the system tray",
+      undefined,
       false
-    )
-    setAppInitialized()
+    );
+    setAppInitialized();
   }
 
-  initBreaks()
-  initTray()
-  createSoundsWindow()
+  initBreaks();
+  initTray();
+  createSoundsWindow();
 
-  if (process.env.NODE_ENV !== 'development' && process.platform !== 'win32') {
-    checkForUpdates()
+  if (process.env.NODE_ENV !== "development" && process.platform !== "win32") {
+    checkForUpdates();
   }
-})
+});
 
-app.on('second-instance', (event: Event, argv: string[]) => {
-  const cliArg = argv[argv.length - 1]
+app.on("second-instance", (_event: Event, argv: string[]) => {
+  const cliArg = argv[argv.length - 1];
 
-  if (cliArg === 'disable') {
-    log.info('Breaks disabled from cli')
-    setBreaksEnabled(false)
-  } else if (cliArg === 'enable') {
-    log.info('Breaks enabled from cli')
-    setBreaksEnabled(true)
-  } else if (process.platform !== 'darwin') {
-    log.info('App opened second time, opening settings')
-    createSettingsWindow()
+  if (cliArg === "disable") {
+    log.info("Breaks disabled from cli");
+    setBreaksEnabled(false);
+  } else if (cliArg === "enable") {
+    log.info("Breaks enabled from cli");
+    setBreaksEnabled(true);
+  } else if (process.platform !== "darwin") {
+    log.info("App opened second time, opening settings");
+    createSettingsWindow();
   }
-})
+});

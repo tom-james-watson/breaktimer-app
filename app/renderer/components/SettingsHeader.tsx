@@ -1,20 +1,21 @@
-import * as React from 'react'
-import {Navbar, Button, Alignment, Intent} from '@blueprintjs/core'
-const styles = require('./SettingsHeader.scss')
+import * as React from "react";
+import { Navbar, Button, Alignment } from "@blueprintjs/core";
+import styles from "./SettingsHeader.scss";
 
 interface Props {
-  textColor: string
-  backgroundColor: string
-  handleSave: () => void
+  backgroundColor: string;
+  handleSave: () => void;
+  showSave: boolean;
+  textColor: string;
 }
 
 export default function SettingsHeader(props: Props) {
-  const {textColor, backgroundColor, handleSave} = props
+  const { backgroundColor, handleSave, showSave, textColor } = props;
 
   const style = {
     color: textColor,
-    backgroundColor
-  }
+    backgroundColor,
+  };
 
   return (
     <Navbar className={`${styles.navbar} bp3-dark`} style={style}>
@@ -23,11 +24,13 @@ export default function SettingsHeader(props: Props) {
           <strong>Settings</strong>
         </Navbar.Heading>
       </Navbar.Group>
-      <Navbar.Group align={Alignment.RIGHT}>
-        <Button intent={Intent.PRIMARY} onClick={handleSave}>
-          Save
-        </Button>
-      </Navbar.Group>
+      {showSave && (
+        <Navbar.Group align={Alignment.RIGHT}>
+          <Button outlined onClick={handleSave}>
+            Save
+          </Button>
+        </Navbar.Group>
+      )}
     </Navbar>
-  )
+  );
 }
