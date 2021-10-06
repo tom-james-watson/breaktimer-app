@@ -1,5 +1,4 @@
-BreakTimer App - https://breaktimer.app
-===========
+# BreakTimer App - https://breaktimer.app
 
 🔨 **Looking for contributors** 🔨 If you feel like getting involved, please get in contact!
 
@@ -7,31 +6,31 @@ BreakTimer is a desktop application for managing and enforcing periodic breaks. 
 
 BreakTimer allows you to customize:
 
-* How long your breaks are and how often you wish to have them
-* Whether to be reminded with a simple notification or a fullscreen break window
-* Working hours so you are only reminded when you want to be
-* The content of messages shown during breaks.
-* Whether to intelligently restart your break countdown when it detects that you have not been using the computer
+- How long your breaks are and how often you wish to have them
+- Whether to be reminded with a simple notification or a fullscreen break window
+- Working hours so you are only reminded when you want to be
+- The content of messages shown during breaks.
+- Whether to intelligently restart your break countdown when it detects that you have not been using the computer
 
 ## Installation
 
-* **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you will receive a warning on install, press more info -> run anyway)
-* **macOS** - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
-* **Linux**:
-  * Auto-updating **[preferred]**:
-    * [BreakTimer Snap](https://snapcraft.io/breaktimer) - **also available in the Ubuntu App Store**.
-    * [BreakTimer.AppImage](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.AppImage)
-  * Non auto-updating
-    * [BreakTimer.deb](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.deb)
-    * [BreakTimer.rpm](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.rpm) (untested)
-    * [BreakTimer.tar.gz](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.tar.gz)
+- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you will receive a warning on install, press more info -> run anyway)
+- **macOS** - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
+- **Linux**:
+  - Auto-updating **[preferred]**:
+    - [BreakTimer Snap](https://snapcraft.io/breaktimer) - **also available in the Ubuntu App Store**.
+    - [BreakTimer.AppImage](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.AppImage)
+  - Non auto-updating
+    - [BreakTimer.deb](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.deb)
+    - [BreakTimer.rpm](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.rpm) (untested)
+    - [BreakTimer.tar.gz](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.tar.gz)
 
 ## Screenshots
 
-![break panel](screenshots/break.png)
----
-![settings panel](screenshots/settings.png)
----
+## ![break panel](screenshots/break.png)
+
+## ![settings panel](screenshots/settings.png)
+
 ![notification](screenshots/notification.png)
 
 ## FAQ
@@ -60,15 +59,25 @@ breaktimer enable
 
 You can find the log file for BreakTimer here:
 
-Linux: `/home/<USERNAME>/.config/BreakTimer/log.log`
+Linux: `/home/<USERNAME>/.config/BreakTimer/logs/main.log`
 
-macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/log.log`
+macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/logs/main.log`
 
-Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\log.log`
+Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\logs/main.log`
 
 You can either upload this to a cloud service such as Dropbox or Google Drive and enable public sharing, or you can email the file as an attachment to contact@breaktimer.app. The log files do not contain any personally-indentifying information.
 
 Please try and include a timestamp for roughly when you have seen the issue so that I can find the relevant place in the log file.
+
+### How can I hard reset the app's data
+
+In case a bug has left the UI in a unrecoverable state, you can reset the app data by exiting the app, deleting the below folder and starting the app again.
+
+Linux: `/home/<USERNAME>/.config/BreakTimer`
+
+macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer`
+
+Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer`
 
 ## Development
 
