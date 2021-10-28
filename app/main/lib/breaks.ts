@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import { PowerMonitor } from "electron";
+import { app, PowerMonitor } from "electron";
 import { Settings, NotificationType } from "../../types/settings";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
@@ -104,6 +104,11 @@ export function endPopupBreak(): void {
     breakTime = null;
     havingBreak = false;
     postponedCount = 0;
+    
+    if (process.platform === 'darwin') {
+      app.hide();
+      app.dock.hide();
+    }
   }
 }
 
