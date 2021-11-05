@@ -121,6 +121,11 @@ export function postponeBreak(): void {
   postponedCount++;
   havingBreak = false;
   createBreak(true);
+  
+  if (process.platform === 'darwin') {
+    app.hide();
+    app.dock.hide();
+  }
 }
 
 function doBreak(): void {
