@@ -1,5 +1,5 @@
 import path from "path";
-import { screen, BrowserWindow } from "electron";
+import { app, screen, BrowserWindow } from "electron";
 import log from "electron-log";
 import { endPopupBreak } from "./breaks";
 
@@ -108,6 +108,7 @@ export function createBreakWindows(): void {
     });
 
     breakWindow.setVisibleOnAllWorkspaces(true);
+    app.dock.hide();
     breakWindow.loadURL(getBrowserWindowUrl("break"));
 
     breakWindow.on("ready-to-show", () => {

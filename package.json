@@ -60,6 +60,9 @@
     "mac": {
       "entitlements": "./internals/build/entitlements.mac.plist",
       "entitlementsInherit": "./internals/build/entitlements.mac.plist",
+      "extendInfo": {
+        "LSUIElement": 1
+      },
       "gatekeeperAssess": false,
       "hardenedRuntime": true,
       "target": [
