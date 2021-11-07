@@ -47,17 +47,21 @@ interface BreakProgressProps {
   breakMessage: string;
   endBreakEnabled: boolean;
   onEndBreak: () => void;
+  settings: Settings;
   textColor: string;
 }
 
 function BreakProgress(props: BreakProgressProps) {
-  const { breakMessage, endBreakEnabled, onEndBreak, textColor } = props;
+  const { breakMessage, endBreakEnabled, onEndBreak, settings, textColor } =
+    props;
   const [timeRemaining, setTimeRemaining] =
     React.useState<TimeRemaining | null>(null);
   const [progress, setProgress] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    ipcRenderer.invokeGongStartPlay();
+    if (settings.gongEnabled) {
+      ipcRenderer.invokeGongStartPlay();
+    }
 
     (async () => {
       const length = new Date(await ipcRenderer.invokeGetBreakLength());
@@ -91,7 +95,7 @@ function BreakProgress(props: BreakProgressProps) {
 
       tick();
     })();
-  }, [onEndBreak]);
+  }, [onEndBreak, settings]);
 
   const fadeIn = useSpring({
     to: { opacity: 1 },
@@ -285,10 +289,13 @@ export default function Break() {
   }, []);
 
   const handleEndBreak = React.useCallback(() => {
-    // For some reason the end gong sometimes sounds very distorted.
-    ipcRenderer.invokeGongStartPlay();
+    if (settings?.gongEnabled) {
+      // For some reason the end gong sometimes sounds very distorted, so just
+      // reuse the start gong.
+      ipcRenderer.invokeGongStartPlay();
+    }
     setClosing(true);
-  }, []);
+  }, [settings]);
 
   if (settings === null || allowPostpone === null) {
     return null;
@@ -332,6 +339,7 @@ export default function Break() {
                 breakMessage={settings.breakMessage}
                 endBreakEnabled={settings.endBreakEnabled}
                 onEndBreak={handleEndBreak}
+                settings={settings}
                 textColor={settings.textColor}
               />
             )}
