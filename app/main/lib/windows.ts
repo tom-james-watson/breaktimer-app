@@ -109,6 +109,8 @@ export function createBreakWindows(): void {
 
     breakWindow.setVisibleOnAllWorkspaces(true);
 
+    // setVisibleOnAllWorkspaces seems to have a bug that causes the dock to
+    // unhide when called.
     if (process.platform === "darwin") {
       app.dock.hide();
     }
