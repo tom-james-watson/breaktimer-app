@@ -109,9 +109,9 @@ export function createBreakWindows(): void {
 
     breakWindow.setVisibleOnAllWorkspaces(true);
 
-    // setVisibleOnAllWorkspaces seems to have a bug that causes the dock to
-    // unhide when called.
     if (process.platform === "darwin") {
+      // setVisibleOnAllWorkspaces seems to have a bug that causes the dock to
+      // unhide when called.
       app.dock.hide();
     }
 
@@ -126,6 +126,12 @@ export function createBreakWindows(): void {
     });
 
     breakWindow.on("closed", () => {
+      if (process.platform === "darwin") {
+        // Ensure that focus is returned to the previous app when break windows
+        // close.
+        app.hide();
+      }
+
       for (const win of breakWindows) {
         if (!win.isDestroyed()) {
           try {
