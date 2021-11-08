@@ -108,7 +108,11 @@ export function createBreakWindows(): void {
     });
 
     breakWindow.setVisibleOnAllWorkspaces(true);
-    app.dock.hide();
+
+    if (process.platform === "darwin") {
+      app.dock.hide();
+    }
+
     breakWindow.loadURL(getBrowserWindowUrl("break"));
 
     breakWindow.on("ready-to-show", () => {
