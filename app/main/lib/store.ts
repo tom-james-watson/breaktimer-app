@@ -5,7 +5,6 @@ import { initBreaks } from "./breaks";
 
 const defaultSettings: Settings = {
   autoLaunch: true,
-  showBackdrop: false,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
   breakFrequency: new Date(0, 0, 0, 0, 28),
@@ -29,7 +28,10 @@ const defaultSettings: Settings = {
   breakTitle: "Time for a break!",
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",
+  backdropColor: "#001914",
   textColor: "#ffffff",
+  showBackdrop: false,
+  backdropOpacity: 0.7,
   endBreakEnabled: true,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,

@@ -7,7 +7,6 @@ export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  showBackdrop: boolean;
   breakFrequency: Date;
   breakLength: Date;
   postponeLength: Date;
@@ -30,6 +29,9 @@ export interface Settings {
   breakMessage: string;
   backgroundColor: string;
   textColor: string;
+  showBackdrop: boolean;
+  backdropColor: string;
+  backdropOpacity: number;
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;

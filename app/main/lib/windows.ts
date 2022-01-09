@@ -37,8 +37,8 @@ export function createSettingsWindow(): void {
     show: false,
     width: 507,
     minWidth: 507,
-    height: process.platform === "win32" ? 700 : 660,
-    minHeight: process.platform === "win32" ? 700 : 660,
+    height: process.platform === "win32" ? 740 : 700,
+    minHeight: process.platform === "win32" ? 740 : 700,
     autoHideMenuBar: true,
     icon:
       process.env.NODE_ENV === "development"
@@ -80,6 +80,8 @@ export function createSoundsWindow(): void {
 }
 
 export function createBreakWindows(): void {
+  const settings = getSettings();
+
   const displays = screen.getAllDisplays();
   let created = 0;
   for (const display of displays) {
@@ -92,7 +94,6 @@ export function createBreakWindows(): void {
     const size = 400;
     const breakWindow = new BrowserWindow({
       show: false,
-      alwaysOnTop: true,
       autoHideMenuBar: true,
       frame: false,
       x: display.bounds.x + display.bounds.width / 2 - size / 2,
@@ -108,7 +109,10 @@ export function createBreakWindows(): void {
       },
     });
 
-    breakWindow.setVisibleOnAllWorkspaces(true);
+    breakWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    breakWindow.setAlwaysOnTop(true, "normal");
+    breakWindow.setFullScreenable(false);
+    breakWindow.moveTop();
 
     if (process.platform === "darwin") {
       // setVisibleOnAllWorkspaces seems to have a bug that causes the dock to
@@ -122,11 +126,12 @@ export function createBreakWindows(): void {
       if (!breakWindow) {
         throw new Error('"breakWindow" is not defined');
       }
-      const settings = getSettings();
-      if(settings.showBackdrop){
-        breakWindow.setSize(display.bounds.width,display.bounds.height)
-        breakWindow.setPosition(0,0)
+
+      if (settings.showBackdrop) {
+        breakWindow.setSize(display.bounds.width, display.bounds.height);
+        breakWindow.setPosition(0, 0);
       }
+
       breakWindow.show();
       breakWindow.focus();
     });
