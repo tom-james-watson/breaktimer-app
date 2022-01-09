@@ -7,6 +7,7 @@ export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
+  showBackdrop: boolean;
   breakFrequency: Date;
   breakLength: Date;
   postponeLength: Date;

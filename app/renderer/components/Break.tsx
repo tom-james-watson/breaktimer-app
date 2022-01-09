@@ -302,7 +302,10 @@ export default function Break() {
   }
 
   return (
-    <div className={`bp3-dark ${styles.breakContainer}`}>
+    <div className={`bp3-dark ${styles.breakContainer}`}
+      style={{
+        backgroundColor: settings.showBackdrop?'rgba(0,0,0,0.5)':'initial',
+      }}>      
       <animated.div
         className={styles.break}
         style={{

@@ -130,6 +130,12 @@ export default function SettingsEl() {
                     onChange={handleNotificationTypeChange}
                     disabled={!settingsDraft.breaksEnabled}
                   />
+                  <Switch
+                  label="Show backdrop"
+                  checked={settingsDraft.showBackdrop}
+                  onChange={handleSwitchChange.bind(null, "showBackdrop")}
+                  disabled={!settingsDraft.breaksEnabled || settingsDraft.notificationType!==NotificationType.Popup}
+                />
                 </FormGroup>
                 <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
                   <TimePicker

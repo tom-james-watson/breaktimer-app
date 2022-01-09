@@ -5,6 +5,7 @@ import { initBreaks } from "./breaks";
 
 const defaultSettings: Settings = {
   autoLaunch: true,
+  showBackdrop: false,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
   breakFrequency: new Date(0, 0, 0, 0, 28),
