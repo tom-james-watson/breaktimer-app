@@ -4,6 +4,7 @@
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 .eslintcache
+.cz-config.js
 
 # Dependency directory
 node_modules
