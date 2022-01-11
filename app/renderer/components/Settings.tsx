@@ -8,6 +8,7 @@ import {
   InputGroup,
   Intent,
   Button,
+  Slider,
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
 import { Settings, NotificationType } from "../../types/settings";
@@ -83,6 +84,15 @@ export default function SettingsEl() {
       ...settingsDraft,
       textColor: "#ffffff",
       backgroundColor: "#16a085",
+      backdropColor: "#001914",
+      backdropOpacity: 0.7,
+    });
+  };
+
+  const handleSliderChange = (field: keyof Settings, newVal: number): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      [field]: newVal,
     });
   };
 
@@ -235,7 +245,6 @@ export default function SettingsEl() {
                 </FormGroup>
                 <FormGroup label="Primary color">
                   <InputGroup
-                    id="primary-color"
                     className={styles.colorPicker}
                     type="color"
                     value={settingsDraft.backgroundColor}
@@ -245,12 +254,43 @@ export default function SettingsEl() {
                 </FormGroup>
                 <FormGroup label="Text color">
                   <InputGroup
-                    id="text-color"
                     className={styles.colorPicker}
                     type="color"
                     value={settingsDraft.textColor}
                     onChange={handleTextChange.bind(null, "textColor")}
                     disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Switch
+                    label="Show backdrop"
+                    checked={settingsDraft.showBackdrop}
+                    onChange={handleSwitchChange.bind(null, "showBackdrop")}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      settingsDraft.notificationType !== NotificationType.Popup
+                    }
+                  />
+                </FormGroup>
+                <FormGroup label="Backdrop color">
+                  <InputGroup
+                    className={styles.colorPicker}
+                    type="color"
+                    value={settingsDraft.backdropColor}
+                    onChange={handleTextChange.bind(null, "backdropColor")}
+                    disabled={!settingsDraft.showBackdrop}
+                  />
+                </FormGroup>
+                <FormGroup label="Backdrop opacity">
+                  <Slider
+                    min={0.2}
+                    max={1}
+                    stepSize={0.05}
+                    labelPrecision={2}
+                    labelStepSize={0.2}
+                    onChange={handleSliderChange.bind(null, "backdropOpacity")}
+                    value={settingsDraft.backdropOpacity}
+                    disabled={!settingsDraft.showBackdrop}
                   />
                 </FormGroup>
                 <FormGroup>

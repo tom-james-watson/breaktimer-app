@@ -8,6 +8,14 @@ import styles from "./Break.scss";
 const COUNTDOWN_SECS = 10;
 const TICK_MS = 200;
 
+function createRgba(hex: string, a: number) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
 interface TimeRemaining {
   hours: number;
   minutes: number;
@@ -238,11 +246,17 @@ export default function Break() {
     width: 0,
     height: 0,
     backgroundOpacity: 0,
+    backdropOpacity: 0,
   }));
 
   React.useEffect(() => {
     setTimeout(async () => {
-      animApi({ backgroundOpacity: 0.8, width: 250, height: 250 });
+      animApi({
+        backgroundOpacity: 0.8,
+        backdropOpacity: 1,
+        width: 250,
+        height: 250,
+      });
       const allowPostpone = await ipcRenderer.invokeGetAllowPostpone();
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
 
@@ -302,7 +316,15 @@ export default function Break() {
   }
 
   return (
-    <div className={`bp3-dark ${styles.breakContainer}`}>
+    <animated.div
+      className={`bp3-dark ${styles.breakContainer}`}
+      style={{
+        backgroundColor: settings.showBackdrop
+          ? createRgba(settings.backdropColor, settings.backdropOpacity)
+          : "initial",
+        opacity: anim.backdropOpacity,
+      }}
+    >
       <animated.div
         className={styles.break}
         style={{
@@ -346,6 +368,6 @@ export default function Break() {
           </>
         )}
       </animated.div>
-    </div>
+    </animated.div>
   );
 }

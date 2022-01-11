@@ -29,6 +29,9 @@ export interface Settings {
   breakMessage: string;
   backgroundColor: string;
   textColor: string;
+  showBackdrop: boolean;
+  backdropColor: string;
+  backdropOpacity: number;
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
