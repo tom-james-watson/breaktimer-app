@@ -110,7 +110,7 @@ export function createBreakWindows(): void {
     });
 
     breakWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    breakWindow.setAlwaysOnTop(true, "normal");
+    breakWindow.setAlwaysOnTop(true);
     breakWindow.setFullScreenable(false);
     breakWindow.moveTop();
 
