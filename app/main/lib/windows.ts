@@ -129,7 +129,7 @@ export function createBreakWindows(): void {
 
       if (settings.showBackdrop) {
         breakWindow.setSize(display.bounds.width, display.bounds.height);
-        breakWindow.setPosition(0, 0);
+        breakWindow.setPosition(display.bounds.x, display.bounds.y);
       }
 
       breakWindow.show();
