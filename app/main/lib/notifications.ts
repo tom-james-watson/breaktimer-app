@@ -22,7 +22,7 @@ export function showNotification(
     silent: process.platform !== "win32",
   });
 
-  if (forceClose) {
+  if (forceClose && process.platform !== "darwin") {
     // Ensure notification doesn't stay open longer than 10 secs
     setTimeout(() => {
       notification.close();
