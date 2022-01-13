@@ -57,7 +57,7 @@ export function buildTray(): void {
       title: "About",
       type: "info",
       message: `BreakTimer`,
-      detail: `Build: ${packageJson.version}\n\nDistributed under GLP-3.0-or-later license`,
+      detail: `Build: ${packageJson.version}\n\nWebsite:\nhttps://breaktimer.app\n\nSource Code:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GLP-3.0-or-later license.`,
     });
   };
 
