@@ -226,7 +226,7 @@
     "electron-store": "^5.2.0",
     "history": "^4.7.2",
     "howler": "^2.2.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "react": "^16.7.0",
     "react-ace": "^7.0.2",
     "react-dom": "^16.7.0",
