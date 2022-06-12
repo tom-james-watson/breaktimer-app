@@ -30,7 +30,7 @@ const defaultSettings: Settings = {
   backgroundColor: "#16a085",
   backdropColor: "#001914",
   textColor: "#ffffff",
-  showBackdrop: false,
+  showBackdrop: true,
   backdropOpacity: 0.7,
   endBreakEnabled: true,
   skipBreakEnabled: false,
