@@ -1,5 +1,4 @@
-Development
-===========
+# Development
 
 ## Requirements
 
@@ -118,6 +117,12 @@ And should also install the `review-tools` snap for enhanced checks before uploa
 
 ```bash
 sudo snap install review-tools
+```
+
+Finally, install deps for building rpms:
+
+```bash
+sudo apt install rpm
 ```
 
 Then run:
