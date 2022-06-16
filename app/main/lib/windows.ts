@@ -46,7 +46,6 @@ export function createSettingsWindow(): void {
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "../../renderer/preload.js"),
-      nativeWindowOpen: true,
     },
   });
 
@@ -72,7 +71,6 @@ export function createSoundsWindow(): void {
     webPreferences: {
       devTools: false,
       preload: path.join(__dirname, "../../renderer/preload.js"),
-      nativeWindowOpen: true,
     },
   });
 
@@ -105,7 +103,6 @@ export function createBreakWindows(): void {
       hasShadow: false,
       webPreferences: {
         preload: path.join(__dirname, "../../renderer/preload.js"),
-        nativeWindowOpen: true,
       },
     });
 
