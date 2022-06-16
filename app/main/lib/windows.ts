@@ -91,6 +91,7 @@ export function createBreakWindows(): void {
       y: display.bounds.y + display.bounds.height / 2 - size / 2,
       width: size,
       height: size,
+      resizable: false,
       focusable: false,
       transparent: true,
       hasShadow: false,
