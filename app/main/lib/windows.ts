@@ -46,7 +46,6 @@ export function createSettingsWindow(): void {
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "../../renderer/preload.js"),
-      nativeWindowOpen: true,
     },
   });
 
@@ -72,7 +71,6 @@ export function createSoundsWindow(): void {
     webPreferences: {
       devTools: false,
       preload: path.join(__dirname, "../../renderer/preload.js"),
-      nativeWindowOpen: true,
     },
   });
 
@@ -83,14 +81,7 @@ export function createBreakWindows(): void {
   const settings = getSettings();
 
   const displays = screen.getAllDisplays();
-  let created = 0;
   for (const display of displays) {
-    // BrowserWindows on a second monitor seem to be created with the wrong
-    // size and colour space on windows for some reason. For now, just create
-    // the break popup on the first screen.
-    if (process.platform === "win32" && created === 1) {
-      break;
-    }
     const size = 400;
     const breakWindow = new BrowserWindow({
       show: false,
@@ -100,12 +91,12 @@ export function createBreakWindows(): void {
       y: display.bounds.y + display.bounds.height / 2 - size / 2,
       width: size,
       height: size,
+      resizable: false,
       focusable: false,
       transparent: true,
       hasShadow: false,
       webPreferences: {
         preload: path.join(__dirname, "../../renderer/preload.js"),
-        nativeWindowOpen: true,
       },
     });
 
@@ -157,6 +148,5 @@ export function createBreakWindows(): void {
     });
 
     breakWindows.push(breakWindow);
-    created++;
   }
 }
