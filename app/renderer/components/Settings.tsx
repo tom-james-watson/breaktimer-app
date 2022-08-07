@@ -481,6 +481,11 @@ export default function SettingsEl() {
                       checked={settingsDraft.autoLaunch}
                       onChange={handleSwitchChange.bind(null, "autoLaunch")}
                     />
+                    <Switch
+                      label="Enable breaks on application start"
+                      checked={settingsDraft.enableOnStart}
+                      onChange={handleSwitchChange.bind(null, "enableOnStart")}
+                    />
                   </FormGroup>
                 </React.Fragment>
               }

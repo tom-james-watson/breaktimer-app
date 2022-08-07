@@ -35,4 +35,5 @@ export interface Settings {
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
+  enableOnStart: boolean;
 }

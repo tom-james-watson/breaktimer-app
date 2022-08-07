@@ -3,7 +3,7 @@ import "core-js/stable";
 import { app } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
-import { initBreaks } from "./lib/breaks";
+import { initBreaks, checkEnableOnStart } from "./lib/breaks";
 import {
   getAppInitialized,
   setAppInitialized,
@@ -96,6 +96,7 @@ app.on("ready", async () => {
     setAppInitialized();
   }
 
+  checkEnableOnStart();
   initBreaks();
   initTray();
   createSoundsWindow();

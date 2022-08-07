@@ -5,6 +5,7 @@ import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import { getSettings, setSettings } from "./store";
 import { createSettingsWindow } from "./windows";
+import log from "electron-log";
 import {
   getBreakTime,
   checkInWorkingHours,
@@ -47,6 +48,7 @@ export function buildTray(): void {
   const breaksEnabled = settings.breaksEnabled;
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
+    log.info("setBreaksEnabled(" + breaksEnabled + ")");
     settings = getSettings();
     setSettings({ ...settings, breaksEnabled });
     buildTray();

@@ -4,7 +4,7 @@ import { Settings, NotificationType } from "../../types/settings";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
 import { sendIpc } from "./ipc";
-import { getSettings } from "./store";
+import { getSettings, setBreaksEnabled } from "./store";
 import { buildTray } from "./tray";
 import { showNotification } from "./notifications";
 import { createBreakWindows } from "./windows";
@@ -323,4 +323,12 @@ export function initBreaks(): void {
   }
 
   tickInterval = setInterval(tick, 1000);
+}
+
+export function checkEnableOnStart(): void {
+  const settings: Settings = getSettings();
+
+  if (settings.enableOnStart && !settings.breaksEnabled) {
+    setBreaksEnabled(true);
+  }
 }
