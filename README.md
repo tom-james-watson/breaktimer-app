@@ -1,5 +1,7 @@
 # BreakTimer App - https://breaktimer.app
 
+![](https://img.shields.io/github/downloads/tom-james-watson/breaktimer-app/total?logo=github&style=social)
+
 🔨 **Looking for contributors** 🔨 If you feel like getting involved, please get in contact!
 
 BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS and Linux.
