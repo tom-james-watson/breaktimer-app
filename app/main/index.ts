@@ -3,7 +3,11 @@ import "core-js/stable";
 import { app } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
-import { initBreaks } from "./lib/breaks";
+import { 
+  initBreaks,
+  startBreakNow,
+  createBreak,
+} from "./lib/breaks";
 import {
   getAppInitialized,
   setAppInitialized,
@@ -26,6 +30,12 @@ if (!gotTheLock) {
   } else if (cliArg === "enable") {
     console.log("breaks enabled");
     setBreaksEnabled(true);
+  } else if (cliArg === "restart") {
+    console.log("break period restarted");
+    createBreak.bind(null, false);
+  } else if (cliArg === "start") {
+    console.log("break started");
+    startBreakNow();
   } else if (process.platform !== "darwin") {
     console.log("app already open, opening settings");
   } else {
@@ -114,6 +124,12 @@ app.on("second-instance", (_event: Event, argv: string[]) => {
   } else if (cliArg === "enable") {
     log.info("Breaks enabled from cli");
     setBreaksEnabled(true);
+  } else if (cliArg === "restart") {
+    console.log("break period restarted");
+    createBreak.bind(null, false);
+  } else if (cliArg === "start") {
+    console.log("break started");
+    startBreakNow();
   } else if (process.platform !== "darwin") {
     log.info("App opened second time, opening settings");
     createSettingsWindow();
