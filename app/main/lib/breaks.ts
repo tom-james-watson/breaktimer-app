@@ -183,15 +183,29 @@ export function checkInWorkingHours(): boolean {
     .set("minutes", hoursTo.getMinutes())
     .set("seconds", 0);
 
-  if (now < hoursFrom) {
-    return false;
+  if (hoursTo > hoursFrom) {
+    if (now < hoursFrom) {
+      return false;
+    }
+
+    if (now > hoursTo) {
+        return false;
+    }
+
+    return true;
+
+  } else {
+    // if user prefers an owl-sleeping time
+    // and sets something like "from 13:00 to 2:00"
+
+    if ((now > hoursTo) && (now < hoursFrom)) {
+        return false;
+    }
+
+    return true;
+
   }
 
-  if (now > hoursTo) {
-    return false;
-  }
-
-  return true;
 }
 
 enum IdleState {
