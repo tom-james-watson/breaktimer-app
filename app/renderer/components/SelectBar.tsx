@@ -40,7 +40,7 @@ export class SelectBar extends React.Component<Iprops, Istate> {
                 intent={this.state.selectedIndexes.includes(item) ? "primary" : "none"}
                 onClick={() => {
                   if (this.state.selectedIndexes.includes(item)) {
-                    this.setIndices(this.state.selectedIndexes.filter((item) => item !== item))
+                    this.setIndices(this.state.selectedIndexes.filter((j) => j !== item))
                   } else {
                     this.setIndices([...this.state.selectedIndexes, item])
                   }
@@ -58,7 +58,7 @@ export class SelectBar extends React.Component<Iprops, Istate> {
                 intent={this.state.selectedIndexes.includes(item) ? "primary" : "none"}
                 onClick={() => {
                   if (this.state.selectedIndexes.includes(item)) {
-                    this.setIndices(this.state.selectedIndexes.filter((item) => item !== item))
+                    this.setIndices(this.state.selectedIndexes.filter((j) => j !== item))
                   } else {
                     this.setIndices([...this.state.selectedIndexes, item])
                   }
