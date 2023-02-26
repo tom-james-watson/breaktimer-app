@@ -172,26 +172,58 @@ export function checkInWorkingHours(): boolean {
     return false;
   }
 
-  let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom);
-  let hoursTo: Date | Moment = new Date(settings.workingHoursTo);
-  hoursFrom = moment()
-    .set("hours", hoursFrom.getHours())
-    .set("minutes", hoursFrom.getMinutes())
+  if (!settings.workingHoursAdvancedEnabled) {
+    let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom)
+    let hoursTo: Date | Moment = new Date(settings.workingHoursTo)
+    hoursFrom = moment()
+      .set("hours", hoursFrom.getHours())
+      .set("minutes", hoursFrom.getMinutes())
     .set("seconds", 0);
-  hoursTo = moment()
-    .set("hours", hoursTo.getHours())
-    .set("minutes", hoursTo.getMinutes())
+    hoursTo = moment()
+      .set("hours", hoursTo.getHours())
+      .set("minutes", hoursTo.getMinutes())
     .set("seconds", 0);
 
-  if (now < hoursFrom) {
+    if (now < hoursFrom) {
     return false;
-  }
+    }
 
-  if (now > hoursTo) {
+    if (now > hoursTo) {
     return false;
-  }
+    }
 
-  return true;
+    return true;
+  } else {
+    const hour = now.hour()
+    let hours: number[] = []
+    switch (now.day()) {
+      case 0:
+        hours = settings.workingHoursAdvanced.workingHoursSunday
+        break
+      case 1:
+        hours = settings.workingHoursAdvanced.workingHoursMonday
+        break
+      case 2:
+        hours = settings.workingHoursAdvanced.workingHoursTuesday
+        break
+      case 3:
+        hours = settings.workingHoursAdvanced.workingHoursWednesday
+        break
+      case 4:
+        hours = settings.workingHoursAdvanced.workingHoursThursday
+        break
+      case 5:
+        hours = settings.workingHoursAdvanced.workingHoursFriday
+        break
+      case 6:
+        hours = settings.workingHoursAdvanced.workingHoursSaturday
+        break
+    }
+    if (hours.includes(hour)) {
+      return true
+    }
+    return false
+  }
 }
 
 enum IdleState {

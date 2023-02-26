@@ -1,5 +1,5 @@
 import Store from "electron-store";
-import { Settings, NotificationType } from "../../types/settings";
+import {Settings, NotificationType, WorkingHoursAdvanced} from "../../types/settings"
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
 
@@ -21,6 +21,8 @@ const defaultSettings: Settings = {
   workingHoursFriday: true,
   workingHoursSaturday: false,
   workingHoursSunday: false,
+  workingHoursAdvanced: new WorkingHoursAdvanced(),
+  workingHoursAdvancedEnabled: false,
   idleResetEnabled: true,
   idleResetLength: new Date(0, 0, 0, 0, 5),
   idleResetNotification: false,
