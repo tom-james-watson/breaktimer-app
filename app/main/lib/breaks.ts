@@ -148,13 +148,13 @@ interface Days {
 }
 
 export function checkInWorkingHours(): boolean {
-  const settings: Settings = getSettings();
+  const settings: Settings = getSettings()
 
   if (!settings.workingHoursEnabled) {
-    return true;
+    return true
   }
 
-  const now = moment();
+  const now = moment()
 
   const days: Days = {
     0: settings.workingHoursSunday,
@@ -164,34 +164,66 @@ export function checkInWorkingHours(): boolean {
     4: settings.workingHoursThursday,
     5: settings.workingHoursFriday,
     6: settings.workingHoursSaturday,
-  };
+  }
 
-  const isWorkingDay = days[now.day() as keyof Days];
+  const isWorkingDay = days[now.day() as keyof Days]
 
   if (!isWorkingDay) {
-    return false;
+    return false
   }
 
-  let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom);
-  let hoursTo: Date | Moment = new Date(settings.workingHoursTo);
-  hoursFrom = moment()
-    .set("hours", hoursFrom.getHours())
-    .set("minutes", hoursFrom.getMinutes())
-    .set("seconds", 0);
-  hoursTo = moment()
-    .set("hours", hoursTo.getHours())
-    .set("minutes", hoursTo.getMinutes())
-    .set("seconds", 0);
+  if (!settings.workingHoursAdvancedEnabled) {
+    let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom)
+    let hoursTo: Date | Moment = new Date(settings.workingHoursTo)
+    hoursFrom = moment()
+      .set("hours", hoursFrom.getHours())
+      .set("minutes", hoursFrom.getMinutes())
+      .set("seconds", 0)
+    hoursTo = moment()
+      .set("hours", hoursTo.getHours())
+      .set("minutes", hoursTo.getMinutes())
+      .set("seconds", 0)
 
-  if (now < hoursFrom) {
-    return false;
+    if (now < hoursFrom) {
+      return false
+    }
+
+    if (now > hoursTo) {
+      return false
+    }
+
+    return true
+  } else {
+    const hour = now.hour()
+    let hours: number[] = []
+    switch (now.day()) {
+      case 0:
+        hours = settings.workingHoursAdvanced.workingHoursSunday
+        break
+      case 1:
+        hours = settings.workingHoursAdvanced.workingHoursMonday
+        break
+      case 2:
+        hours = settings.workingHoursAdvanced.workingHoursTuesday
+        break
+      case 3:
+        hours = settings.workingHoursAdvanced.workingHoursWednesday
+        break
+      case 4:
+        hours = settings.workingHoursAdvanced.workingHoursThursday
+        break
+      case 5:
+        hours = settings.workingHoursAdvanced.workingHoursFriday
+        break
+      case 6:
+        hours = settings.workingHoursAdvanced.workingHoursSaturday
+        break
+    }
+    if (hours.includes(hour)) {
+      return true
+    }
+    return false
   }
-
-  if (now > hoursTo) {
-    return false;
-  }
-
-  return true;
 }
 
 enum IdleState {

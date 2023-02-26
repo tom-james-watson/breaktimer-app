@@ -11,10 +11,12 @@ import {
   Slider,
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
-import { Settings, NotificationType } from "../../types/settings";
+import {Settings, NotificationType, WorkingHoursAdvanced} from "../../types/settings"
 import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
 import styles from "./Settings.scss";
+import {Scrollbars} from "react-custom-scrollbars"
+import {SelectBar} from "./SelectBar";
 
 export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
@@ -96,11 +98,47 @@ export default function SettingsEl() {
     });
   };
 
+  const handleWorkingHoursAdvancedChange = (field: keyof WorkingHoursAdvanced,
+    e: number[]) => {
+    setSettingsDraft({
+      ...settingsDraft,
+      workingHoursAdvanced: {...settingsDraft.workingHoursAdvanced, [field]: e}
+    })
+  }
+
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
     toast("Settings saved", Intent.PRIMARY);
     setSettings(settingsDraft);
   };
+
+  const SelectBarWorkingHoursAdvanced: React.FC<{f: string}> = ({f}) => {
+    const f0 = f as keyof WorkingHoursAdvanced
+    return (
+      <SelectBar field={f0} setFunction={handleWorkingHoursAdvancedChange} initialValue={settingsDraft.workingHoursAdvanced[f0]} />
+    )
+  }
+
+  const WorkingHoursWorkday: React.FC<{day: string}> = ({day}) => {
+    const field = "workingHours" + day as keyof Settings
+    return (
+      <div>
+        <Switch
+          label={day}
+          checked={settingsDraft[field] as boolean}
+          onChange={handleSwitchChange.bind(
+            null,
+            field.toString()
+          )}
+          disabled={
+            !settingsDraft.breaksEnabled ||
+            !settingsDraft.workingHoursEnabled
+          }
+        />
+        {settingsDraft.workingHoursAdvancedEnabled && <SelectBarWorkingHoursAdvanced f={field.toString()} />}
+      </div>
+    )
+  }
 
   return (
     <React.Fragment>
@@ -314,115 +352,53 @@ export default function SettingsEl() {
                     )}
                     disabled={!settingsDraft.breaksEnabled}
                   />
+                  <Switch
+                    label="Advanced Working Hours Settings"
+                    checked={settingsDraft.workingHoursAdvancedEnabled}
+                    onChange={
+                      handleSwitchChange.bind(
+                        null,
+                        "workingHoursAdvancedEnabled"
+                      )
+                    }
+                    disabled={!settingsDraft.workingHoursEnabled || !settingsDraft.breaksEnabled}
+                  />
+
                 </FormGroup>
-                <FormGroup label="Breaks from">
-                  <TimePicker
-                    onChange={handleDateChange.bind(null, "workingHoursFrom")}
-                    value={new Date(settingsDraft.workingHoursFrom)}
-                    selectAllOnFocus
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
+                <Scrollbars style={{height: window.innerHeight - 270}}>
+                  {!settingsDraft.workingHoursAdvancedEnabled && <FormGroup>
+                    <FormGroup label="Breaks from">
+                      <TimePicker
+                        onChange={handleDateChange.bind(null, "workingHoursFrom")}
+                        value={new Date(settingsDraft.workingHoursFrom)}
+                        selectAllOnFocus
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          !settingsDraft.workingHoursEnabled ||
+                          settingsDraft.workingHoursAdvancedEnabled
+                        }
+                      />
+                    </FormGroup>
+                    <FormGroup label="Breaks to">
+                      <TimePicker
+                        onChange={handleDateChange.bind(null, "workingHoursTo")}
+                        value={new Date(settingsDraft.workingHoursTo)}
+                        selectAllOnFocus
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          !settingsDraft.workingHoursEnabled ||
+                          settingsDraft.workingHoursAdvancedEnabled
+                        }
+                      />
+                    </FormGroup>
+                  </FormGroup>}
+                  <FormGroup label="Breaks on">
+                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day, index) =>
+                      <WorkingHoursWorkday day={day} key={index} />
+                    )
                     }
-                  />
-                </FormGroup>
-                <FormGroup label="Breaks to">
-                  <TimePicker
-                    onChange={handleDateChange.bind(null, "workingHoursTo")}
-                    value={new Date(settingsDraft.workingHoursTo)}
-                    selectAllOnFocus
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                </FormGroup>
-                <FormGroup label="Breaks on">
-                  <Switch
-                    label="Monday"
-                    checked={settingsDraft.workingHoursMonday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursMonday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Tuesday"
-                    checked={settingsDraft.workingHoursTuesday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursTuesday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Wednesday"
-                    checked={settingsDraft.workingHoursWednesday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursWednesday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Thursday"
-                    checked={settingsDraft.workingHoursThursday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursThursday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Friday"
-                    checked={settingsDraft.workingHoursFriday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursFriday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Saturday"
-                    checked={settingsDraft.workingHoursSaturday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursSaturday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                  <Switch
-                    label="Sunday"
-                    checked={settingsDraft.workingHoursSunday}
-                    onChange={handleSwitchChange.bind(
-                      null,
-                      "workingHoursSunday"
-                    )}
-                    disabled={
-                      !settingsDraft.breaksEnabled ||
-                      !settingsDraft.workingHoursEnabled
-                    }
-                  />
-                </FormGroup>
+                  </FormGroup>
+                </Scrollbars>
               </React.Fragment>
             }
           />
