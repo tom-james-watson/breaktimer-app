@@ -35,6 +35,7 @@ const defaultSettings: Settings = {
   endBreakEnabled: true,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
+  startBreakEnabled: true,
 };
 
 const store = new Store<{

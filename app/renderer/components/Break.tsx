@@ -145,8 +145,10 @@ interface BreakCountdownProps {
   onCountdownOver: () => void;
   onPostponeBreak: () => void;
   onSkipBreak: () => void;
+  onStartBreak: () => void;
   postponeBreakEnabled: boolean;
   skipBreakEnabled: boolean;
+  startBreakEnabled: boolean;
   textColor: string;
 }
 
@@ -156,8 +158,10 @@ function BreakCountdown(props: BreakCountdownProps) {
     onCountdownOver,
     onPostponeBreak,
     onSkipBreak,
+    onStartBreak,
     postponeBreakEnabled,
     skipBreakEnabled,
+    startBreakEnabled,
     textColor,
   } = props;
   const [progress, setProgress] = React.useState<number | null>(null);
@@ -203,30 +207,48 @@ function BreakCountdown(props: BreakCountdownProps) {
       {(skipBreakEnabled || postponeBreakEnabled) && (
         <ControlGroup>
           <ButtonGroup>
-            {skipBreakEnabled && (
-              <Button
-                className={styles.actionButton}
-                onClick={onSkipBreak}
-                icon={<Spinner value={1 - progress} size={16} />}
-                outlined
-                autoFocus={true}
-                style={{ color: textColor }}
-              >
-                Skip
-              </Button>
-            )}
-            {postponeBreakEnabled && (
-              <Button
-                className={styles.actionButton}
-                onClick={onPostponeBreak}
-                icon={<Spinner value={1 - progress} size={16} />}
-                outlined
-                autoFocus={true}
-                style={{ color: textColor }}
-              >
-                Snooze
-              </Button>
-            )}
+            <div>
+              <div>
+                {skipBreakEnabled && (
+                  <Button
+                    className={styles.actionButton}
+                    onClick={onSkipBreak}
+                    icon={<Spinner value={1 - progress} size={16} />}
+                    outlined
+                    autoFocus={true}
+                    style={{ color: textColor }}
+                  >
+                    Skip
+                  </Button>
+                )}
+                {postponeBreakEnabled && (
+                  <Button
+                    className={styles.actionButton}
+                    onClick={onPostponeBreak}
+                    icon={<Spinner value={1 - progress} size={16} />}
+                    outlined
+                    autoFocus={true}
+                    style={{ color: textColor }}
+                  >
+                    Snooze
+                  </Button>
+                )}
+                <div>
+                  {startBreakEnabled && (
+                    <Button
+                      className={styles.actionButton}
+                      onClick={onStartBreak}
+                      icon={<Spinner value={1 - progress} size={16} />}
+                      outlined
+                      autoFocus={true}
+                      style={{ color: textColor }}
+                    >
+                      Start Now
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
           </ButtonGroup>
         </ControlGroup>
       )}
@@ -302,6 +324,10 @@ export default function Break() {
     setClosing(true);
   }, []);
 
+  const handleStartBreak = React.useCallback(() => {
+    setCountingDown(false);
+  }, []);
+
   const handleEndBreak = React.useCallback(() => {
     if (settings?.gongEnabled) {
       // For some reason the end gong sometimes sounds very distorted, so just
@@ -350,10 +376,12 @@ export default function Break() {
                 onCountdownOver={handleCountdownOver}
                 onPostponeBreak={handlePostponeBreak}
                 onSkipBreak={handleSkipBreak}
+                onStartBreak={handleStartBreak}
                 postponeBreakEnabled={
                   settings.postponeBreakEnabled && allowPostpone
                 }
                 skipBreakEnabled={settings.skipBreakEnabled}
+                startBreakEnabled={settings.startBreakEnabled}
                 textColor={settings.textColor}
               />
             ) : (

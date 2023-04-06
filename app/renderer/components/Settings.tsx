@@ -169,6 +169,12 @@ export default function SettingsEl() {
                   disabled={!settingsDraft.breaksEnabled}
                 />
                 <Switch
+                  label="Allow starting break instantly"
+                  checked={settingsDraft.startBreakEnabled}
+                  onChange={handleSwitchChange.bind(null, "startBreakEnabled")}
+                  disabled={!settingsDraft.breaksEnabled}
+                />
+                <Switch
                   label="Allow snooze break"
                   checked={settingsDraft.postponeBreakEnabled}
                   onChange={handleSwitchChange.bind(
