@@ -243,7 +243,7 @@ function BreakCountdown(props: BreakCountdownProps) {
                       autoFocus={true}
                       style={{ color: textColor }}
                     >
-                      Start Now
+                      Start
                     </Button>
                   )}
                 </div>
