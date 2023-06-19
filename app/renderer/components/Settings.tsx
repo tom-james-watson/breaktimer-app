@@ -1,4 +1,5 @@
 import * as React from "react";
+import classnames from "classnames";
 import {
   Tabs,
   Tab,
@@ -16,11 +17,24 @@ import { toast } from "../toaster";
 import SettingsHeader from "./SettingsHeader";
 import styles from "./Settings.scss";
 
+const initialDarkMode =
+  window.matchMedia &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches;
+
 export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
     null
   );
   const [settings, setSettings] = React.useState<Settings | null>(null);
+  const [darkMode, setDarkMode] = React.useState(initialDarkMode);
+
+  React.useEffect(() => {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        setDarkMode(event.matches);
+      });
+  }, [setDarkMode]);
 
   React.useEffect(() => {
     (async () => {
@@ -102,6 +116,11 @@ export default function SettingsEl() {
     setSettings(settingsDraft);
   };
 
+  const settingsClassName = classnames(styles.settings, {
+    "bp3-dark": darkMode,
+    [styles.darkMode]: darkMode,
+  });
+
   return (
     <React.Fragment>
       <SettingsHeader
@@ -110,7 +129,7 @@ export default function SettingsEl() {
         showSave={dirty}
         textColor={settingsDraft.textColor}
       />
-      <main className={styles.settings}>
+      <main className={settingsClassName}>
         <FormGroup>
           <Switch
             label="Breaks enabled"
