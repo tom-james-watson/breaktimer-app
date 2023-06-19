@@ -221,6 +221,7 @@
     "@types/moment-timezone": "^0.5.12",
     "auto-launch": "^5.0.5",
     "brace": "^0.11.1",
+    "classnames": "^2.3.2",
     "connected-react-router": "^6.1.0",
     "core-js": "^3.6.5",
     "electron-store": "^5.2.0",

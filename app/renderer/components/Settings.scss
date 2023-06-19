@@ -1,7 +1,12 @@
 @import "~@blueprintjs/core/lib/scss/variables.scss";
 
 .settings {
-  margin: $pt-grid-size * 2;
+  flex-grow: 1;
+  padding: $pt-grid-size * 2;
+}
+
+.darkMode {
+  background: $dark-gray5;
 }
 
 :global {
