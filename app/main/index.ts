@@ -28,6 +28,7 @@ if (!gotTheLock) {
     setBreaksEnabled(true);
   } else if (process.platform !== "darwin") {
     console.log("app already open, opening settings");
+    createSettingsWindow();
   } else {
     log.info("app already running");
   }
@@ -102,20 +103,5 @@ app.on("ready", async () => {
 
   if (process.env.NODE_ENV !== "development" && process.platform !== "win32") {
     checkForUpdates();
-  }
-});
-
-app.on("second-instance", (_event: Event, argv: string[]) => {
-  const cliArg = argv[argv.length - 1];
-
-  if (cliArg === "disable") {
-    log.info("Breaks disabled from cli");
-    setBreaksEnabled(false);
-  } else if (cliArg === "enable") {
-    log.info("Breaks enabled from cli");
-    setBreaksEnabled(true);
-  } else if (process.platform !== "darwin") {
-    log.info("App opened second time, opening settings");
-    createSettingsWindow();
   }
 });

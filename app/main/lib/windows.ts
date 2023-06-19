@@ -45,6 +45,7 @@ export function createSettingsWindow(): void {
         ? path.join(__dirname, "../../../resources/tray/icon.png")
         : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
     webPreferences: {
+      devTools: false,
       preload: path.join(__dirname, "../../renderer/preload.js"),
     },
   });
@@ -96,6 +97,7 @@ export function createBreakWindows(): void {
       transparent: true,
       hasShadow: false,
       webPreferences: {
+        devTools: false,
         preload: path.join(__dirname, "../../renderer/preload.js"),
       },
     });
