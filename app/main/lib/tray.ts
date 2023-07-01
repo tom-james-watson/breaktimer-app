@@ -57,7 +57,7 @@ export function buildTray(): void {
       title: "关于",
       type: "info",
       message: `BreakTimer`,
-      detail: `版本： ${packageJson.version}\n\n官网:\nhttps://breaktimer.app\n\n源代码:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GLP-3.0-or-later license.`,
+      detail: `版本： ${packageJson.version}\n\n官网:\nhttps://breaktimer.app\n\n源代码:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GPL-3.0-or-later license.`,
     });
   };
 

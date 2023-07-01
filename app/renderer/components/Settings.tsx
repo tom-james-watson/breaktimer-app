@@ -129,7 +129,7 @@ export default function SettingsEl() {
         showSave={dirty}
         textColor={settingsDraft.textColor}
       />
-      <main className={styles.settings}>
+     <main className={settingsClassName}>
         <FormGroup>
           <Switch
             label="开启休息"
