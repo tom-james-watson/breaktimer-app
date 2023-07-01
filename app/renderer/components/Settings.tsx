@@ -112,7 +112,7 @@ export default function SettingsEl() {
 
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
-    toast("Settings saved", Intent.PRIMARY);
+    toast("设置已保存", Intent.PRIMARY);
     setSettings(settingsDraft);
   };
 
@@ -129,10 +129,10 @@ export default function SettingsEl() {
         showSave={dirty}
         textColor={settingsDraft.textColor}
       />
-      <main className={settingsClassName}>
+      <main className={styles.settings}>
         <FormGroup>
           <Switch
-            label="Breaks enabled"
+            label="开启休息"
             checked={settingsDraft.breaksEnabled}
             onChange={handleSwitchChange.bind(null, "breaksEnabled")}
           />
@@ -140,27 +140,27 @@ export default function SettingsEl() {
         <Tabs defaultSelectedTabId="break-settings">
           <Tab
             id="break-settings"
-            title="Break Settings"
+            title="休息设置"
             panel={
               <React.Fragment>
-                <FormGroup label="Notify me with">
+                <FormGroup label="提醒方式">
                   <HTMLSelect
                     value={settingsDraft.notificationType}
                     options={[
                       {
                         value: NotificationType.Popup,
-                        label: "Popup break",
+                        label: "弹出提醒",
                       },
                       {
                         value: NotificationType.Notification,
-                        label: "Simple notification",
+                        label: "通知栏提醒",
                       },
                     ]}
                     onChange={handleNotificationTypeChange}
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
+                <FormGroup label="休息频率" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "breakFrequency")}
                     value={new Date(settingsDraft.breakFrequency)}
@@ -169,7 +169,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
+                <FormGroup label="休息时长" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "breakLength")}
                     value={new Date(settingsDraft.breakLength)}
@@ -182,13 +182,13 @@ export default function SettingsEl() {
                   />
                 </FormGroup>
                 <Switch
-                  label="Allow skip break"
+                  label="允许跳过休息"
                   checked={settingsDraft.skipBreakEnabled}
                   onChange={handleSwitchChange.bind(null, "skipBreakEnabled")}
                   disabled={!settingsDraft.breaksEnabled}
                 />
                 <Switch
-                  label="Allow snooze break"
+                  label="允许推迟休息"
                   checked={settingsDraft.postponeBreakEnabled}
                   onChange={handleSwitchChange.bind(
                     null,
@@ -196,7 +196,7 @@ export default function SettingsEl() {
                   )}
                   disabled={!settingsDraft.breaksEnabled}
                 />
-                <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
+                <FormGroup label="推迟时长" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "postponeLength")}
                     value={new Date(settingsDraft.postponeLength)}
@@ -208,7 +208,7 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Snooze limit">
+                <FormGroup label="推迟限制">
                   <HTMLSelect
                     value={settingsDraft.postponeLimit}
                     options={[
@@ -217,7 +217,7 @@ export default function SettingsEl() {
                       { value: 3, label: "3" },
                       { value: 4, label: "4" },
                       { value: 5, label: "5" },
-                      { value: 0, label: "No limit" },
+                      { value: 0, label: "无限制" },
                     ]}
                     onChange={handlePostponeLimitChange}
                     disabled={
@@ -227,13 +227,13 @@ export default function SettingsEl() {
                   />
                 </FormGroup>
                 <Switch
-                  label="Play gong sound on break start/end"
+                  label="在休息开始/结束时播放声音"
                   checked={settingsDraft.gongEnabled}
                   onChange={handleSwitchChange.bind(null, "gongEnabled")}
                   disabled={!settingsDraft.breaksEnabled}
                 />
                 <Switch
-                  label="Allow end break"
+                  label="允许提前结束休息"
                   checked={settingsDraft.endBreakEnabled}
                   onChange={handleSwitchChange.bind(null, "endBreakEnabled")}
                   disabled={!settingsDraft.breaksEnabled}
@@ -243,10 +243,10 @@ export default function SettingsEl() {
           />
           <Tab
             id="customization"
-            title="Customization"
+            title="自定义"
             panel={
               <React.Fragment>
-                <FormGroup label="Break title">
+                <FormGroup label="休息标题">
                   <InputGroup
                     id="break-title"
                     value={settingsDraft.breakTitle}
@@ -254,7 +254,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Break message">
+                <FormGroup label="休息消息">
                   <InputGroup
                     id="break-message"
                     value={settingsDraft.breakMessage}
@@ -262,7 +262,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Primary color">
+                <FormGroup label="主题色">
                   <InputGroup
                     className={styles.colorPicker}
                     type="color"
@@ -271,7 +271,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Text color">
+                <FormGroup label="文字颜色">
                   <InputGroup
                     className={styles.colorPicker}
                     type="color"
@@ -282,7 +282,7 @@ export default function SettingsEl() {
                 </FormGroup>
                 <FormGroup>
                   <Switch
-                    label="Show backdrop"
+                    label="显示背景"
                     checked={settingsDraft.showBackdrop}
                     onChange={handleSwitchChange.bind(null, "showBackdrop")}
                     disabled={
@@ -291,7 +291,7 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Backdrop color">
+                <FormGroup label="背景颜色">
                   <InputGroup
                     className={styles.colorPicker}
                     type="color"
@@ -300,7 +300,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.showBackdrop}
                   />
                 </FormGroup>
-                <FormGroup label="Backdrop opacity">
+                <FormGroup label="背景不透明度">
                   <Slider
                     min={0.2}
                     max={1}
@@ -313,19 +313,19 @@ export default function SettingsEl() {
                   />
                 </FormGroup>
                 <FormGroup>
-                  <Button onClick={handleResetColors}>Reset colors</Button>
+                  <Button onClick={handleResetColors}>恢复默认颜色</Button>
                 </FormGroup>
               </React.Fragment>
             }
           />
           <Tab
             id="working-hours"
-            title="Working Hours"
+            title="工作时间"
             panel={
               <React.Fragment>
                 <FormGroup>
                   <Switch
-                    label="Enable working hours"
+                    label="按照工作时间"
                     checked={settingsDraft.workingHoursEnabled}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -334,7 +334,7 @@ export default function SettingsEl() {
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
-                <FormGroup label="Breaks from">
+                <FormGroup label="开始时间">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "workingHoursFrom")}
                     value={new Date(settingsDraft.workingHoursFrom)}
@@ -345,7 +345,7 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Breaks to">
+                <FormGroup label="结束时间">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "workingHoursTo")}
                     value={new Date(settingsDraft.workingHoursTo)}
@@ -356,9 +356,9 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <FormGroup label="Breaks on">
+                <FormGroup label="开启休息">
                   <Switch
-                    label="Monday"
+                    label="星期一"
                     checked={settingsDraft.workingHoursMonday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -370,7 +370,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Tuesday"
+                    label="星期二"
                     checked={settingsDraft.workingHoursTuesday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -382,7 +382,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Wednesday"
+                    label="星期三"
                     checked={settingsDraft.workingHoursWednesday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -394,7 +394,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Thursday"
+                    label="星期四"
                     checked={settingsDraft.workingHoursThursday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -406,7 +406,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Friday"
+                    label="星期五"
                     checked={settingsDraft.workingHoursFriday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -418,7 +418,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Saturday"
+                    label="星期六"
                     checked={settingsDraft.workingHoursSaturday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -430,7 +430,7 @@ export default function SettingsEl() {
                     }
                   />
                   <Switch
-                    label="Sunday"
+                    label="星期日"
                     checked={settingsDraft.workingHoursSunday}
                     onChange={handleSwitchChange.bind(
                       null,
@@ -447,19 +447,19 @@ export default function SettingsEl() {
           />
           <Tab
             id="idle-reset"
-            title="Idle Reset"
+            title="空闲重置"
             panel={
               <React.Fragment>
                 <FormGroup>
                   <Switch
-                    label="Enable idle reset"
+                    label="启用空闲重置"
                     checked={settingsDraft.idleResetEnabled}
                     onChange={handleSwitchChange.bind(null, "idleResetEnabled")}
                     disabled={!settingsDraft.breaksEnabled}
                   />
                 </FormGroup>
                 <FormGroup
-                  label="Reset break countdown when idle for"
+                  label="但你达到空闲时长时，重置休息倒计时"
                   labelInfo="(hh:mm:ss)"
                 >
                   <TimePicker
@@ -474,7 +474,7 @@ export default function SettingsEl() {
                   />
                 </FormGroup>
                 <Switch
-                  label="Show notification on idle reset"
+                  label="空闲重置时显示通知"
                   checked={settingsDraft.idleResetNotification}
                   onChange={handleSwitchChange.bind(
                     null,
@@ -491,12 +491,12 @@ export default function SettingsEl() {
           {processEnv.SNAP === undefined && (
             <Tab
               id="system"
-              title="System"
+              title="系统"
               panel={
                 <React.Fragment>
                   <FormGroup>
                     <Switch
-                      label="Start at login"
+                      label="开启开机自启动"
                       checked={settingsDraft.autoLaunch}
                       onChange={handleSwitchChange.bind(null, "autoLaunch")}
                     />

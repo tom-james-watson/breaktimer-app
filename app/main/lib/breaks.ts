@@ -70,8 +70,8 @@ function createIdleNotification() {
 
   if (settings.idleResetNotification) {
     showNotification(
-      "Break countdown reset",
-      `Idle for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
+      "重置休息倒计时",
+      `空闲持续时间为 ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
         idleSeconds
       )}`
     );

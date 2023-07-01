@@ -132,7 +132,7 @@ function BreakProgress(props: BreakProgressProps) {
             autoFocus={true}
             style={{ color: textColor }}
           >
-            End
+            结束
           </Button>
         )}
       </div>
@@ -212,7 +212,7 @@ function BreakCountdown(props: BreakCountdownProps) {
                 autoFocus={true}
                 style={{ color: textColor }}
               >
-                Skip
+                跳过
               </Button>
             )}
             {postponeBreakEnabled && (
@@ -224,7 +224,7 @@ function BreakCountdown(props: BreakCountdownProps) {
                 autoFocus={true}
                 style={{ color: textColor }}
               >
-                Snooze
+                推迟
               </Button>
             )}
           </ButtonGroup>

@@ -54,10 +54,10 @@ export function buildTray(): void {
 
   const createAboutWindow = (): void => {
     dialog.showMessageBox({
-      title: "About",
+      title: "关于",
       type: "info",
       message: `BreakTimer`,
-      detail: `Build: ${packageJson.version}\n\nWebsite:\nhttps://breaktimer.app\n\nSource Code:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GPL-3.0-or-later license.`,
+      detail: `版本： ${packageJson.version}\n\n官网:\nhttps://breaktimer.app\n\n源代码:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GLP-3.0-or-later license.`,
     });
   };
 
@@ -76,11 +76,11 @@ export function buildTray(): void {
 
   if (minsLeft !== undefined) {
     if (minsLeft > 1) {
-      nextBreak = `Next break in ${minsLeft} minutes`;
+      nextBreak = `下次休息在 ${minsLeft} 分钟后`;
     } else if (minsLeft === 1) {
-      nextBreak = `Next break in 1 minute`;
+      nextBreak = `下次休息在1分钟后`;
     } else {
-      nextBreak = `Next break in less than a minute`;
+      nextBreak = `下一次休息在不到1分钟内`;
     }
   }
 
@@ -91,7 +91,7 @@ export function buildTray(): void {
       enabled: false,
     },
     {
-      label: `Outside of working hours`,
+      label: `未在工作时间`,
       visible: !inWorkingHours,
       enabled: false,
     },
@@ -102,23 +102,23 @@ export function buildTray(): void {
     },
     { type: "separator" },
     {
-      label: breaksEnabled ? "Disable" : "Enable",
+      label: breaksEnabled ? "禁用" : "开启",
       click: setBreaksEnabled.bind(null, !breaksEnabled),
     },
     {
-      label: "Start break now",
+      label: "现在开始休息",
       visible: breakTime !== null && inWorkingHours,
       click: startBreakNow,
     },
     {
-      label: "Restart break period",
+      label: "重置休息时间",
       visible: breakTime !== null && inWorkingHours,
       click: createBreak.bind(null, false),
     },
     { type: "separator" },
-    { label: "Settings...", click: createSettingsWindow },
-    { label: "About...", click: createAboutWindow },
-    { label: "Quit", click: quit },
+    { label: "设置", click: createSettingsWindow },
+    { label: "关于", click: createAboutWindow },
+    { label: "退出", click: quit },
   ]);
 
   // Call this again for Linux because we modified the context menu
