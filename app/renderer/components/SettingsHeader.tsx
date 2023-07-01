@@ -21,13 +21,13 @@ export default function SettingsHeader(props: Props) {
     <Navbar className={`${styles.navbar} bp3-dark`} style={style}>
       <Navbar.Group align={Alignment.LEFT}>
         <Navbar.Heading>
-          <strong>Settings</strong>
+          <strong>设置</strong>
         </Navbar.Heading>
       </Navbar.Group>
       {showSave && (
         <Navbar.Group align={Alignment.RIGHT}>
           <Button outlined onClick={handleSave}>
-            Save
+            保存
           </Button>
         </Navbar.Group>
       )}
