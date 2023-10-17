@@ -124,7 +124,7 @@ export function createBreakWindows(): void {
         breakWindow.setPosition(display.bounds.x, display.bounds.y);
       }
 
-	  // show as inactive (no focus) to avoid interrupting e.g. IME input
+      // Show as inactive to avoid stealing focus
       breakWindow.showInactive();
     });
 
