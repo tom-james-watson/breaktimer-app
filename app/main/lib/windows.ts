@@ -124,8 +124,8 @@ export function createBreakWindows(): void {
         breakWindow.setPosition(display.bounds.x, display.bounds.y);
       }
 
-      breakWindow.show();
-      breakWindow.focus();
+      // Show as inactive to avoid stealing focus
+      breakWindow.showInactive();
     });
 
     breakWindow.on("closed", () => {
