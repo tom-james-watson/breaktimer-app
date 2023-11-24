@@ -4,11 +4,11 @@
 
 🔨 **Looking for contributors** 🔨 If you feel like getting involved, please get in contact!
 
-BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS and Linux.
+BreakTimer is a desktop application for managing and enforcing periodic breaks. BreakTimer is available for Windows, macOS, and Linux.
 
 BreakTimer allows you to customize:
 
-- How long your breaks are and how often you wish to have them
+- How long your breaks are and how often do you wish to have them
 - Whether to be reminded with a simple notification or a fullscreen break window
 - Working hours so you are only reminded when you want to be
 - The content of messages shown during breaks.
@@ -16,7 +16,7 @@ BreakTimer allows you to customize:
 
 ## Installation
 
-- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you will receive a warning on install, press more info -> run anyway)
+- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you may receive a warning on install, press more info -> run anyway)
 - **macOS** - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
 - **Linux**:
   - Auto-updating **[preferred]**:
@@ -39,11 +39,11 @@ BreakTimer allows you to customize:
 
 ### Why can't I see the app in the tray?
 
-Some operating systems, such as linux distributions running plain Gnome (e.g. Fedora) or Pantheon (e.g. Elementary OS), don't support system tray icons. In this case, simply re-run the app to open the settings window. You will lose access to certain functionality only available in the tray menu, but at least this workaround lets you use the app.
+Some operating systems, such as Linux distributions running plain Gnome (e.g. Fedora) or Pantheon (e.g. Elementary OS), don't support system tray icons. In this case, simply re-run the app to open the settings window. You will lose access to certain functionality only available in the tray menu, but at least this workaround lets you use the app.
 
-### Is there a way to control the app via the commmand line?
+### Is there a way to control the app via the command line?
 
-On linux, if you run the app via the command line there is some basic support for command line arguments:
+On Linux, if you run the app via the command line there is some basic support for command line arguments:
 
 Disable breaks:
 
@@ -67,13 +67,13 @@ macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/logs/main.log`
 
 Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\logs/main.log`
 
-You can either upload this to a cloud service such as Dropbox or Google Drive and enable public sharing, or you can email the file as an attachment to contact@breaktimer.app. The log files do not contain any personally-indentifying information.
+You can either upload this to a cloud service such as Dropbox or Google Drive and enable public sharing, or you can email the file as an attachment to contact@breaktimer.app. The log files do not contain any personally identifying information.
 
 Please try and include a timestamp for roughly when you have seen the issue so that I can find the relevant place in the log file.
 
 ### How can I hard reset the app's data
 
-In case a bug has left the UI in a unrecoverable state, you can reset the app data by exiting the app, deleting the below folder and starting the app again.
+In case a bug has left the UI in an unrecoverable state, you can reset the app data by exiting the app, deleting the below folder, and starting the app again.
 
 Linux: `/home/<USERNAME>/.config/BreakTimer`
 
