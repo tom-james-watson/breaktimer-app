@@ -16,7 +16,7 @@ BreakTimer allows you to customize:
 
 ## Installation
 
-- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe)
+- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you may receive a warning on install, press more info -> run anyway)
 - **macOS** - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
 - **Linux**:
   - Auto-updating **[preferred]**:
