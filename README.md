@@ -14,6 +14,8 @@ BreakTimer allows you to customize:
 - The content of messages shown during breaks.
 - Whether to intelligently restart your break countdown when it detects that you have not been using the computer
 
+We do not offer support for enterprise environments or commercial deployment. This software is provided ‘as is’ without any warranties or guarantees of support.
+
 ## Installation
 
 - **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you may receive a warning on install, press more info -> run anyway)
