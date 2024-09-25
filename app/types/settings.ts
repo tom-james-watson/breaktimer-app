@@ -35,4 +35,6 @@ export interface Settings {
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
+  halfFullTrayMinutes: number;
+  almostEmptyTrayMinutes: number;
 }

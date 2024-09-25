@@ -35,6 +35,8 @@ const defaultSettings: Settings = {
   endBreakEnabled: true,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
+  halfFullTrayMinutes: 20,
+  almostEmptyTrayMinutes: 3,
 };
 
 const store = new Store<{
