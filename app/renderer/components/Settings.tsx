@@ -77,9 +77,10 @@ export default function SettingsEl() {
     field: string,
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    const value = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
     setSettingsDraft({
       ...settingsDraft,
-      [field]: e.target.value,
+      [field]: value,
     });
   };
 
@@ -314,6 +315,34 @@ export default function SettingsEl() {
                 </FormGroup>
                 <FormGroup>
                   <Button onClick={handleResetColors}>Reset colors</Button>
+                </FormGroup>
+              </React.Fragment>
+            }
+          />
+          <Tab
+            id="tray"
+            title="Tray"
+            panel={
+              <React.Fragment>
+                <FormGroup label="Show half-full tray icon when">
+                  <InputGroup
+                    type="number"
+                    min={0}
+                    value={settingsDraft.halfFullTrayMinutes.toString()}
+                    onChange={handleTextChange.bind(null, "halfFullTrayMinutes")}
+                    rightElement={<span>minutes remaining</span>}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup label="Show almost-empty tray icon when">
+                  <InputGroup
+                    type="number"
+                    min={0}
+                    value={settingsDraft.almostEmptyTrayMinutes.toString()}
+                    onChange={handleTextChange.bind(null, "almostEmptyTrayMinutes")}
+                    rightElement={<span>minutes remaining</span>}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
                 </FormGroup>
               </React.Fragment>
             }
