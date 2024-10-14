@@ -115,8 +115,7 @@
       "owner": "tom-james-watson",
       "repo": "breaktimer-app",
       "private": false
-    },
-    "afterSign": "internals/scripts/Notarize.js"
+    }
   },
   "repository": {
     "type": "git",
