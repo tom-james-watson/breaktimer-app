@@ -65,8 +65,14 @@
       },
       "gatekeeperAssess": false,
       "hardenedRuntime": true,
+      "notarize": true,
       "target": [
-        "dmg"
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
       ]
     },
     "dmg": {
