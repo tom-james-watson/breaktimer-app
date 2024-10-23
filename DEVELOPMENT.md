@@ -49,6 +49,13 @@ To package apps for the local platform:
 npm run package
 ```
 
+:bulb: When packaging for MacOS make sure to set your signing/notirization env variables per [the electron-builder docs](https://www.electron.build/mac#notarize). You can obtain an API key from [App Store Connect](https://appstoreconnect.apple.com/access/integrations/api).
+Create a **Team Key** (not an _Individual Key_) with **App Manager** access.:
+
+```bash
+APPLE_API_KEY='YOUR_APPLE_API_KEY' APPLE_API_KEY_ID='YOUR_APPLE_API_KEY_ID' APPLE_API_ISSUER='YOUR_APPLE_API_ISSUER' npm run package
+```
+
 To package apps for all platforms:
 
 First, refer to the [Multi Platform Build docs](https://www.electron.build/multi-platform-build) for dependencies.
