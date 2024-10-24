@@ -16,24 +16,50 @@ import {
 let tray: Tray;
 let lastMinsLeft = 0;
 
+
+/**
+ * Returns the path to the tray icon based on the status and the remaining minutes.
+ *
+ * @param {('disabled' | 'not-in-working-hours' | 'active')} status - The status of the tray icon.
+ * @param {number} [minsLeft] - The remaining minutes. Only used when the status is 'active'.
+ * @return {string} The path to the tray icon.
+ */
+function getTrayIconPath(status: 'disabled' | 'not-in-working-hours' | 'active', minsLeft?: number): string {
+  const settings = getSettings();
+
+  let trayIconFileName = "icon.png";
+
+  if (process.platform === "darwin") {
+    trayIconFileName = "tray-IconTemplate.png";
+  } else {
+    switch (status) {
+      case 'disabled':
+        trayIconFileName = "icon-disabled.png";
+        break;
+      case 'not-in-working-hours':
+        trayIconFileName = "icon-off-work.png";
+        break;
+      case 'active':
+        if (minsLeft !== undefined) {
+          if (minsLeft < settings.almostEmptyTrayMinutes) {
+            trayIconFileName = "icon-almost-empty.png";
+          } else if (minsLeft < settings.halfFullTrayMinutes) {
+            trayIconFileName = "icon-half-full.png";
+          }
+        }
+        break;
+    }
+  }
+
+  return process.env.NODE_ENV === "development"
+    ? path.join("resources", "tray", trayIconFileName)
+    : path.join(process.resourcesPath, "app", "resources", "tray", trayIconFileName);
+}
+
 export function buildTray(): void {
   if (!tray) {
-    let imgPath;
-    if (process.platform === "darwin") {
-      imgPath =
-        process.env.NODE_ENV === "development"
-          ? "resources/tray/tray-IconTemplate.png"
-          : path.join(
-              process.resourcesPath,
-              "app/resources/tray/tray-IconTemplate.png"
-            );
-    } else {
-      imgPath =
-        process.env.NODE_ENV === "development"
-          ? "resources/tray/icon.png"
-          : path.join(process.resourcesPath, "app/resources/tray/icon.png");
-    }
-    tray = new Tray(imgPath);
+    const trayIconPath = getTrayIconPath('disabled');
+    tray = new Tray(trayIconPath);
 
     // On windows, context menu will not show on left click by default
     if (process.platform === "win32") {
@@ -72,27 +98,33 @@ export function buildTray(): void {
   const idle = checkIdle();
   const minsLeft = breakTime?.diff(moment(), "minutes");
 
-  let nextBreak = "";
+  let toolTip = "";
 
-  if (minsLeft !== undefined) {
-    if (minsLeft > 1) {
-      nextBreak = `Next break in ${minsLeft} minutes`;
-    } else if (minsLeft === 1) {
-      nextBreak = `Next break in 1 minute`;
+  if (breaksEnabled) {
+    if (inWorkingHours) {
+      if (minsLeft !== undefined) {
+        if (minsLeft > 1) {
+          toolTip = `Next break in ${minsLeft} minutes`;
+        } else if (minsLeft === 1) {
+          toolTip = `Next break in 1 minute`;
+        } else {
+          toolTip = `Next break in less than a minute`;
+        }
+        tray.setImage(getTrayIconPath('active', minsLeft));
+      }
     } else {
-      nextBreak = `Next break in less than a minute`;
+      toolTip = "Outside of working hours";
+      tray.setImage(getTrayIconPath("not-in-working-hours"))
     }
+  } else {
+    toolTip = "Disabled";
+    tray.setImage(getTrayIconPath("disabled"));
   }
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: nextBreak,
-      visible: breakTime !== null && inWorkingHours,
-      enabled: false,
-    },
-    {
-      label: `Outside of working hours`,
-      visible: !inWorkingHours,
+      label: toolTip,
+      visible: breakTime !== null || !inWorkingHours,
       enabled: false,
     },
     {
@@ -121,8 +153,8 @@ export function buildTray(): void {
     { label: "Quit", click: quit },
   ]);
 
-  // Call this again for Linux because we modified the context menu
   tray.setContextMenu(contextMenu);
+  tray.setToolTip(toolTip);
 }
 
 export function initTray(): void {
