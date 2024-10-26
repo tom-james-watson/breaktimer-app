@@ -1,10 +1,3 @@
-/**
- * Build config for development electron renderer process that uses
- * Hot-Module-Replacement
- *
- * https://webpack.js.org/concepts/hot-module-replacement/
- */
-
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const { spawn } = require("child_process");
@@ -160,10 +153,6 @@ module.exports = merge.smart(baseConfig, {
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin({
-      multiStep: true,
-    }),
-
     new webpack.NoEmitOnErrorsPlugin(),
 
     /**
@@ -210,7 +199,7 @@ module.exports = merge.smart(baseConfig, {
       stats: "errors-only",
     },
     headers: { "Access-Control-Allow-Origin": "*" },
-    onBeforeSetupMiddleware: () => {
+    setupMiddlewares: (middlewares, devServer) => {
       if (process.env.START_HOT) {
         spawn("npm", ["run", "start-main-dev"], {
           shell: true,
@@ -220,6 +209,7 @@ module.exports = merge.smart(baseConfig, {
           .on("close", (code) => process.exit(code))
           .on("error", (spawnError) => console.error(spawnError));
       }
+      return middlewares;
     },
   },
 });

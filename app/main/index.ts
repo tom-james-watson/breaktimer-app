@@ -1,19 +1,19 @@
-import "regenerator-runtime/runtime";
 import "core-js/stable";
 import { app } from "electron";
-import { autoUpdater } from "electron-updater";
 import log from "electron-log";
+import { autoUpdater } from "electron-updater";
+import "regenerator-runtime/runtime";
+import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
+import "./lib/ipc";
+import { showNotification } from "./lib/notifications";
 import {
   getAppInitialized,
   setAppInitialized,
   setBreaksEnabled,
 } from "./lib/store";
-import { createSoundsWindow, createSettingsWindow } from "./lib/windows";
-import { setAutoLauch } from "./lib/auto-launch";
-import { showNotification } from "./lib/notifications";
 import { initTray } from "./lib/tray";
-import "./lib/ipc";
+import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -64,7 +64,9 @@ if (
 // }
 
 // Don't exit on close all windows - live in tray
-app.on("window-all-closed", (e: Event) => e.preventDefault());
+app.on("window-all-closed", () => {
+  // Pass
+});
 
 app.on("ready", async () => {
   if (
@@ -87,7 +89,9 @@ app.on("ready", async () => {
   const appInitialized = getAppInitialized();
 
   if (!appInitialized) {
-    setAutoLauch(true);
+    if (process.env.NODE_ENV !== "development") {
+      setAutoLauch(true);
+    }
     showNotification(
       "BreakTimer runs in the background",
       "The app can be accessed via the system tray",

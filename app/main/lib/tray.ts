@@ -1,17 +1,17 @@
-import path from "path";
-import moment from "moment";
 import { app, dialog, Menu, Tray } from "electron";
+import moment from "moment";
+import path from "path";
 import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
+import {
+  checkIdle,
+  checkInWorkingHours,
+  createBreak,
+  getBreakTime,
+  startBreakNow,
+} from "./breaks";
 import { getSettings, setSettings } from "./store";
 import { createSettingsWindow } from "./windows";
-import {
-  getBreakTime,
-  checkInWorkingHours,
-  checkIdle,
-  startBreakNow,
-  createBreak,
-} from "./breaks";
 
 let tray: Tray;
 let lastMinsLeft = 0;

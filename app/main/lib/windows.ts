@@ -35,10 +35,10 @@ export function createSettingsWindow(): void {
 
   settingsWindow = new BrowserWindow({
     show: false,
-    width: 570,
-    minWidth: 570,
-    height: 710 + (process.platform === "win32" ? 40 : 0),
-    minHeight: 710 + (process.platform === "win32" ? 40 : 0),
+    width: 510,
+    minWidth: 510,
+    height: 600 + (process.platform === "win32" ? 40 : 0),
+    minHeight: 600 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
     icon:
       process.env.NODE_ENV === "development"

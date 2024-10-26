@@ -3,6 +3,16 @@ export enum NotificationType {
   Popup = "POPUP",
 }
 
+export interface WorkingHoursRange {
+  fromMinutes: number;
+  toMinutes: number;
+}
+
+export interface WorkingHours {
+  enabled: boolean;
+  ranges: WorkingHoursRange[];
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
@@ -12,15 +22,13 @@ export interface Settings {
   postponeLength: Date;
   postponeLimit: number;
   workingHoursEnabled: boolean;
-  workingHoursFrom: Date;
-  workingHoursTo: Date;
-  workingHoursMonday: boolean;
-  workingHoursTuesday: boolean;
-  workingHoursWednesday: boolean;
-  workingHoursThursday: boolean;
-  workingHoursFriday: boolean;
-  workingHoursSaturday: boolean;
-  workingHoursSunday: boolean;
+  workingHoursMonday: WorkingHours;
+  workingHoursTuesday: WorkingHours;
+  workingHoursWednesday: WorkingHours;
+  workingHoursThursday: WorkingHours;
+  workingHoursFriday: WorkingHours;
+  workingHoursSaturday: WorkingHours;
+  workingHoursSunday: WorkingHours;
   idleResetEnabled: boolean;
   idleResetLength: Date;
   idleResetNotification: boolean;
@@ -36,3 +44,83 @@ export interface Settings {
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
 }
+
+export const defaultWorkingRange: WorkingHoursRange = {
+  fromMinutes: 9 * 60, // 09:00
+  toMinutes: 18 * 60, // 18:00
+};
+
+export const defaultSettings: Settings = {
+  autoLaunch: true,
+  breaksEnabled: true,
+  notificationType: NotificationType.Popup,
+  breakFrequency: new Date(0, 0, 0, 0, 28),
+  breakLength: new Date(0, 0, 0, 0, 2),
+  postponeLength: new Date(0, 0, 0, 0, 3),
+  postponeLimit: 0,
+  workingHoursEnabled: true,
+  workingHoursMonday: {
+    enabled: true,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursTuesday: {
+    enabled: true,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursWednesday: {
+    enabled: true,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursThursday: {
+    enabled: true,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursFriday: {
+    enabled: true,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursSaturday: {
+    enabled: false,
+    ranges: [defaultWorkingRange],
+  },
+  workingHoursSunday: {
+    enabled: false,
+    ranges: [defaultWorkingRange],
+  },
+  idleResetEnabled: true,
+  idleResetLength: new Date(0, 0, 0, 0, 5),
+  idleResetNotification: false,
+  gongEnabled: true,
+  breakTitle: "Time for a break!",
+  breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
+  backgroundColor: "#16a085",
+  backdropColor: "#001914",
+  textColor: "#ffffff",
+  showBackdrop: true,
+  backdropOpacity: 0.7,
+  endBreakEnabled: true,
+  skipBreakEnabled: false,
+  postponeBreakEnabled: true,
+};
+
+export interface DayConfig {
+  key:
+    | "workingHoursMonday"
+    | "workingHoursTuesday"
+    | "workingHoursWednesday"
+    | "workingHoursThursday"
+    | "workingHoursFriday"
+    | "workingHoursSaturday"
+    | "workingHoursSunday";
+  label: string;
+}
+
+export const daysConfig: DayConfig[] = [
+  { key: "workingHoursMonday", label: "Monday" },
+  { key: "workingHoursTuesday", label: "Tuesday" },
+  { key: "workingHoursWednesday", label: "Wednesday" },
+  { key: "workingHoursThursday", label: "Thursday" },
+  { key: "workingHoursFriday", label: "Friday" },
+  { key: "workingHoursSaturday", label: "Saturday" },
+  { key: "workingHoursSunday", label: "Sunday" },
+];

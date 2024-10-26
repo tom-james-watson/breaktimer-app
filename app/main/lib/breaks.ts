@@ -1,12 +1,12 @@
-import moment, { Moment } from "moment";
 import { PowerMonitor } from "electron";
-import { Settings, NotificationType } from "../../types/settings";
+import moment from "moment";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
+import { DayConfig, NotificationType, Settings } from "../../types/settings";
 import { sendIpc } from "./ipc";
+import { showNotification } from "./notifications";
 import { getSettings } from "./store";
 import { buildTray } from "./tray";
-import { showNotification } from "./notifications";
 import { createBreakWindows } from "./windows";
 
 let powerMonitor: PowerMonitor;
@@ -137,16 +137,6 @@ function doBreak(): void {
   }
 }
 
-interface Days {
-  0: boolean;
-  1: boolean;
-  2: boolean;
-  3: boolean;
-  4: boolean;
-  5: boolean;
-  6: boolean;
-}
-
 export function checkInWorkingHours(): boolean {
   const settings: Settings = getSettings();
 
@@ -155,43 +145,29 @@ export function checkInWorkingHours(): boolean {
   }
 
   const now = moment();
+  const currentMinutes = now.hours() * 60 + now.minutes();
+  const dayOfWeek = now.day();
 
-  const days: Days = {
-    0: settings.workingHoursSunday,
-    1: settings.workingHoursMonday,
-    2: settings.workingHoursTuesday,
-    3: settings.workingHoursWednesday,
-    4: settings.workingHoursThursday,
-    5: settings.workingHoursFriday,
-    6: settings.workingHoursSaturday,
+  const dayMap: { [key: number]: DayConfig["key"] } = {
+    0: "workingHoursSunday",
+    1: "workingHoursMonday",
+    2: "workingHoursTuesday",
+    3: "workingHoursWednesday",
+    4: "workingHoursThursday",
+    5: "workingHoursFriday",
+    6: "workingHoursSaturday",
   };
 
-  const isWorkingDay = days[now.day() as keyof Days];
+  const todaySettings = settings[dayMap[dayOfWeek]];
 
-  if (!isWorkingDay) {
+  if (!todaySettings.enabled) {
     return false;
   }
 
-  let hoursFrom: Date | Moment = new Date(settings.workingHoursFrom);
-  let hoursTo: Date | Moment = new Date(settings.workingHoursTo);
-  hoursFrom = moment()
-    .set("hours", hoursFrom.getHours())
-    .set("minutes", hoursFrom.getMinutes())
-    .set("seconds", 0);
-  hoursTo = moment()
-    .set("hours", hoursTo.getHours())
-    .set("minutes", hoursTo.getMinutes())
-    .set("seconds", 0);
-
-  if (now < hoursFrom) {
-    return false;
-  }
-
-  if (now > hoursTo) {
-    return false;
-  }
-
-  return true;
+  return todaySettings.ranges.some(
+    (range) =>
+      currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes
+  );
 }
 
 enum IdleState {

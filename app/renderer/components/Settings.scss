@@ -1,9 +1,21 @@
 @import "~@blueprintjs/core/lib/scss/variables.scss";
 
 .settings {
-  flex-grow: 1;
-  padding: $pt-grid-size * 2 $pt-grid-size * 4;
-  overflow-y: auto;
+  height: calc(100% - 50px);
+  display: flex;
+  flex-direction: column;
+}
+
+div.breaksEnabled {
+  padding: $pt-grid-size * 1.5 $pt-grid-size * 3 0 $pt-grid-size * 3;
+  margin: 0 !important;
+}
+
+.tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .darkMode {
@@ -11,8 +23,58 @@
 }
 
 :global {
-  .bp5-tabs .bp5-tab-list {
-    margin-bottom: $pt-grid-size * 2;
+  .bp5-tabs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  div.bp5-tab-list {
+    padding: $pt-grid-size * 1.5 $pt-grid-size * 3;
+    border-bottom: 1px solid $dark-gray3;
+  }
+
+  .bp5-tab-panel {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: $pt-grid-size * 1.5 $pt-grid-size * 3 $pt-grid-size * 3
+      $pt-grid-size * 3;
+
+    &::-webkit-scrollbar {
+      width: $pt-grid-size;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .darkMode & {
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+
+  .bp5-tabs {
+    margin-bottom: $pt-grid-size * 1.5;
+    flex-shrink: 0;
   }
 
   .bp5-tab {
@@ -23,15 +85,23 @@
     margin-bottom: 0 !important;
   }
 
-  .bp5-form-group {
-    margin-bottom: $pt-grid-size * 2;
+  div.bp5-form-group {
+    margin-bottom: $pt-grid-size * 1.5;
   }
 
-  .bp5-form-group:last-child {
-    margin-bottom: 0 !important;
+  div.bp5-form-group:last-child {
+    margin-bottom: 0;
   }
 }
 
 .colorPicker {
   width: 100px;
+}
+
+.advanced {
+  margin-bottom: $pt-grid-size;
+}
+
+.collapse {
+  overflow: hidden;
 }
