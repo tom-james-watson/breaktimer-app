@@ -188,8 +188,8 @@ module.exports = merge.smart(baseConfig, {
 
     new webpack.DefinePlugin({
       // https://github.com/palantir/blueprint/issues/3739.
-      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
-      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
+      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
+      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
     }),
   ],
 
@@ -212,7 +212,8 @@ module.exports = merge.smart(baseConfig, {
     headers: { "Access-Control-Allow-Origin": "*" },
     onBeforeSetupMiddleware: () => {
       if (process.env.START_HOT) {
-        spawn("npm", ["run", "start-main-dev"], { shell: true,
+        spawn("npm", ["run", "start-main-dev"], {
+          shell: true,
           env: process.env,
           stdio: "inherit",
         })

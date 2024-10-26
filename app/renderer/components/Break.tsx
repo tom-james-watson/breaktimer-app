@@ -1,7 +1,7 @@
-import * as React from "react";
+import { Button, ButtonGroup, ControlGroup, Spinner } from "@blueprintjs/core";
 import moment from "moment";
-import { Button, Spinner, ControlGroup, ButtonGroup } from "@blueprintjs/core";
-import { useSpring, animated, config } from "react-spring";
+import * as React from "react";
+import { animated, config, useSpring } from "react-spring";
 import { Settings } from "../../types/settings";
 import styles from "./Break.scss";
 
@@ -31,15 +31,15 @@ function OuterSpinner(props: SpinnerProps) {
   const { textColor, value } = props;
 
   return (
-    <div className={`bp3-spinner ${styles.outerSpinner}`}>
+    <div className={`bp5-spinner ${styles.outerSpinner}`}>
       <svg width="400" height="400" strokeWidth="2" viewBox="2 2 96 96">
         <path
-          className="bp3-spinner-track"
+          className="bp5-spinner-track"
           d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
           style={{ stroke: "none" }}
         ></path>
         <path
-          className="bp3-spinner-head"
+          className="bp5-spinner-head"
           d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
           pathLength="100"
           strokeDasharray="100 100"
@@ -317,7 +317,7 @@ export default function Break() {
 
   return (
     <animated.div
-      className={`bp3-dark ${styles.breakContainer}`}
+      className={`bp5-dark ${styles.breakContainer}`}
       style={{
         backgroundColor: settings.showBackdrop
           ? createRgba(settings.backdropColor, settings.backdropOpacity)

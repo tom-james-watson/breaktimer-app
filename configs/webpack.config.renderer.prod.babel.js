@@ -192,8 +192,8 @@ module.exports = merge.smart(baseConfig, {
 
     new webpack.DefinePlugin({
       // https://github.com/palantir/blueprint/issues/3739.
-      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
-      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp3"),
+      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
+      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
     }),
 
     new MiniCssExtractPlugin({

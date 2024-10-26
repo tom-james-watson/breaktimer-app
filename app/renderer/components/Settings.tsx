@@ -1,25 +1,28 @@
-import * as React from "react";
-import classnames from "classnames";
 import {
-  Tabs,
-  Tab,
-  Switch,
-  HTMLSelect,
+  Button,
+  FocusStyleManager,
   FormGroup,
+  HTMLSelect,
   InputGroup,
   Intent,
-  Button,
   Slider,
+  Switch,
+  Tab,
+  Tabs,
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
-import { Settings, NotificationType } from "../../types/settings";
+import classnames from "classnames";
+import * as React from "react";
+import { NotificationType, Settings } from "../../types/settings";
 import { toast } from "../toaster";
-import SettingsHeader from "./SettingsHeader";
 import styles from "./Settings.scss";
+import SettingsHeader from "./SettingsHeader";
 
 const initialDarkMode =
   window.matchMedia &&
   window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+FocusStyleManager.onlyShowFocusOnTabs();
 
 export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
@@ -117,7 +120,7 @@ export default function SettingsEl() {
   };
 
   const settingsClassName = classnames(styles.settings, {
-    "bp3-dark": darkMode,
+    "bp5-dark": darkMode,
     [styles.darkMode]: darkMode,
   });
 
@@ -181,21 +184,25 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <Switch
-                  label="Allow skip break"
-                  checked={settingsDraft.skipBreakEnabled}
-                  onChange={handleSwitchChange.bind(null, "skipBreakEnabled")}
-                  disabled={!settingsDraft.breaksEnabled}
-                />
-                <Switch
-                  label="Allow snooze break"
-                  checked={settingsDraft.postponeBreakEnabled}
-                  onChange={handleSwitchChange.bind(
-                    null,
-                    "postponeBreakEnabled"
-                  )}
-                  disabled={!settingsDraft.breaksEnabled}
-                />
+                <FormGroup>
+                  <Switch
+                    label="Allow skip break"
+                    checked={settingsDraft.skipBreakEnabled}
+                    onChange={handleSwitchChange.bind(null, "skipBreakEnabled")}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Switch
+                    label="Allow snooze break"
+                    checked={settingsDraft.postponeBreakEnabled}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "postponeBreakEnabled"
+                    )}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
                 <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
                   <TimePicker
                     onChange={handleDateChange.bind(null, "postponeLength")}
@@ -226,18 +233,22 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <Switch
-                  label="Play gong sound on break start/end"
-                  checked={settingsDraft.gongEnabled}
-                  onChange={handleSwitchChange.bind(null, "gongEnabled")}
-                  disabled={!settingsDraft.breaksEnabled}
-                />
-                <Switch
-                  label="Allow end break"
-                  checked={settingsDraft.endBreakEnabled}
-                  onChange={handleSwitchChange.bind(null, "endBreakEnabled")}
-                  disabled={!settingsDraft.breaksEnabled}
-                />
+                <FormGroup>
+                  <Switch
+                    label="Play gong sound on break start/end"
+                    checked={settingsDraft.gongEnabled}
+                    onChange={handleSwitchChange.bind(null, "gongEnabled")}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Switch
+                    label="Allow end break"
+                    checked={settingsDraft.endBreakEnabled}
+                    onChange={handleSwitchChange.bind(null, "endBreakEnabled")}
+                    disabled={!settingsDraft.breaksEnabled}
+                  />
+                </FormGroup>
               </React.Fragment>
             }
           />
@@ -473,18 +484,20 @@ export default function SettingsEl() {
                     }
                   />
                 </FormGroup>
-                <Switch
-                  label="Show notification on idle reset"
-                  checked={settingsDraft.idleResetNotification}
-                  onChange={handleSwitchChange.bind(
-                    null,
-                    "idleResetNotification"
-                  )}
-                  disabled={
-                    !settingsDraft.breaksEnabled ||
-                    !settingsDraft.idleResetEnabled
-                  }
-                />
+                <FormGroup>
+                  <Switch
+                    label="Show notification on idle reset"
+                    checked={settingsDraft.idleResetNotification}
+                    onChange={handleSwitchChange.bind(
+                      null,
+                      "idleResetNotification"
+                    )}
+                    disabled={
+                      !settingsDraft.breaksEnabled ||
+                      !settingsDraft.idleResetEnabled
+                    }
+                  />
+                </FormGroup>
               </React.Fragment>
             }
           />

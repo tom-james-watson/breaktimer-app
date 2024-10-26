@@ -1,6 +1,6 @@
-import path from "path";
-import { app, screen, BrowserWindow } from "electron";
+import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
+import path from "path";
 import { endPopupBreak } from "./breaks";
 import { getSettings } from "./store";
 
@@ -35,10 +35,10 @@ export function createSettingsWindow(): void {
 
   settingsWindow = new BrowserWindow({
     show: false,
-    width: 507,
-    minWidth: 507,
-    height: process.platform === "win32" ? 740 : 700,
-    minHeight: process.platform === "win32" ? 740 : 700,
+    width: 570,
+    minWidth: 570,
+    height: 710 + (process.platform === "win32" ? 40 : 0),
+    minHeight: 710 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
     icon:
       process.env.NODE_ENV === "development"
