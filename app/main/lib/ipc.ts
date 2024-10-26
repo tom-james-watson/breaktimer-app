@@ -1,10 +1,10 @@
-import { ipcMain, IpcMainInvokeEvent, BrowserWindow } from "electron";
+import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import log from "electron-log";
-import { Settings } from "../../types/settings";
 import { IpcChannel } from "../../types/ipc";
-import { getWindows } from "./windows";
-import { getBreakLength, getAllowPostpone, postponeBreak } from "./breaks";
+import { Settings, SoundType } from "../../types/settings";
+import { getAllowPostpone, getBreakLength, postponeBreak } from "./breaks";
 import { getSettings, setSettings } from "./store";
+import { getWindows } from "./windows";
 
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   const windows: BrowserWindow[] = getWindows();
@@ -30,15 +30,21 @@ ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
   postponeBreak();
 });
 
-ipcMain.handle(IpcChannel.GongStartPlay, (): void => {
-  log.info(IpcChannel.GongStartPlay);
-  sendIpc(IpcChannel.GongStartPlay);
-});
+ipcMain.handle(
+  IpcChannel.SoundStartPlay,
+  (_event: IpcMainInvokeEvent, type: SoundType): void => {
+    log.info(IpcChannel.SoundStartPlay);
+    sendIpc(IpcChannel.SoundStartPlay, type);
+  }
+);
 
-ipcMain.handle(IpcChannel.GongEndPlay, (): void => {
-  log.info(IpcChannel.GongEndPlay);
-  sendIpc(IpcChannel.GongEndPlay);
-});
+ipcMain.handle(
+  IpcChannel.SoundEndPlay,
+  (_event: IpcMainInvokeEvent, type: SoundType): void => {
+    log.info(IpcChannel.SoundEndPlay);
+    sendIpc(IpcChannel.SoundEndPlay, type);
+  }
+);
 
 ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
   log.info(IpcChannel.SettingsGet);

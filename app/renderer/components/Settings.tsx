@@ -19,6 +19,7 @@ import { NotificationType, Settings } from "../../types/settings";
 import { toast } from "../toaster";
 import styles from "./Settings.scss";
 import SettingsHeader from "./SettingsHeader";
+import { SoundSelect } from "./SoundSelect";
 import WorkingHoursSettings from "./WorkingHoursSettings";
 
 const initialDarkMode =
@@ -258,17 +259,21 @@ export default function SettingsEl() {
                         }
                       />
                     </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Play gong sound on break start/end"
-                        checked={settingsDraft.gongEnabled}
-                        onChange={handleSwitchChange.bind(null, "gongEnabled")}
+                    <FormGroup label="Break sound">
+                      <SoundSelect
+                        value={settingsDraft.soundType}
+                        onChange={(soundType) => {
+                          setSettingsDraft({
+                            ...settingsDraft,
+                            soundType,
+                          });
+                        }}
                         disabled={!settingsDraft.breaksEnabled}
                       />
                     </FormGroup>
                     <FormGroup>
                       <Switch
-                        label="Allow end break"
+                        label="Allow ending break early"
                         checked={settingsDraft.endBreakEnabled}
                         onChange={handleSwitchChange.bind(
                           null,

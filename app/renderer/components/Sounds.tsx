@@ -1,18 +1,27 @@
-import * as React from "react";
 import { Howl } from "howler";
+import * as React from "react";
+import { SoundType } from "../../types/settings";
 
 export default function Sounds() {
-  const playSound = (path: string): void => {
-    const sound = new Howl({ src: [path] });
+  const playSound = (type: string, isStart: boolean): void => {
+    if (type === SoundType.None) return;
+    const sound = new Howl({
+      src: [
+        `../../renderer/sounds/${type.toLowerCase()}_${
+          isStart ? "start" : "end"
+        }.wav`,
+      ],
+    });
     sound.play();
   };
 
   React.useEffect(() => {
-    ipcRenderer.onPlayStartGong(() => {
-      playSound("../../renderer/sounds/gong_start.wav");
+    ipcRenderer.onPlayStartSound((type: string) => {
+      playSound(type, true);
     });
-    ipcRenderer.onPlayEndGong(() => {
-      playSound("../../renderer/sounds/gong_end.wav");
+
+    ipcRenderer.onPlayEndSound((type: string) => {
+      playSound(type, false);
     });
   }, []);
 

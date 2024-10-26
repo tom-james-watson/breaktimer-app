@@ -3,11 +3,11 @@ declare const ipcRenderer: {
   invokeGetAllowPostpone: () => Promise<boolean>;
   invokeGetBreakLength: () => Promise<Date>;
   invokeGetSettings: () => Promise<unknown>;
-  invokeGongEndPlay: () => Promise<unknown>;
-  invokeGongStartPlay: () => Promise<unknown>;
+  invokeEndSound: (type: string) => Promise<unknown>;
+  invokeStartSound: (type: string) => Promise<unknown>;
   invokeSetSettings: (settings: unknown) => Promise<void>;
-  onPlayEndGong: (cb: () => void) => Promise<void>;
-  onPlayStartGong: (cb: () => void) => Promise<void>;
+  onPlayEndSound: (cb: (type: string) => void) => Promise<void>;
+  onPlayStartSound: (cb: (type: string) => void) => Promise<void>;
 };
 
 declare const processEnv: {

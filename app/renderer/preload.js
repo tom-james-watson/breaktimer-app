@@ -23,20 +23,24 @@ process.once("loaded", () => {
     invokeGetSettings: () => {
       return ipcRenderer.invoke("SETTINGS_GET");
     },
-    invokeGongEndPlay: () => {
-      return ipcRenderer.invoke("GONG_END_PLAY");
+    invokeEndSound: (type) => {
+      return ipcRenderer.invoke("SOUND_END_PLAY", type);
     },
-    invokeGongStartPlay: () => {
-      return ipcRenderer.invoke("GONG_START_PLAY");
+    invokeStartSound: (type) => {
+      return ipcRenderer.invoke("SOUND_START_PLAY", type);
     },
     invokeSetSettings: (settings) => {
       return ipcRenderer.invoke("SETTINGS_SET", settings);
     },
-    onPlayEndGong: (cb) => {
-      ipcRenderer.on("GONG_END_PLAY", cb);
+    onPlayStartSound: (cb) => {
+      ipcRenderer.on("SOUND_START_PLAY", (_event, type) => {
+        cb(type);
+      });
     },
-    onPlayStartGong: (cb) => {
-      ipcRenderer.on("GONG_START_PLAY", cb);
+    onPlayEndSound: (cb) => {
+      ipcRenderer.on("SOUND_END_PLAY", (_event, type) => {
+        cb(type);
+      });
     },
   });
 });

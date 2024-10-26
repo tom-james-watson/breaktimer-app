@@ -13,6 +13,15 @@ export interface WorkingHours {
   ranges: WorkingHoursRange[];
 }
 
+export enum SoundType {
+  None = "NONE",
+  Gong = "GONG",
+  Blip = "BLIP",
+  Bloop = "BLOOP",
+  Ping = "PING",
+  Scifi = "SCIFI",
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
@@ -32,7 +41,7 @@ export interface Settings {
   idleResetEnabled: boolean;
   idleResetLength: Date;
   idleResetNotification: boolean;
-  gongEnabled: boolean;
+  soundType: SoundType;
   breakTitle: string;
   breakMessage: string;
   backgroundColor: string;
@@ -90,7 +99,7 @@ export const defaultSettings: Settings = {
   idleResetEnabled: true,
   idleResetLength: new Date(0, 0, 0, 0, 5),
   idleResetNotification: false,
-  gongEnabled: true,
+  soundType: SoundType.Gong,
   breakTitle: "Time for a break!",
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",

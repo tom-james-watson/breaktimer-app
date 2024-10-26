@@ -2,7 +2,7 @@ import { Button, ButtonGroup, ControlGroup, Spinner } from "@blueprintjs/core";
 import moment from "moment";
 import * as React from "react";
 import { animated, config, useSpring } from "react-spring";
-import { Settings } from "../../types/settings";
+import { Settings, SoundType } from "../../types/settings";
 import styles from "./Break.scss";
 
 const COUNTDOWN_SECS = 10;
@@ -67,8 +67,8 @@ function BreakProgress(props: BreakProgressProps) {
   const [progress, setProgress] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    if (settings.gongEnabled) {
-      ipcRenderer.invokeGongStartPlay();
+    if (settings.soundType !== SoundType.None) {
+      ipcRenderer.invokeStartSound(settings.soundType);
     }
 
     (async () => {
@@ -303,10 +303,8 @@ export default function Break() {
   }, []);
 
   const handleEndBreak = React.useCallback(() => {
-    if (settings?.gongEnabled) {
-      // For some reason the end gong sometimes sounds very distorted, so just
-      // reuse the start gong.
-      ipcRenderer.invokeGongStartPlay();
+    if (settings && settings?.soundType !== SoundType.None) {
+      ipcRenderer.invokeEndSound(settings.soundType);
     }
     setClosing(true);
   }, [settings]);

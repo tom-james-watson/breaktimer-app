@@ -2,7 +2,12 @@ import { PowerMonitor } from "electron";
 import moment from "moment";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
-import { DayConfig, NotificationType, Settings } from "../../types/settings";
+import {
+  DayConfig,
+  NotificationType,
+  Settings,
+  SoundType,
+} from "../../types/settings";
 import { sendIpc } from "./ipc";
 import { showNotification } from "./notifications";
 import { getSettings } from "./store";
@@ -125,8 +130,8 @@ function doBreak(): void {
 
   if (settings.notificationType === NotificationType.Notification) {
     showNotification(settings.breakTitle, settings.breakMessage);
-    if (settings.gongEnabled) {
-      sendIpc(IpcChannel.GongStartPlay);
+    if (settings.soundType !== SoundType.None) {
+      sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
     }
     havingBreak = false;
     createBreak();
