@@ -106,11 +106,7 @@
       "category": "Utility"
     },
     "snap": {
-      "autoStart": true,
-      "plugs": [
-        "default",
-        "audio-playback"
-      ]
+      "autoStart": true
     },
     "directories": {
       "buildResources": "resources",
