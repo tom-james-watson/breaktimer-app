@@ -46,9 +46,9 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
+ipcMain.handle(IpcChannel.SettingsGet, (): [Settings, NodeJS.Platform] => {
   log.info(IpcChannel.SettingsGet);
-  return getSettings();
+  return [getSettings(), process.platform];
 });
 
 ipcMain.handle(

@@ -32,6 +32,7 @@ export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
     null
   );
+  const [platform, setPlatform] = React.useState<NodeJS.Platform | null>(null);
   const [settings, setSettings] = React.useState<Settings | null>(null);
   const [darkMode, setDarkMode] = React.useState(initialDarkMode);
   const [showAdvancedBreaks, setShowAdvanedBreaks] = React.useState(false);
@@ -48,9 +49,13 @@ export default function SettingsEl() {
 
   React.useEffect(() => {
     (async () => {
-      const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
+      const [settings, platform] = (await ipcRenderer.invokeGetSettings()) as [
+        Settings,
+        NodeJS.Platform
+      ];
       setSettingsDraft(settings);
       setSettings(settings);
+      setPlatform(platform);
     })();
   }, []);
 
@@ -58,7 +63,7 @@ export default function SettingsEl() {
     return JSON.stringify(settingsDraft) !== JSON.stringify(settings);
   }, [settings, settingsDraft]);
 
-  if (settings === null || settingsDraft === null) {
+  if (settings === null || settingsDraft === null || platform === null) {
     return null;
   }
 
@@ -471,6 +476,16 @@ export default function SettingsEl() {
                         onChange={handleSwitchChange.bind(null, "autoLaunch")}
                       />
                     </FormGroup>
+                    {platform === "win32" && (
+                      <FormGroup>
+                        <Switch
+                          label="Respect system Do Not Disturb settings"
+                          checked={settingsDraft.respectDnd}
+                          onChange={handleSwitchChange.bind(null, "respectDnd")}
+                          disabled={!settingsDraft.breaksEnabled}
+                        />
+                      </FormGroup>
+                    )}
                   </>
                 }
               />
