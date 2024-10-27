@@ -8,7 +8,6 @@ import {
   Settings,
   SoundType,
 } from "../../types/settings";
-import { checkDoNotDisturb } from "./dnd";
 import { sendIpc } from "./ipc";
 import { showNotification } from "./notifications";
 import { getSettings } from "./store";
@@ -213,17 +212,10 @@ export function checkIdle(): boolean {
 
 function checkShouldHaveBreak(): boolean {
   const settings: Settings = getSettings();
-  const isInWorkingHours = checkInWorkingHours();
-  const isIdle = checkIdle();
-  const isDndOn = checkDoNotDisturb();
+  const inWorkingHours = checkInWorkingHours();
+  const idle = checkIdle();
 
-  return (
-    !havingBreak &&
-    settings.breaksEnabled &&
-    isInWorkingHours &&
-    !isIdle &&
-    !isDndOn
-  );
+  return !havingBreak && settings.breaksEnabled && inWorkingHours && !idle;
 }
 
 function checkBreak(): void {

@@ -251,9 +251,9 @@ export default function Break() {
 
   React.useEffect(() => {
     const init = async () => {
-      const [allowPostpone, [settings]] = await Promise.all([
+      const [allowPostpone, settings] = await Promise.all([
         ipcRenderer.invokeGetAllowPostpone(),
-        ipcRenderer.invokeGetSettings() as Promise<[Settings, NodeJS.Platform]>,
+        ipcRenderer.invokeGetSettings() as Promise<Settings>,
       ]);
 
       setAllowPostpone(allowPostpone);
