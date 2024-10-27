@@ -277,7 +277,9 @@ export default function Break() {
       setReady(true);
     };
 
-    init();
+    // Delay or the window displays incorrectly.
+    // FIXME: work out why and how to avoid this.
+    setTimeout(init, 1000);
   }, [animApi]);
 
   const handleCountdownOver = React.useCallback(() => {
