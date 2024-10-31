@@ -7,30 +7,18 @@ import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
-import {
-    getAppInitialized,
-    setAppInitialized,
-    setBreaksEnabled
-} from "./lib/store";
+import { getAppInitialized, setAppInitialized } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
 
 const gotTheLock = app.requestSingleInstanceLock();
 
+app.on("second-instance", () => {
+  createSettingsWindow();
+});
+
 if (!gotTheLock) {
-  const cliArg = process.argv[process.argv.length - 1];
-
-  if (cliArg === "disable") {
-    console.log("breaks disabled");
-    setBreaksEnabled(false);
-  } else if (cliArg === "enable") {
-    console.log("breaks enabled");
-    setBreaksEnabled(true);
-  } else {
-    console.log("app already open, opening settings");
-    createSettingsWindow();
-  }
-
+  log.info("app already running");
   app.exit();
 }
 
