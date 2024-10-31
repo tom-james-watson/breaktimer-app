@@ -8,9 +8,9 @@ import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
 import {
-  getAppInitialized,
-  setAppInitialized,
-  setBreaksEnabled,
+    getAppInitialized,
+    setAppInitialized,
+    setBreaksEnabled
 } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
@@ -26,12 +26,11 @@ if (!gotTheLock) {
   } else if (cliArg === "enable") {
     console.log("breaks enabled");
     setBreaksEnabled(true);
-  } else if (process.platform !== "darwin") {
+  } else {
     console.log("app already open, opening settings");
     createSettingsWindow();
-  } else {
-    log.info("app already running");
   }
+
   app.exit();
 }
 

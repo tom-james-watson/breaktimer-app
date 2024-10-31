@@ -15,6 +15,27 @@ import { createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
+let disableTimeout: NodeJS.Timeout | null = null;
+let disableEndTime: number | null = null;
+
+function getDisableTimeRemaining(): string {
+  if (!disableEndTime) {
+    return "";
+  }
+
+  const remainingMs = disableEndTime - Date.now();
+  const remainingMinutes = Math.floor(remainingMs / 60000);
+  const remainingHours = Math.floor(remainingMinutes / 60);
+  const remainingDisplayMinutes = remainingMinutes % 60;
+
+  if (remainingMinutes < 1) {
+    return "<1m";
+  } else if (remainingHours > 0) {
+    return `${remainingHours}h ${remainingDisplayMinutes}m`;
+  } else {
+    return `${remainingMinutes}m`;
+  }
+}
 
 export function buildTray(): void {
   if (!tray) {
@@ -47,8 +68,30 @@ export function buildTray(): void {
   const breaksEnabled = settings.breaksEnabled;
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
+    if (breaksEnabled && disableTimeout) {
+      clearTimeout(disableTimeout);
+      disableTimeout = null;
+      disableEndTime = null;
+    }
+
     settings = getSettings();
     setSettings({ ...settings, breaksEnabled });
+    buildTray();
+  };
+
+  const disableBreaksFor = (duration: number): void => {
+    setBreaksEnabled(false);
+    disableEndTime = Date.now() + duration;
+
+    if (disableTimeout) {
+      clearTimeout(disableTimeout);
+    }
+
+    disableTimeout = setTimeout(() => {
+      disableEndTime = null;
+      setBreaksEnabled(true);
+    }, duration);
+
     buildTray();
   };
 
@@ -87,7 +130,12 @@ export function buildTray(): void {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: nextBreak,
-      visible: breakTime !== null && inWorkingHours,
+      visible: breakTime !== null && inWorkingHours && settings.breaksEnabled,
+      enabled: false,
+    },
+    {
+      label: `Disabled for ${getDisableTimeRemaining()}`,
+      visible: disableTimeout !== null && !breaksEnabled,
       enabled: false,
     },
     {
@@ -102,8 +150,35 @@ export function buildTray(): void {
     },
     { type: "separator" },
     {
-      label: breaksEnabled ? "Disable" : "Enable",
-      click: setBreaksEnabled.bind(null, !breaksEnabled),
+      label: "Enable",
+      click: setBreaksEnabled.bind(null, true),
+      visible: !breaksEnabled,
+    },
+    {
+      label: "Disable...",
+      submenu: [
+        { label: "Indefinitely", click: setBreaksEnabled.bind(null, false) },
+        { label: "30 minutes", click: () => disableBreaksFor(30 * 60 * 1000) },
+        { label: "1 hour", click: () => disableBreaksFor(60 * 60 * 1000) },
+        { label: "2 hours", click: () => disableBreaksFor(2 * 60 * 60 * 1000) },
+        { label: "4 hours", click: () => disableBreaksFor(4 * 60 * 60 * 1000) },
+        {
+          label: "Rest of day",
+          click: () => {
+            const now = new Date();
+            const endOfDay = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate(),
+              23,
+              59,
+              59
+            );
+            disableBreaksFor(endOfDay.getTime() - now.getTime());
+          },
+        },
+      ],
+      visible: breaksEnabled,
     },
     {
       label: "Start break now",
