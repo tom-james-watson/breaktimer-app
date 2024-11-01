@@ -59,11 +59,13 @@ const store = new Store<{
   settings: Settings;
   appInitialized: boolean;
   settingsVersion: number;
+  disableEndTime: number | null;
 }>({
   defaults: {
     settings: defaultSettings,
     appInitialized: false,
     settingsVersion: 0,
+    disableEndTime: null,
   },
 });
 
@@ -139,4 +141,12 @@ export function setAppInitialized(): void {
 export function setBreaksEnabled(breaksEnabled: boolean): void {
   const settings: Settings = getSettings();
   setSettings({ ...settings, breaksEnabled }, false);
+}
+
+export function setDisableEndTime(endTime: number | null): void {
+  store.set("disableEndTime", endTime);
+}
+
+export function getDisableEndTime(): number | null {
+  return store.get("disableEndTime");
 }

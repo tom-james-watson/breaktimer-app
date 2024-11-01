@@ -4,21 +4,36 @@ import path from "path";
 import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import {
-  checkIdle,
-  checkInWorkingHours,
-  createBreak,
-  getBreakTime,
-  startBreakNow,
+    checkIdle,
+    checkInWorkingHours,
+    createBreak,
+    getBreakTime,
+    startBreakNow
 } from "./breaks";
-import { getSettings, setSettings } from "./store";
+import {
+    getDisableEndTime,
+    getSettings,
+    setDisableEndTime,
+    setSettings
+} from "./store";
 import { createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
-let disableTimeout: NodeJS.Timeout | null = null;
-let disableEndTime: number | null = null;
+
+function checkDisableTimeout() {
+  const disableEndTime = getDisableEndTime();
+
+  if (disableEndTime && Date.now() >= disableEndTime) {
+    setDisableEndTime(null);
+    const settings = getSettings();
+    setSettings({ ...settings, breaksEnabled: true });
+    buildTray();
+  }
+}
 
 function getDisableTimeRemaining(): string {
+  const disableEndTime = getDisableEndTime();
   if (!disableEndTime) {
     return "";
   }
@@ -68,12 +83,9 @@ export function buildTray(): void {
   const breaksEnabled = settings.breaksEnabled;
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
-    if (breaksEnabled && disableTimeout) {
-      clearTimeout(disableTimeout);
-      disableTimeout = null;
-      disableEndTime = null;
+    if (breaksEnabled) {
+      setDisableEndTime(null);
     }
-
     settings = getSettings();
     setSettings({ ...settings, breaksEnabled });
     buildTray();
@@ -81,17 +93,8 @@ export function buildTray(): void {
 
   const disableBreaksFor = (duration: number): void => {
     setBreaksEnabled(false);
-    disableEndTime = Date.now() + duration;
-
-    if (disableTimeout) {
-      clearTimeout(disableTimeout);
-    }
-
-    disableTimeout = setTimeout(() => {
-      disableEndTime = null;
-      setBreaksEnabled(true);
-    }, duration);
-
+    const endTime = Date.now() + duration;
+    setDisableEndTime(endTime);
     buildTray();
   };
 
@@ -127,6 +130,8 @@ export function buildTray(): void {
     }
   }
 
+  const disableEndTime = getDisableEndTime();
+
   const contextMenu = Menu.buildFromTemplate([
     {
       label: nextBreak,
@@ -135,7 +140,7 @@ export function buildTray(): void {
     },
     {
       label: `Disabled for ${getDisableTimeRemaining()}`,
-      visible: disableTimeout !== null && !breaksEnabled,
+      visible: disableEndTime !== null && !breaksEnabled,
       enabled: false,
     },
     {
@@ -202,7 +207,17 @@ export function buildTray(): void {
 
 export function initTray(): void {
   buildTray();
+  let lastDisableText = getDisableTimeRemaining();
+
   setInterval(() => {
+    checkDisableTimeout();
+
+    const currentDisableText = getDisableTimeRemaining();
+    if (currentDisableText !== lastDisableText) {
+      buildTray();
+      lastDisableText = currentDisableText;
+    }
+
     const breakTime = getBreakTime();
     if (breakTime === null) {
       return;
