@@ -18,7 +18,7 @@ We do not offer support for enterprise environments or commercial deployment. Th
 
 ## Installation
 
-- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (unsigned - you may receive a warning on install, press more info -> run anyway)
+- **Windows** - [BreakTimer.exe](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe) (Unsigned - you will receive a warning on install, press more info -> run anyway. Will not auto-update)
 - **macOS** - [BreakTimer.dmg](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.dmg)
 - **Linux**:
   - Auto-updating **[preferred]**:
