@@ -55,7 +55,7 @@
         ]
       }
     ],
-    "asar": false,
+    "asar": true,
     "artifactName": "${productName}.${ext}",
     "mac": {
       "entitlements": "./internals/build/entitlements.mac.plist",
