@@ -4,22 +4,28 @@ import path from "path";
 import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import {
-    checkIdle,
-    checkInWorkingHours,
-    createBreak,
-    getBreakTime,
-    startBreakNow
+  checkIdle,
+  checkInWorkingHours,
+  createBreak,
+  getBreakTime,
+  startBreakNow,
 } from "./breaks";
 import {
-    getDisableEndTime,
-    getSettings,
-    setDisableEndTime,
-    setSettings
+  getDisableEndTime,
+  getSettings,
+  setDisableEndTime,
+  setSettings,
 } from "./store";
 import { createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
+
+const rootPath = path.dirname(app.getPath("exe"));
+const resourcesPath =
+  process.platform === "darwin"
+    ? path.resolve(rootPath, "..", "Resources")
+    : rootPath;
 
 function checkDisableTimeout() {
   const disableEndTime = getDisableEndTime();
@@ -55,20 +61,19 @@ function getDisableTimeRemaining(): string {
 export function buildTray(): void {
   if (!tray) {
     let imgPath;
+
     if (process.platform === "darwin") {
       imgPath =
         process.env.NODE_ENV === "development"
           ? "resources/tray/tray-IconTemplate.png"
-          : path.join(
-              process.resourcesPath,
-              "app/resources/tray/tray-IconTemplate.png"
-            );
+          : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
     } else {
       imgPath =
         process.env.NODE_ENV === "development"
           ? "resources/tray/icon.png"
-          : path.join(process.resourcesPath, "app/resources/tray/icon.png");
+          : path.join(resourcesPath, "tray", "icon.png");
     }
+
     tray = new Tray(imgPath);
 
     // On windows, context menu will not show on left click by default

@@ -1,6 +1,6 @@
 {
   "name": "breaktimer",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "productName": "BreakTimer",
   "description": "Manage periodic breaks",
   "scripts": {
@@ -33,6 +33,7 @@
     "copyright": "Copyright © 2019 Thomas James Watson",
     "appId": "com.tomjwatson.breaktimer",
     "files": [
+      "!node_modules",
       "app/renderer/dist/",
       "app/renderer/sounds/",
       "app/renderer/preload.js",
@@ -53,6 +54,12 @@
         "filter": [
           "*.png"
         ]
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "resources/tray",
+        "to": "tray"
       }
     ],
     "asar": true,
