@@ -39,6 +39,12 @@ We do not offer support for enterprise environments or commercial deployment. Th
 
 ## FAQ
 
+### Can I donate to BreakTimer?
+
+Some of you have asked about being able to make a donation towards BreakTimer. That's incredibly generous, but I honestly have no need for monetary donations.
+
+What would be awesome is if you were to instead make a donation to a charity of your choice. That way your money goes where it's actually needed 🫶.
+
 ### Why can't I see the app in the tray?
 
 Some operating systems, such as Linux distributions running plain Gnome (e.g. Fedora) or Pantheon (e.g. Elementary OS), don't support system tray icons. In this case, simply re-run the app to open the settings window. You will lose access to certain functionality only available in the tray menu, but at least this workaround lets you use the app.
