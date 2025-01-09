@@ -43,7 +43,7 @@ We do not offer support for enterprise environments or commercial deployment. Th
 
 Some of you have asked about being able to make a donation towards BreakTimer. That's incredibly generous, but I honestly have no need for monetary donations.
 
-What would be awesome is if you were to instead make a donation to a charity of your choice. That way your money goes where it's actually needed 🫶.
+If you’d like to show your appreciation, consider donating to a charity of your choice instead. That way, the money goes where it’s really needed 🫶. If you do, I’d love to hear about it—feel free to email me at contact@breaktimer.app and let me know where you donated.
 
 ### Why can't I see the app in the tray?
 
