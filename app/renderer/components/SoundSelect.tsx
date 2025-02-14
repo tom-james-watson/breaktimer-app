@@ -7,12 +7,13 @@ interface SoundSelectProps {
   value: SoundType;
   onChange: (value: SoundType) => void;
   disabled?: boolean;
+  volume: number; // Add this prop
 }
 
-export function SoundSelect({ value, onChange, disabled }: SoundSelectProps) {
+export function SoundSelect({ value, onChange, disabled, volume }: SoundSelectProps) {
   const playSound = (soundType: SoundType) => {
     if (soundType === SoundType.None) return;
-    ipcRenderer.invokeStartSound(soundType);
+    ipcRenderer.invokeStartSound(soundType, volume); // Pass the volume here
   };
 
   return (

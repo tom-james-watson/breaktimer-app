@@ -92,6 +92,12 @@ div.breaksEnabled {
   div.bp5-form-group:last-child {
     margin-bottom: 0;
   }
+  .volumeControl {
+    width: 100%;                     // Ensure it takes full width of the parent container
+    max-width: 95%;                  // Restrict max width for large screens
+    margin: 0 auto;                  // Center the element horizontally
+    padding: $pt-grid-size * 1.5 $pt-grid-size * 3 0 $pt-grid-size * 3; // Responsive padding
+  }
 }
 
 .colorPicker {

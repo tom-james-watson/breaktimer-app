@@ -52,6 +52,7 @@ export interface Settings {
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
+  volume: number;
 }
 
 export const defaultWorkingRange: WorkingHoursRange = {
@@ -110,6 +111,7 @@ export const defaultSettings: Settings = {
   endBreakEnabled: true,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
+  volume: 1,
 };
 
 export interface DayConfig {

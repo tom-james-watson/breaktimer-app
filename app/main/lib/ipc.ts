@@ -32,17 +32,17 @@ ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
 
 ipcMain.handle(
   IpcChannel.SoundStartPlay,
-  (_event: IpcMainInvokeEvent, type: SoundType): void => {
-    log.info(IpcChannel.SoundStartPlay);
-    sendIpc(IpcChannel.SoundStartPlay, type);
+  (_event: IpcMainInvokeEvent, type: SoundType, volume: number): void => {
+    log.info(`${IpcChannel.SoundStartPlay} - Type: ${type}, Volume: ${volume}`);
+    sendIpc(IpcChannel.SoundStartPlay, type, volume); // Pass volume
   }
 );
 
 ipcMain.handle(
   IpcChannel.SoundEndPlay,
-  (_event: IpcMainInvokeEvent, type: SoundType): void => {
-    log.info(IpcChannel.SoundEndPlay);
-    sendIpc(IpcChannel.SoundEndPlay, type);
+  (_event: IpcMainInvokeEvent, type: SoundType, volume: number): void => {
+    log.info(`${IpcChannel.SoundEndPlay} - Type: ${type}, Volume: ${volume}`);
+    sendIpc(IpcChannel.SoundEndPlay, type, volume); // Pass volume
   }
 );
 

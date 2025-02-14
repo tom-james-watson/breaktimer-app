@@ -93,6 +93,12 @@ export default function SettingsEl() {
     });
   };
 
+  const handleVolumeChange = (newVal: number): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      volume: newVal,
+    });
+  };
   const handleSwitchChange = (
     field: string,
     e: React.ChangeEvent<HTMLInputElement>
@@ -268,8 +274,21 @@ export default function SettingsEl() {
                             soundType,
                           });
                         }}
+                        volume={settingsDraft.volume} // Pass volume directly
                         disabled={!settingsDraft.breaksEnabled}
                       />
+                    </FormGroup>
+                    <FormGroup label="Volume" labelInfo="(0 to 100)">
+                      <div className="volumeControl">
+                        <Slider
+                          min={0}
+                          max={100}
+                          stepSize={1}
+                          labelStepSize={25}
+                          onChange={(value) => handleVolumeChange(value / 100)} // Normalize to 0-1
+                          value={settingsDraft.volume * 100} // Convert back to 0-100 for display
+                        />
+                      </div>
                     </FormGroup>
                     <FormGroup>
                       <Switch
