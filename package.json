@@ -215,7 +215,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.12.1",
+    "@babel/runtime-corejs3": "^7.26.10",
     "@blueprintjs/core": "^5.13.1",
     "@blueprintjs/datetime": "^5.3.11",
     "@blueprintjs/icons": "^5.13.0",
