@@ -189,7 +189,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-log": "^4.3.2",
     "electron-updater": "^6.3.0",
-    "esbuild-loader": "^2.15.1",
+    "esbuild-loader": "^4.3.0",
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.25.2",
     "eslint-plugin-react-hooks": "^4.2.0",
