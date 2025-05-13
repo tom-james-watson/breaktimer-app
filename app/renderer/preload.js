@@ -10,6 +10,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 process.once("loaded", () => {
   contextBridge.exposeInMainWorld("processEnv", { ...process.env });
+  contextBridge.exposeInMainWorld("processPlatform", process.platform );
   contextBridge.exposeInMainWorld("ipcRenderer", {
     invokeBreakPostpone: () => {
       return ipcRenderer.invoke("BREAK_POSTPONE");
