@@ -42,8 +42,8 @@ export function createSettingsWindow(): void {
     autoHideMenuBar: true,
     icon:
       process.env.NODE_ENV === "development"
-        ? path.join(__dirname, "../../../resources/tray/icon.png")
-        : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
+        ? path.join(__dirname, "../../../resources/tray/icon-color.png")
+        : path.join(process.resourcesPath, "app/resources/tray/icon-color.png"),
     webPreferences: {
       preload: path.join(__dirname, "../../renderer/preload.js"),
     },

@@ -22,6 +22,12 @@ export enum SoundType {
   Scifi = "SCIFI",
 }
 
+export enum TrayIconType {
+  Color = "COLOR",
+  Black = "BLACK",
+  White = "WHITE",
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
@@ -42,6 +48,7 @@ export interface Settings {
   idleResetLength: Date;
   idleResetNotification: boolean;
   soundType: SoundType;
+  trayIconType: TrayIconType;
   breakTitle: string;
   breakMessage: string;
   backgroundColor: string;
@@ -100,6 +107,7 @@ export const defaultSettings: Settings = {
   idleResetLength: new Date(0, 0, 0, 0, 5),
   idleResetNotification: false,
   soundType: SoundType.Gong,
+  trayIconType: TrayIconType.Color,
   breakTitle: "Time for a break!",
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",

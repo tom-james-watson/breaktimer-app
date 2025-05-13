@@ -2,7 +2,7 @@ import { app, dialog, Menu, Tray } from "electron";
 import moment from "moment";
 import path from "path";
 import packageJson from "../../../package.json";
-import { Settings } from "../../types/settings";
+import { Settings, TrayIconType } from "../../types/settings";
 import {
     checkIdle,
     checkInWorkingHours,
@@ -58,23 +58,27 @@ function getDisableTimeRemaining(): string {
   }
 }
 
+function getTrayIconPath(trayIconType: TrayIconType): string {
+  if (process.platform === "darwin") {
+    return process.env.NODE_ENV === "development"
+      ? "resources/tray/tray-IconTemplate.png"
+      : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
+  } else {
+    const imgFilename = `icon-${trayIconType.toLowerCase()}.png`;
+    return process.env.NODE_ENV === "development"
+      ? `resources/tray/${imgFilename}`
+      : path.join(app.getAppPath(), "..", "tray", imgFilename);
+  }
+}
+
 export function buildTray(): void {
-    if (!tray) {
-      let imgPath;
+  let settings: Settings = getSettings();
 
-      if (process.platform === "darwin") {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/tray-IconTemplate.png"
-            : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
-      } else {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/icon.png"
-            : path.join(app.getAppPath(), "..", "tray", "icon.png");
-      }
+  if (!tray) {
+    const trayIconType = settings.trayIconType;
+    const imgPath = getTrayIconPath(trayIconType);
 
-      tray = new Tray(imgPath);
+    tray = new Tray(imgPath);
 
     // On windows, context menu will not show on left click by default
     if (process.platform === "win32") {
@@ -84,7 +88,6 @@ export function buildTray(): void {
     }
   }
 
-  let settings: Settings = getSettings();
   const breaksEnabled = settings.breaksEnabled;
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
@@ -234,4 +237,13 @@ export function initTray(): void {
       lastMinsLeft = minsLeft;
     }
   }, 5000);
+}
+
+export function updateTrayIcon(trayIconType: TrayIconType): void {
+  if (!tray) {
+    return;
+  }
+
+  const imgPath = getTrayIconPath(trayIconType);
+  tray.setImage(imgPath);
 }

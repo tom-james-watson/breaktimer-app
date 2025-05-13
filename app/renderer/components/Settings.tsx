@@ -15,7 +15,7 @@ import {
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
 import classnames from "classnames";
 import * as React from "react";
-import { NotificationType, Settings } from "../../types/settings";
+import { NotificationType, Settings, TrayIconType } from "../../types/settings";
 import { toast } from "../toaster";
 import styles from "./Settings.scss";
 import SettingsHeader from "./SettingsHeader";
@@ -119,6 +119,13 @@ export default function SettingsEl() {
       [field]: newVal,
     });
   };
+
+  const handleTrayIconTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    const trayIconType = e.target.value as TrayIconType;
+    setSettingsDraft({ ...settingsDraft, trayIconType });
+  }
 
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
@@ -458,12 +465,12 @@ export default function SettingsEl() {
                 </>
               }
             />
-            {processEnv.SNAP === undefined && (
-              <Tab
-                id="system"
-                title="System"
-                panel={
-                  <>
+            <Tab
+              id="system"
+              title="System"
+              panel={
+                <>
+                  {processEnv.SNAP === undefined && (
                     <FormGroup>
                       <Switch
                         label="Start at login"
@@ -471,10 +478,32 @@ export default function SettingsEl() {
                         onChange={handleSwitchChange.bind(null, "autoLaunch")}
                       />
                     </FormGroup>
-                  </>
-                }
-              />
-            )}
+                  )}
+                  {processPlatform !== "darwin" && (
+                    <FormGroup label="Tray icon">
+                      <HTMLSelect
+                        value={settingsDraft.trayIconType}
+                        options={[
+                          {
+                            value: TrayIconType.Color,
+                            label: "Color",
+                          },
+                          {
+                            value: TrayIconType.Black,
+                            label: "Black",
+                          },
+                          {
+                            value: TrayIconType.White,
+                            label: "White",
+                          },
+                        ]}
+                        onChange={handleTrayIconTypeChange}
+                      />
+                    </FormGroup>
+                  )}
+                </>
+              }
+            />
           </Tabs>
         </div>
       </main>

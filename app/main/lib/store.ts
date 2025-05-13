@@ -2,6 +2,7 @@ import Store from "electron-store";
 import { defaultSettings, Settings } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
+import { updateTrayIcon } from "./tray";
 
 interface Migration {
   version: number;
@@ -121,6 +122,10 @@ export function setSettings(settings: Settings, resetBreaks = true): void {
 
   if (currentSettings.autoLaunch !== settings.autoLaunch) {
     setAutoLauch(settings.autoLaunch);
+  }
+
+  if (currentSettings.trayIconType !== settings.trayIconType) {
+    updateTrayIcon(settings.trayIconType);
   }
 
   store.set({ settings });
