@@ -71,7 +71,7 @@ You can find the log file for BreakTimer here:
 
 Linux: `/home/<USERNAME>/.config/BreakTimer/logs/main.log`
 
-macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/logs/main.log`
+macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer/main.log`
 
 Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\logs/main.log`
 
@@ -85,7 +85,7 @@ In case a bug has left the UI in an unrecoverable state, you can reset the app d
 
 Linux: `/home/<USERNAME>/.config/BreakTimer`
 
-macOS: `/Users/<USERNAME>/Library/Logs/BreakTimer`
+macOS: `/Users/<USERNAME>/Library/Application Support/BreakTimer`
 
 Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer`
 
