@@ -211,7 +211,7 @@
     "webpack": "^5.94.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.7.2",
+    "webpack-dev-server": "^5.2.1",
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
