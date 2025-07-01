@@ -20,6 +20,9 @@ process.once("loaded", () => {
     invokeGetBreakLength: () => {
       return ipcRenderer.invoke("BREAK_LENGTH_GET");
     },
+    invokeGetNextBreak: () => {
+      return ipcRenderer.invoke("GET_NEXT_BREAK");
+    },
     invokeGetSettings: () => {
       return ipcRenderer.invoke("SETTINGS_GET");
     },

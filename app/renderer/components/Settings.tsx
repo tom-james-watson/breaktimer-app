@@ -3,7 +3,6 @@ import {
   Collapse,
   FocusStyleManager,
   FormGroup,
-  HTMLSelect,
   InputGroup,
   Intent,
   OverlaysProvider,
@@ -17,9 +16,9 @@ import classnames from "classnames";
 import * as React from "react";
 import { NotificationType, Settings } from "../../types/settings";
 import { toast } from "../toaster";
+import BreakTab from "./BreakTab";
 import styles from "./Settings.scss";
 import SettingsHeader from "./SettingsHeader";
-import { SoundSelect } from "./SoundSelect";
 import WorkingHoursSettings from "./WorkingHoursSettings";
 
 const initialDarkMode =
@@ -34,7 +33,6 @@ export default function SettingsEl() {
   );
   const [settings, setSettings] = React.useState<Settings | null>(null);
   const [darkMode, setDarkMode] = React.useState(initialDarkMode);
-  const [showAdvancedBreaks, setShowAdvanedBreaks] = React.useState(false);
   const [showAdvancedAppearance, setShowAdvanedAppearance] =
     React.useState(false);
 
@@ -62,25 +60,11 @@ export default function SettingsEl() {
     return null;
   }
 
-  const handleNotificationTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ): void => {
-    const notificationType = e.target.value as NotificationType;
-    setSettingsDraft({ ...settingsDraft, notificationType });
-  };
-
   const handleDateChange = (field: keyof Settings, newVal: Date): void => {
     setSettingsDraft({
       ...settingsDraft,
       [field]: newVal,
     });
-  };
-
-  const handlePostponeLimitChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ): void => {
-    const postponeLimit = Number(e.target.value);
-    setSettingsDraft({ ...settingsDraft, postponeLimit });
   };
 
   const handleTextChange = (
@@ -152,139 +136,8 @@ export default function SettingsEl() {
             <Tab
               id="break-settings"
               title="Breaks"
-              panel={
-                <>
-                  <FormGroup label="Notify me with">
-                    <HTMLSelect
-                      value={settingsDraft.notificationType}
-                      options={[
-                        {
-                          value: NotificationType.Popup,
-                          label: "Popup break",
-                        },
-                        {
-                          value: NotificationType.Notification,
-                          label: "Simple notification",
-                        },
-                      ]}
-                      onChange={handleNotificationTypeChange}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
-                    <TimePicker
-                      onChange={handleDateChange.bind(null, "breakFrequency")}
-                      value={new Date(settingsDraft.breakFrequency)}
-                      selectAllOnFocus
-                      precision={TimePrecision.SECOND}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
-                    <TimePicker
-                      onChange={handleDateChange.bind(null, "breakLength")}
-                      value={new Date(settingsDraft.breakLength)}
-                      selectAllOnFocus
-                      precision={TimePrecision.SECOND}
-                      disabled={
-                        !settingsDraft.breaksEnabled ||
-                        settingsDraft.notificationType !==
-                          NotificationType.Popup
-                      }
-                    />
-                  </FormGroup>
-                  <Button
-                    onClick={() => setShowAdvanedBreaks(!showAdvancedBreaks)}
-                    rightIcon={
-                      showAdvancedBreaks ? "chevron-up" : "chevron-down"
-                    }
-                    outlined
-                    className={styles.advanced}
-                  >
-                    Advanced
-                  </Button>
-                  <Collapse
-                    isOpen={showAdvancedBreaks}
-                    className={styles.collapse}
-                  >
-                    <FormGroup>
-                      <Switch
-                        label="Allow skip break"
-                        checked={settingsDraft.skipBreakEnabled}
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "skipBreakEnabled"
-                        )}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Allow snooze break"
-                        checked={settingsDraft.postponeBreakEnabled}
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "postponeBreakEnabled"
-                        )}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                    <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
-                      <TimePicker
-                        onChange={handleDateChange.bind(null, "postponeLength")}
-                        value={new Date(settingsDraft.postponeLength)}
-                        selectAllOnFocus
-                        precision={TimePrecision.SECOND}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup label="Snooze limit">
-                      <HTMLSelect
-                        value={settingsDraft.postponeLimit}
-                        options={[
-                          { value: 1, label: "1" },
-                          { value: 2, label: "2" },
-                          { value: 3, label: "3" },
-                          { value: 4, label: "4" },
-                          { value: 5, label: "5" },
-                          { value: 0, label: "No limit" },
-                        ]}
-                        onChange={handlePostponeLimitChange}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup label="Break sound">
-                      <SoundSelect
-                        value={settingsDraft.soundType}
-                        onChange={(soundType) => {
-                          setSettingsDraft({
-                            ...settingsDraft,
-                            soundType,
-                          });
-                        }}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Allow ending break early"
-                        checked={settingsDraft.endBreakEnabled}
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "endBreakEnabled"
-                        )}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                  </Collapse>
-                </>
-              }
+              panel={<BreakTab setSettingsDraft={setSettingsDraft} />}
+              className={styles.breakTabs}
             />
             <Tab
               id="working-hours"

@@ -4,17 +4,17 @@ import path from "path";
 import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import {
-    checkIdle,
-    checkInWorkingHours,
-    createBreak,
-    getBreakTime,
-    startBreakNow
+  checkIdle,
+  checkInWorkingHours,
+  getBreaks,
+  getNextBreak,
+  startBreakNow,
 } from "./breaks";
 import {
-    getDisableEndTime,
-    getSettings,
-    setDisableEndTime,
-    setSettings
+  getDisableEndTime,
+  getSettings,
+  setDisableEndTime,
+  setSettings,
 } from "./store";
 import { createSettingsWindow } from "./windows";
 
@@ -59,22 +59,22 @@ function getDisableTimeRemaining(): string {
 }
 
 export function buildTray(): void {
-    if (!tray) {
-      let imgPath;
+  if (!tray) {
+    let imgPath;
 
-      if (process.platform === "darwin") {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/tray-IconTemplate.png"
-            : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
-      } else {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/icon.png"
-            : path.join(app.getAppPath(), "..", "tray", "icon.png");
-      }
+    if (process.platform === "darwin") {
+      imgPath =
+        process.env.NODE_ENV === "development"
+          ? "resources/tray/tray-IconTemplate.png"
+          : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
+    } else {
+      imgPath =
+        process.env.NODE_ENV === "development"
+          ? "resources/tray/icon.png"
+          : path.join(app.getAppPath(), "..", "tray", "icon.png");
+    }
 
-      tray = new Tray(imgPath);
+    tray = new Tray(imgPath);
 
     // On windows, context menu will not show on left click by default
     if (process.platform === "win32") {
@@ -118,20 +118,22 @@ export function buildTray(): void {
     });
   };
 
-  const breakTime = getBreakTime();
+  const breaks = getBreaks();
+  const nextBreak = getNextBreak();
+
   const inWorkingHours = checkInWorkingHours();
   const idle = checkIdle();
-  const minsLeft = breakTime?.diff(moment(), "minutes");
+  const minsLeft = breaks[nextBreak.name]?.diff(moment(), "minutes");
 
-  let nextBreak = "";
+  let nextBreakLabel = "";
 
   if (minsLeft !== undefined) {
     if (minsLeft > 1) {
-      nextBreak = `Next break in ${minsLeft} minutes`;
+      nextBreakLabel = `Next break in ${minsLeft} minutes`;
     } else if (minsLeft === 1) {
-      nextBreak = `Next break in 1 minute`;
+      nextBreakLabel = `Next break in 1 minute`;
     } else {
-      nextBreak = `Next break in less than a minute`;
+      nextBreakLabel = `Next break in less than a minute`;
     }
   }
 
@@ -139,8 +141,8 @@ export function buildTray(): void {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: nextBreak,
-      visible: breakTime !== null && inWorkingHours && settings.breaksEnabled,
+      label: nextBreakLabel,
+      visible: nextBreak !== null && inWorkingHours && settings.breaksEnabled,
       enabled: false,
     },
     {
@@ -192,13 +194,8 @@ export function buildTray(): void {
     },
     {
       label: "Start break now",
-      visible: breakTime !== null && inWorkingHours,
+      visible: nextBreak !== null && inWorkingHours,
       click: startBreakNow,
-    },
-    {
-      label: "Restart break period",
-      visible: breakTime !== null && inWorkingHours,
-      click: createBreak.bind(null, false),
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },
@@ -223,12 +220,18 @@ export function initTray(): void {
       lastDisableText = currentDisableText;
     }
 
-    const breakTime = getBreakTime();
-    if (breakTime === null) {
+    const nextBreak = getNextBreak();
+    const breaks = getBreaks();
+
+    if (
+      nextBreak === null ||
+      !Object.keys(breaks).length ||
+      !breaks[nextBreak.name]
+    ) {
       return;
     }
 
-    const minsLeft = breakTime.diff(moment(), "minutes");
+    const minsLeft = breaks[nextBreak.name].diff(moment(), "minutes");
     if (minsLeft !== lastMinsLeft) {
       buildTray();
       lastMinsLeft = minsLeft;

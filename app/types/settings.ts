@@ -22,14 +22,26 @@ export enum SoundType {
   Scifi = "SCIFI",
 }
 
+export interface Break {
+  frequency: Date;
+  len: Date;
+  name: string;
+  title: string;
+  message: string;
+  notificationType: NotificationType;
+  postponeLimit: number;
+  postponeLength: Date;
+  soundType: SoundType;
+  endBreakEnabled: boolean;
+  skipBreakEnabled: boolean;
+  postponeBreakEnabled: boolean;
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  breakFrequency: Date;
-  breakLength: Date;
-  postponeLength: Date;
-  postponeLimit: number;
+  breaks: Break[];
   workingHoursEnabled: boolean;
   workingHoursMonday: WorkingHours;
   workingHoursTuesday: WorkingHours;
@@ -63,10 +75,22 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  breakFrequency: new Date(0, 0, 0, 0, 28),
-  breakLength: new Date(0, 0, 0, 0, 2),
-  postponeLength: new Date(0, 0, 0, 0, 3),
-  postponeLimit: 0,
+  breaks: [
+    {
+      name: "Default",
+      frequency: new Date(0, 0, 0, 0, 28),
+      len: new Date(0, 0, 0, 0, 2),
+      title: "Time for a break!",
+      message: "Rest your eyes. Stretch your legs. Breathe. Relax.",
+      notificationType: NotificationType.Popup,
+      postponeLimit: 0,
+      postponeLength: new Date(0, 0, 0, 0, 3),
+      soundType: SoundType.Gong,
+      endBreakEnabled: true,
+      skipBreakEnabled: false,
+      postponeBreakEnabled: true,
+    },
+  ],
   workingHoursEnabled: true,
   workingHoursMonday: {
     enabled: true,

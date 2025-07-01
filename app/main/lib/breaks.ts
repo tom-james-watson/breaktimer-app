@@ -1,8 +1,9 @@
 import { PowerMonitor } from "electron";
 import moment from "moment";
-import { BreakTime } from "../../types/breaks";
+import { Breaks, NOW_KEY } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
 import {
+  Break,
   DayConfig,
   NotificationType,
   Settings,
@@ -15,20 +16,19 @@ import { buildTray } from "./tray";
 import { createBreakWindows } from "./windows";
 
 let powerMonitor: PowerMonitor;
-let breakTime: BreakTime = null;
+let breaks: Breaks;
 let havingBreak = false;
 let postponedCount = 0;
 let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
 
-export function getBreakTime(): BreakTime {
-  return breakTime;
+export function getBreaks(): Breaks {
+  return breaks;
 }
 
 export function getBreakLength(): Date {
-  const settings: Settings = getSettings();
-  return settings.breakLength;
+  return getNextBreak().len;
 }
 
 function zeroPad(n: number) {
@@ -47,9 +47,25 @@ function getIdleResetSeconds(): number {
   return getSeconds(new Date(settings.idleResetLength));
 }
 
-function getBreakSeconds(): number {
+function getBreakSeconds(b: Break): number {
+  return getSeconds(new Date(b.frequency));
+}
+
+export function getNextBreak(): Break {
   const settings: Settings = getSettings();
-  return getSeconds(new Date(settings.breakFrequency));
+
+  let minDiff = Infinity;
+  let nextBreakName = "";
+  const now = moment();
+  for (const [name, breakTime] of Object.entries(breaks)) {
+    const diff = breakTime.diff(now, "seconds");
+    if (diff < minDiff) {
+      minDiff = diff;
+      nextBreakName = name;
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return settings.breaks.find((i) => i.name === nextBreakName)!;
 }
 
 function createIdleNotification() {
@@ -83,62 +99,63 @@ function createIdleNotification() {
   }
 }
 
-export function createBreak(isPostpone = false): void {
-  const settings: Settings = getSettings();
-
+export function createBreak(b: Break, isPostpone = false): void {
   if (idleStart) {
     createIdleNotification();
     idleStart = null;
     postponedCount = 0;
   }
 
-  const freq = new Date(
-    isPostpone ? settings.postponeLength : settings.breakFrequency
-  );
-
-  breakTime = moment()
+  const freq = new Date(isPostpone ? b.postponeLength : b.frequency);
+  const breakTimeCandidate = moment()
     .add(freq.getHours(), "hours")
     .add(freq.getMinutes(), "minutes")
     .add(freq.getSeconds(), "seconds");
 
+  if (!breaks || !Object.keys(breaks).length) {
+    breaks = { [b.name]: breakTimeCandidate };
+  } else {
+    breaks[b.name] = breakTimeCandidate;
+  }
+
   buildTray();
 }
 
-export function endPopupBreak(): void {
-  if (breakTime !== null && breakTime < moment()) {
-    breakTime = null;
-    havingBreak = false;
-    postponedCount = 0;
-  }
+export function endPopupBreak(b: Break): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  createBreak(b);
+  havingBreak = false;
+  postponedCount = 0;
 }
 
 export function getAllowPostpone(): boolean {
-  const settings = getSettings();
-  return !settings.postponeLimit || postponedCount < settings.postponeLimit;
+  const nextBreak = getNextBreak();
+  return !nextBreak.postponeLimit || postponedCount < nextBreak.postponeLimit;
 }
 
 export function postponeBreak(): void {
   postponedCount++;
   havingBreak = false;
-  createBreak(true);
+  const nextBreak = getNextBreak();
+  createBreak(nextBreak, true);
 }
 
-function doBreak(): void {
+function doBreak(b: Break): void {
   havingBreak = true;
 
   const settings: Settings = getSettings();
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification(settings.breakTitle, settings.breakMessage);
+    showNotification(b.title, b.message);
     if (settings.soundType !== SoundType.None) {
       sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
     }
     havingBreak = false;
-    createBreak();
+    createBreak(b);
   }
 
   if (settings.notificationType === NotificationType.Popup) {
-    createBreakWindows();
+    createBreakWindows(b);
   }
 }
 
@@ -218,16 +235,16 @@ function checkShouldHaveBreak(): boolean {
   return !havingBreak && settings.breaksEnabled && inWorkingHours && !idle;
 }
 
-function checkBreak(): void {
+function checkBreak(b: Break): void {
   const now = moment();
 
-  if (breakTime !== null && now > breakTime) {
-    doBreak();
+  if (breaks[b.name] !== null && now > breaks[b.name]) {
+    doBreak(b);
   }
 }
 
 export function startBreakNow(): void {
-  breakTime = moment();
+  breaks[NOW_KEY] = moment();
 }
 
 function tick(): void {
@@ -240,7 +257,8 @@ function tick(): void {
     const secondsSinceLastTick = lastTick
       ? Math.abs(+new Date() - +lastTick) / 1000
       : 0;
-    const breakSeconds = getBreakSeconds();
+    const nextBreak = getNextBreak();
+    const breakSeconds = getBreakSeconds(nextBreak);
     const lockSeconds = lockStart && Math.abs(+new Date() - +lockStart) / 1000;
 
     if (lockStart && lockSeconds !== null && lockSeconds > breakSeconds) {
@@ -254,7 +272,7 @@ function tick(): void {
       // case, it's not particularly helpful to show an idle reset
       // notification, so just reset the break
       lockStart = null;
-      breakTime = null;
+      breaks = {};
     } else if (secondsSinceLastTick > getIdleResetSeconds()) {
       //  If idleStart exists, it means we were idle before the computer slept.
       //  If it doesn't exist, count the computer going unresponsive as the
@@ -263,25 +281,25 @@ function tick(): void {
         lockStart = null;
         idleStart = lastTick;
       }
-      createBreak();
+      createBreak(nextBreak);
     }
 
-    if (!shouldHaveBreak && !havingBreak && breakTime) {
+    if (!shouldHaveBreak && !havingBreak && Object.keys(breaks)) {
       if (checkIdle()) {
         idleStart = new Date();
       }
-      breakTime = null;
+      breaks = {};
       buildTray();
       return;
     }
 
-    if (shouldHaveBreak && !breakTime) {
-      createBreak();
-      return;
-    }
+    //if (shouldHaveBreak) {
+    //  createBreak(nextBreak);
+    //  return;
+    //}
 
     if (shouldHaveBreak) {
-      checkBreak();
+      checkBreak(nextBreak);
     }
   } finally {
     lastTick = new Date();
@@ -296,7 +314,7 @@ export function initBreaks(): void {
   const settings: Settings = getSettings();
 
   if (settings.breaksEnabled) {
-    createBreak();
+    settings.breaks.map((b) => createBreak(b));
   }
 
   if (tickInterval) {

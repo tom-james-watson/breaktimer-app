@@ -1,8 +1,13 @@
 import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
-import { Settings, SoundType } from "../../types/settings";
-import { getAllowPostpone, getBreakLength, postponeBreak } from "./breaks";
+import { Break, Settings, SoundType } from "../../types/settings";
+import {
+  getAllowPostpone,
+  getBreakLength,
+  getNextBreak,
+  postponeBreak,
+} from "./breaks";
 import { getSettings, setSettings } from "./store";
 import { getWindows } from "./windows";
 
@@ -28,6 +33,11 @@ ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
 ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
   log.info(IpcChannel.BreakPostpone);
   postponeBreak();
+});
+
+ipcMain.handle(IpcChannel.GetNextBreak, (): Break => {
+  log.info(IpcChannel.GetNextBreak);
+  return getNextBreak();
 });
 
 ipcMain.handle(

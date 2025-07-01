@@ -2,6 +2,7 @@ export enum IpcChannel {
   AllowPostponeGet = "ALLOW_POSTPONE_GET",
   BreakLengthGet = "BREAK_LENGTH_GET",
   BreakPostpone = "BREAK_POSTPONE",
+  GetNextBreak = "GET_NEXT_BREAK",
   Error = "ERROR",
   SoundEndPlay = "SOUND_END_PLAY",
   SoundStartPlay = "SOUND_START_PLAY",

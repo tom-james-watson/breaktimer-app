@@ -1,3 +1,4 @@
+import { Break } from "app/types/settings";
 import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
 import path from "path";
@@ -77,7 +78,7 @@ export function createSoundsWindow(): void {
   soundsWindow.loadURL(getBrowserWindowUrl("sounds"));
 }
 
-export function createBreakWindows(): void {
+export function createBreakWindows(b: Break): void {
   const settings = getSettings();
 
   const displays = screen.getAllDisplays();
@@ -145,7 +146,7 @@ export function createBreakWindows(): void {
         }
       }
       breakWindows = [];
-      endPopupBreak();
+      endPopupBreak(b);
     });
 
     breakWindows.push(breakWindow);

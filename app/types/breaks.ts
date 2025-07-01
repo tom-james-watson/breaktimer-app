@@ -1,3 +1,4 @@
 import { Moment } from "moment";
 
-export type BreakTime = Moment | null;
+export const NOW_KEY = Symbol("Now");
+export type Breaks = Record<string, Moment> & { [NOW_KEY]?: Moment };

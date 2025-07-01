@@ -2,7 +2,7 @@ import { Button, ButtonGroup, ControlGroup, Spinner } from "@blueprintjs/core";
 import moment from "moment";
 import * as React from "react";
 import { animated, config, useSpring } from "react-spring";
-import { Settings, SoundType } from "../../types/settings";
+import { Break, Settings, SoundType } from "../../types/settings";
 import styles from "./Break.scss";
 
 const COUNTDOWN_SECS = 10;
@@ -236,6 +236,7 @@ function BreakCountdown(props: BreakCountdownProps) {
 
 export default function Break() {
   const [settings, setSettings] = React.useState<Settings | null>(null);
+  const [nextBreak, setNextBreak] = React.useState<Break | null>(null);
   const [countingDown, setCountingDown] = React.useState(true);
   const [allowPostpone, setAllowPostpone] = React.useState<boolean | null>(
     null
@@ -251,13 +252,15 @@ export default function Break() {
 
   React.useEffect(() => {
     const init = async () => {
-      const [allowPostpone, settings] = await Promise.all([
+      const [allowPostpone, settings, nextBreak] = await Promise.all([
         ipcRenderer.invokeGetAllowPostpone(),
         ipcRenderer.invokeGetSettings() as Promise<Settings>,
+        ipcRenderer.invokeGetNextBreak() as Promise<Break>,
       ]);
 
       setAllowPostpone(allowPostpone);
       setSettings(settings);
+      setNextBreak(nextBreak);
 
       animApi({
         backgroundOpacity: 0.8,
@@ -352,7 +355,7 @@ export default function Break() {
           <>
             {countingDown ? (
               <BreakCountdown
-                breakTitle={settings.breakTitle}
+                breakTitle={nextBreak?.title || ""}
                 onCountdownOver={handleCountdownOver}
                 onPostponeBreak={handlePostponeBreak}
                 onSkipBreak={handleSkipBreak}
@@ -364,7 +367,7 @@ export default function Break() {
               />
             ) : (
               <BreakProgress
-                breakMessage={settings.breakMessage}
+                breakMessage={nextBreak?.message || ""}
                 endBreakEnabled={settings.endBreakEnabled}
                 onEndBreak={handleEndBreak}
                 settings={settings}
