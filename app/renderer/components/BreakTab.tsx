@@ -107,10 +107,12 @@ export default function BreakTab({
         [field]: e.target.value,
       };
 
-      if (field === "name" && findBreakIdxByName(e.target.value) === -1) {
-        const newBreaks = updateBreakByIdx(findBreakIdxByName(name), newBreak);
-        setBreaks([...newBreaks]);
+      if (field === "name" && findBreakIdxByName(e.target.value) !== -1) {
+        return
       }
+
+      const newBreaks = updateBreakByIdx(findBreakIdxByName(name), newBreak);
+      setBreaks([...newBreaks]);
     }
   };
 
