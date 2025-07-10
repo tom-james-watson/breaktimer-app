@@ -64,6 +64,9 @@ export function getNextBreak(): Break {
       nextBreakName = name;
     }
   }
+  if (!nextBreakName) {
+    return settings.breaks[0];
+  }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return settings.breaks.find((i) => i.name === nextBreakName)!;
 }
@@ -145,16 +148,16 @@ function doBreak(b: Break): void {
 
   const settings: Settings = getSettings();
 
-  if (settings.notificationType === NotificationType.Notification) {
+  if (b.notificationType === NotificationType.Notification) {
     showNotification(b.title, b.message);
     if (settings.soundType !== SoundType.None) {
-      sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
+      sendIpc(IpcChannel.SoundStartPlay, b.soundType);
     }
     havingBreak = false;
     createBreak(b);
   }
 
-  if (settings.notificationType === NotificationType.Popup) {
+  if (b.notificationType === NotificationType.Popup) {
     createBreakWindows(b);
   }
 }
@@ -313,6 +316,7 @@ export function initBreaks(): void {
 
   const settings: Settings = getSettings();
 
+  breaks = {};
   if (settings.breaksEnabled) {
     settings.breaks.map((b) => createBreak(b));
   }

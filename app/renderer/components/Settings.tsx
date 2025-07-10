@@ -136,7 +136,7 @@ export default function SettingsEl() {
             <Tab
               id="break-settings"
               title="Breaks"
-              panel={<BreakTab setSettingsDraft={setSettingsDraft} />}
+              panel={<BreakTab setSettingsDraft={setSettingsDraft} dirty={dirty} />}
               className={styles.breakTabs}
             />
             <Tab
@@ -167,22 +167,6 @@ export default function SettingsEl() {
               title="Appearance"
               panel={
                 <>
-                  <FormGroup label="Break title">
-                    <InputGroup
-                      id="break-title"
-                      value={settingsDraft.breakTitle}
-                      onChange={handleTextChange.bind(null, "breakTitle")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break message">
-                    <InputGroup
-                      id="break-message"
-                      value={settingsDraft.breakMessage}
-                      onChange={handleTextChange.bind(null, "breakMessage")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
                   <Button
                     onClick={() =>
                       setShowAdvanedAppearance(!showAdvancedAppearance)
@@ -228,7 +212,7 @@ export default function SettingsEl() {
                         disabled={
                           !settingsDraft.breaksEnabled ||
                           settingsDraft.notificationType !==
-                            NotificationType.Popup
+                          NotificationType.Popup
                         }
                       />
                     </FormGroup>

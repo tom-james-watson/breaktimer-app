@@ -54,8 +54,6 @@ export interface Settings {
   idleResetLength: Date;
   idleResetNotification: boolean;
   soundType: SoundType;
-  breakTitle: string;
-  breakMessage: string;
   backgroundColor: string;
   textColor: string;
   showBackdrop: boolean;
@@ -124,8 +122,6 @@ export const defaultSettings: Settings = {
   idleResetLength: new Date(0, 0, 0, 0, 5),
   idleResetNotification: false,
   soundType: SoundType.Gong,
-  breakTitle: "Time for a break!",
-  breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",
   backdropColor: "#001914",
   textColor: "#ffffff",

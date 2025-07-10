@@ -123,7 +123,10 @@ export function buildTray(): void {
 
   const inWorkingHours = checkInWorkingHours();
   const idle = checkIdle();
-  const minsLeft = breaks[nextBreak.name]?.diff(moment(), "minutes");
+  let minsLeft;
+  if (nextBreak?.name) {
+    minsLeft = breaks[nextBreak.name]?.diff(moment(), "minutes");
+  }
 
   let nextBreakLabel = "";
 

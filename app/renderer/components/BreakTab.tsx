@@ -24,8 +24,10 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 export default function BreakTab({
   setSettingsDraft,
+  dirty,
 }: {
   setSettingsDraft: React.Dispatch<React.SetStateAction<Settings | null>>;
+  dirty: boolean
 }) {
   const [settings, setSettings] = React.useState<Settings | null>(null);
   const [breaks, setBreaks] = React.useState<Break[]>([]);
@@ -162,10 +164,20 @@ export default function BreakTab({
   };
 
   const handleAddBreak = (): void => {
+    const breakLen = breaks?.length ?? 1
     const newBreak = {
+      name: `New Break ${breakLen ? breakLen - 1 : ''}`,
       frequency: new Date(0, 0, 0, 0, 28),
       len: new Date(0, 0, 0, 0, 2),
-      name: "New Brake",
+      title: 'Time for a break!',
+      message: 'Rest your eyes. Stretch your legs. Breathe. Relax.',
+      notificationType: NotificationType.Popup,
+      postponeLimit: 0,
+      postponeLength: new Date(0, 0, 0, 0, 5),
+      soundType: 'GONG',
+      endBreakEnabled: true,
+      skipBreakEnabled: false,
+      postponeBreakEnabled: true
     } as Break;
     setBreaks([...breaks, newBreak]);
   };
@@ -177,7 +189,7 @@ export default function BreakTab({
 
   return (
     <div className={styles.breakTabs}>
-      <Tabs defaultSelectedTabId="break-0">
+      <Tabs defaultSelectedTabId={`break-${(settings?.breaks?.length ?? 1) - 1}`}>
         {breaks.length &&
           breaks?.map((b, i) => (
             <Tab
@@ -354,7 +366,7 @@ export default function BreakTab({
               }
             />
           ))}
-        <Button onClick={handleAddBreak} outlined>
+        <Button onClick={handleAddBreak} outlined disabled={dirty}>
           Add Break
         </Button>
       </Tabs>

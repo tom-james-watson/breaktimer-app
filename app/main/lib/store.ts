@@ -62,7 +62,7 @@ const store = new Store<{
   disableEndTime: number | null;
 }>({
   defaults: {
-    settings: defaultSettings,
+    settings: { ...defaultSettings },
     appInitialized: false,
     settingsVersion: 0,
     disableEndTime: null,
@@ -124,6 +124,7 @@ export function setSettings(settings: Settings, resetBreaks = true): void {
   }
 
   store.set({ settings });
+  console.log("SETTEd", settings);
 
   if (resetBreaks) {
     initBreaks();
