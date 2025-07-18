@@ -26,9 +26,9 @@ export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  breakFrequency: Date;
-  breakLength: Date;
-  postponeLength: Date;
+  breakFrequencySeconds: number;
+  breakLengthSeconds: number;
+  postponeLengthSeconds: number;
   postponeLimit: number;
   workingHoursEnabled: boolean;
   workingHoursMonday: WorkingHours;
@@ -39,7 +39,7 @@ export interface Settings {
   workingHoursSaturday: WorkingHours;
   workingHoursSunday: WorkingHours;
   idleResetEnabled: boolean;
-  idleResetLength: Date;
+  idleResetLengthSeconds: number;
   idleResetNotification: boolean;
   soundType: SoundType;
   breakTitle: string;
@@ -63,9 +63,9 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  breakFrequency: new Date(0, 0, 0, 0, 28),
-  breakLength: new Date(0, 0, 0, 0, 2),
-  postponeLength: new Date(0, 0, 0, 0, 3),
+  breakFrequencySeconds: 28 * 60, // 28 minutes in seconds
+  breakLengthSeconds: 2 * 60, // 2 minutes in seconds
+  postponeLengthSeconds: 3 * 60, // 3 minutes in seconds
   postponeLimit: 0,
   workingHoursEnabled: true,
   workingHoursMonday: {
@@ -97,7 +97,7 @@ export const defaultSettings: Settings = {
     ranges: [defaultWorkingRange],
   },
   idleResetEnabled: true,
-  idleResetLength: new Date(0, 0, 0, 0, 5),
+  idleResetLengthSeconds: 5 * 60, // 5 minutes in seconds
   idleResetNotification: false,
   soundType: SoundType.Gong,
   breakTitle: "Time for a break!",

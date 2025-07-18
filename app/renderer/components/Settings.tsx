@@ -29,14 +29,11 @@ const initialDarkMode =
 FocusStyleManager.onlyShowFocusOnTabs();
 
 export default function SettingsEl() {
-  const [settingsDraft, setSettingsDraft] = useState<Settings | null>(
-    null
-  );
+  const [settingsDraft, setSettingsDraft] = useState<Settings | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [darkMode, setDarkMode] = useState(initialDarkMode);
   const [showAdvancedBreaks, setShowAdvanedBreaks] = useState(false);
-  const [showAdvancedAppearance, setShowAdvanedAppearance] =
-    useState(false);
+  const [showAdvancedAppearance, setShowAdvanedAppearance] = useState(false);
 
   useEffect(() => {
     window
@@ -69,10 +66,28 @@ export default function SettingsEl() {
     setSettingsDraft({ ...settingsDraft, notificationType });
   };
 
-  const handleDateChange = (field: keyof Settings, newVal: Date): void => {
+  const handleDateChange = (fieldName: string, newVal: Date): void => {
+    const seconds =
+      newVal.getHours() * 3600 +
+      newVal.getMinutes() * 60 +
+      newVal.getSeconds();
+
+    let secondsField: keyof Settings;
+    if (fieldName === "breakFrequency") {
+      secondsField = "breakFrequencySeconds";
+    } else if (fieldName === "breakLength") {
+      secondsField = "breakLengthSeconds";
+    } else if (fieldName === "postponeLength") {
+      secondsField = "postponeLengthSeconds";
+    } else if (fieldName === "idleResetLength") {
+      secondsField = "idleResetLengthSeconds";
+    } else {
+      return;
+    }
+
     setSettingsDraft({
       ...settingsDraft,
-      [field]: newVal,
+      [secondsField]: seconds,
     });
   };
 
@@ -174,7 +189,16 @@ export default function SettingsEl() {
                   <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
                     <TimePicker
                       onChange={handleDateChange.bind(null, "breakFrequency")}
-                      value={new Date(settingsDraft.breakFrequency)}
+                      value={
+                        new Date(
+                          0,
+                          0,
+                          0,
+                          Math.floor(settingsDraft.breakFrequencySeconds / 3600),
+                          Math.floor((settingsDraft.breakFrequencySeconds % 3600) / 60),
+                          settingsDraft.breakFrequencySeconds % 60
+                        )
+                      }
                       selectAllOnFocus
                       precision={TimePrecision.SECOND}
                       disabled={!settingsDraft.breaksEnabled}
@@ -183,7 +207,16 @@ export default function SettingsEl() {
                   <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
                     <TimePicker
                       onChange={handleDateChange.bind(null, "breakLength")}
-                      value={new Date(settingsDraft.breakLength)}
+                      value={
+                        new Date(
+                          0,
+                          0,
+                          0,
+                          Math.floor(settingsDraft.breakLengthSeconds / 3600),
+                          Math.floor((settingsDraft.breakLengthSeconds % 3600) / 60),
+                          settingsDraft.breakLengthSeconds % 60
+                        )
+                      }
                       selectAllOnFocus
                       precision={TimePrecision.SECOND}
                       disabled={
@@ -232,7 +265,16 @@ export default function SettingsEl() {
                     <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
                       <TimePicker
                         onChange={handleDateChange.bind(null, "postponeLength")}
-                        value={new Date(settingsDraft.postponeLength)}
+                        value={
+                          new Date(
+                            0,
+                            0,
+                            0,
+                            Math.floor(settingsDraft.postponeLengthSeconds / 3600),
+                            Math.floor((settingsDraft.postponeLengthSeconds % 3600) / 60),
+                            settingsDraft.postponeLengthSeconds % 60
+                          )
+                        }
                         selectAllOnFocus
                         precision={TimePrecision.SECOND}
                         disabled={
@@ -432,7 +474,16 @@ export default function SettingsEl() {
                   >
                     <TimePicker
                       onChange={handleDateChange.bind(null, "idleResetLength")}
-                      value={new Date(settingsDraft.idleResetLength)}
+                      value={
+                        new Date(
+                          0,
+                          0,
+                          0,
+                          Math.floor(settingsDraft.idleResetLengthSeconds / 3600),
+                          Math.floor((settingsDraft.idleResetLengthSeconds % 3600) / 60),
+                          settingsDraft.idleResetLengthSeconds % 60
+                        )
+                      }
                       selectAllOnFocus
                       precision={TimePrecision.SECOND}
                       disabled={

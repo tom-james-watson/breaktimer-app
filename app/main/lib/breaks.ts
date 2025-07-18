@@ -26,9 +26,9 @@ export function getBreakTime(): BreakTime {
   return breakTime;
 }
 
-export function getBreakLength(): Date {
+export function getBreakLengthSeconds(): number {
   const settings: Settings = getSettings();
-  return settings.breakLength;
+  return settings.breakLengthSeconds;
 }
 
 function zeroPad(n: number) {
@@ -36,20 +36,18 @@ function zeroPad(n: number) {
   return nStr.length === 1 ? `0${nStr}` : nStr;
 }
 
-function getSeconds(date: Date): number {
-  return (
-    date.getHours() * 60 * 60 + date.getMinutes() * 60 + date.getSeconds() || 1
-  ); // can't be 0
+function getSecondsFromSettings(seconds: number): number {
+  return seconds || 1; // can't be 0
 }
 
 function getIdleResetSeconds(): number {
   const settings: Settings = getSettings();
-  return getSeconds(new Date(settings.idleResetLength));
+  return getSecondsFromSettings(settings.idleResetLengthSeconds);
 }
 
 function getBreakSeconds(): number {
   const settings: Settings = getSettings();
-  return getSeconds(new Date(settings.breakFrequency));
+  return getSecondsFromSettings(settings.breakFrequencySeconds);
 }
 
 function createIdleNotification() {
@@ -92,14 +90,9 @@ export function createBreak(isPostpone = false): void {
     postponedCount = 0;
   }
 
-  const freq = new Date(
-    isPostpone ? settings.postponeLength : settings.breakFrequency
-  );
+  const seconds = isPostpone ? settings.postponeLengthSeconds : settings.breakFrequencySeconds;
 
-  breakTime = moment()
-    .add(freq.getHours(), "hours")
-    .add(freq.getMinutes(), "minutes")
-    .add(freq.getSeconds(), "seconds");
+  breakTime = moment().add(seconds, "seconds");
 
   buildTray();
 }

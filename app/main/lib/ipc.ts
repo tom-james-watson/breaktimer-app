@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
-import { getAllowPostpone, getBreakLength, postponeBreak } from "./breaks";
+import { getAllowPostpone, getBreakLengthSeconds, postponeBreak } from "./breaks";
 import { getSettings, setSettings } from "./store";
 import { getWindows } from "./windows";
 
@@ -59,7 +59,7 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle(IpcChannel.BreakLengthGet, (): Date => {
+ipcMain.handle(IpcChannel.BreakLengthGet, (): number => {
   log.info(IpcChannel.BreakLengthGet);
-  return getBreakLength();
+  return getBreakLengthSeconds();
 });
