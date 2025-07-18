@@ -3,6 +3,7 @@ import { app } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import "regenerator-runtime/runtime";
+import electronDebug from "electron-debug";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
@@ -37,7 +38,7 @@ if (
   process.env.NODE_ENV === "development" ||
   process.env.DEBUG_PROD === "true"
 ) {
-  require("electron-debug")();
+  electronDebug();
 }
 
 // function installExtensions() {
@@ -70,7 +71,7 @@ app.on("ready", async () => {
   }
 
   if (process.platform === "darwin") {
-    app.dock.hide();
+    app.dock?.hide();
   }
 
   const appInitialized = getAppInitialized();
