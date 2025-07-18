@@ -103,6 +103,7 @@ export function endPopupBreak(): void {
     havingBreak = false;
     postponedCount = 0;
   }
+  buildTray();
 }
 
 export function getAllowPostpone(): boolean {
@@ -133,6 +134,8 @@ function doBreak(): void {
   if (settings.notificationType === NotificationType.Popup) {
     createBreakWindows();
   }
+  
+  buildTray();
 }
 
 export function checkInWorkingHours(): boolean {
@@ -201,6 +204,10 @@ export function checkIdle(): boolean {
   }
 
   return state === IdleState.Idle;
+}
+
+export function isHavingBreak(): boolean {
+  return havingBreak;
 }
 
 function checkShouldHaveBreak(): boolean {

@@ -151,3 +151,17 @@ export function createBreakWindows(): void {
     breakWindows.push(breakWindow);
   }
 }
+
+export function closeBreakWindows(): void {
+  for (const win of breakWindows) {
+    if (!win.isDestroyed()) {
+      try {
+        win.close();
+      } catch (err) {
+        log.warn(err);
+      }
+    }
+  }
+  breakWindows = [];
+  endPopupBreak();
+}
