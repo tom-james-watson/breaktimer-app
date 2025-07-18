@@ -10,7 +10,6 @@ root.render(<Main />);
 /* eslint-disable @typescript-eslint/no-explicit-any */
 if ((module as any).hot) {
   (module as any).hot.accept("./components/Main", () => {
-    // eslint-disable-next-line global-require
     const NextMain = require("./components/Main").default;
     root.render(<NextMain />);
   });

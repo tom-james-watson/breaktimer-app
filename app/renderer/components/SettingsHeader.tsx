@@ -1,5 +1,5 @@
 import { Alignment, Button, Navbar } from "@blueprintjs/core";
-import styles from "./SettingsHeader.scss";
+import * as styles from "./SettingsHeader.scss";
 
 interface Props {
   backgroundColor: string;

@@ -17,7 +17,7 @@ import classnames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 import { NotificationType, Settings } from "../../types/settings";
 import { toast } from "../toaster";
-import styles from "./Settings.scss";
+import * as styles from "./Settings.scss";
 import SettingsHeader from "./SettingsHeader";
 import { SoundSelect } from "./SoundSelect";
 import WorkingHoursSettings from "./WorkingHoursSettings";

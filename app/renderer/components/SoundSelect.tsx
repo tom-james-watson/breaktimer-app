@@ -1,6 +1,6 @@
 import { Button, HTMLSelect } from "@blueprintjs/core";
 import { SoundType } from "../../types/settings";
-import styles from "./SoundSelect.scss";
+import * as styles from "./SoundSelect.scss";
 
 interface SoundSelectProps {
   value: SoundType;

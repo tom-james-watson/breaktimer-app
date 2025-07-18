@@ -60,6 +60,7 @@ module.exports = merge(baseConfig, {
             options: {
               modules: {
                 localIdentName: "[name]__[local]__[hash:base64:5]",
+                exportGlobals: true,
               },
             },
           },
@@ -99,6 +100,7 @@ module.exports = merge(baseConfig, {
             options: {
               modules: {
                 localIdentName: "[name]__[local]__[hash:base64:5]",
+                exportGlobals: true,
               },
             },
           },

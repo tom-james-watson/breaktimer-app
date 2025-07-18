@@ -3,7 +3,7 @@ import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Settings, SoundType } from "../../types/settings";
-import styles from "./Break.scss";
+import * as styles from "./Break.scss";
 
 const COUNTDOWN_SECS = 10;
 const TICK_MS = 200;

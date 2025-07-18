@@ -16,7 +16,7 @@ import {
   WorkingHoursRange,
 } from "../../types/settings";
 import { useState } from "react";
-import styles from "./WorkingHoursSettings.scss";
+import * as styles from "./WorkingHoursSettings.scss";
 
 interface WorkingHoursProps {
   settingsDraft: Settings;
@@ -88,7 +88,7 @@ function TimeRange({
         selectAllOnFocus
         disabled={disabled}
       />
-      <span className={styles.timeSeparator}>to</span>
+      <span>to</span>
       <TimePicker
         value={getTimeFromMinutes(range.toMinutes)}
         onChange={(date) => handleTimeChange(false, date)}
