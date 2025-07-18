@@ -4,7 +4,7 @@
 
 const path = require("path");
 const webpack = require("webpack");
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const TerserPlugin = require("terser-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const baseConfig = require("./webpack.config.base");
@@ -12,7 +12,7 @@ const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv");
 
 CheckNodeEnv("production");
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
   devtool: "source-map",
 
   mode: "production",

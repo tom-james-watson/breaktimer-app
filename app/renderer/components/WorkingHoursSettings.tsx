@@ -7,7 +7,6 @@ import {
   Switch,
 } from "@blueprintjs/core";
 import { TimePicker } from "@blueprintjs/datetime";
-import * as React from "react";
 import {
   DayConfig,
   daysConfig,
@@ -16,6 +15,7 @@ import {
   WorkingHours,
   WorkingHoursRange,
 } from "../../types/settings";
+import { useState } from "react";
 import styles from "./WorkingHoursSettings.scss";
 
 interface WorkingHoursProps {
@@ -52,8 +52,8 @@ function TimeRange({
   isFirstRange: boolean;
   day: DayConfig;
 }) {
-  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-  const [selectedDays, setSelectedDays] = React.useState<DayConfig[]>([]);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [selectedDays, setSelectedDays] = useState<DayConfig[]>([]);
 
   const handleTimeChange = (isStart: boolean, date: Date) => {
     const minutes = getMinutesFromTime(date);

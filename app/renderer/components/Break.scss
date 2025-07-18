@@ -16,7 +16,7 @@
   position: relative;
 
   :focus,
-  :focus ~ .bp5-control-indicator {
+  :focus ~ .bp6-control-indicator {
     outline: none !important;
   }
 }
@@ -68,7 +68,7 @@
 }
 
 :global {
-  .bp5-spinner-head {
+  .bp6-spinner-head {
     stroke: #ffffff !important;
   }
 }

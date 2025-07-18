@@ -1,6 +1,7 @@
 const webpack = require("webpack");
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const { spawn } = require("child_process");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const baseConfig = require("./webpack.config.base.js");
 const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv.js");
 
@@ -9,14 +10,14 @@ CheckNodeEnv("development");
 const port = 1212;
 const publicPath = `http://localhost:${port}/renderer/dist`;
 
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
   devtool: "inline-source-map",
 
   mode: "development",
 
   target: "web",
 
-  entry: ["react-hot-loader/patch", "./app/renderer/index"],
+  entry: ["./app/renderer/index"],
 
   output: {
     publicPath: `${publicPath}/`,
@@ -155,6 +156,8 @@ module.exports = merge.smart(baseConfig, {
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
 
+    new ReactRefreshWebpackPlugin(),
+
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -177,8 +180,8 @@ module.exports = merge.smart(baseConfig, {
 
     new webpack.DefinePlugin({
       // https://github.com/palantir/blueprint/issues/3739.
-      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
-      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
+      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp6"),
+      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp6"),
     }),
   ],
 
@@ -187,18 +190,40 @@ module.exports = merge.smart(baseConfig, {
     __filename: false,
   },
 
+  watchOptions: {
+    ignored: /node_modules/,
+    aggregateTimeout: 300,
+    poll: 1000,
+  },
+
   devServer: {
     port,
     static: {
-      publicPath,
+      directory: "app/renderer/dist",
+      publicPath: `${publicPath}/`,
     },
     client: {
       logging: "warn",
     },
     devMiddleware: {
       stats: "errors-only",
+      publicPath: `${publicPath}/`,
     },
-    headers: { "Access-Control-Allow-Origin": "*" },
+    headers: { 
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    },
+    allowedHosts: "all",
+    hot: true,
+    watchFiles: {
+      paths: ["app/renderer/**/*", "app/main/**/*"],
+      options: {
+        usePolling: true,
+        interval: 1000,
+        ignored: /node_modules/,
+      },
+    },
     setupMiddlewares: (middlewares, devServer) => {
       if (process.env.START_HOT) {
         spawn("npm", ["run", "start-main-dev"], {

@@ -33,6 +33,11 @@ module.exports = {
       NODE_ENV: "production",
     }),
 
-    new ForkTsCheckerWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: path.resolve(__dirname, "..", "tsconfig.json"),
+      },
+      devServer: false,
+    }),
   ],
 };

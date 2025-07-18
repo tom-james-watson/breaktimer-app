@@ -1,26 +1,17 @@
-import * as React from "react";
-import { render } from "react-dom";
-import { AppContainer } from "react-hot-loader";
+import { createRoot } from "react-dom/client";
 import Main from "./components/Main";
 import "./app.global.scss";
 
-render(
-  <AppContainer>
-    <Main />
-  </AppContainer>,
-  document.getElementById("root")
-);
+const container = document.getElementById("root");
+if (!container) throw new Error("Root container not found");
+const root = createRoot(container);
+root.render(<Main />);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 if ((module as any).hot) {
   (module as any).hot.accept("./components/Main", () => {
     // eslint-disable-next-line global-require
     const NextMain = require("./components/Main").default;
-    render(
-      <AppContainer>
-        <NextMain />
-      </AppContainer>,
-      document.getElementById("root")
-    );
+    root.render(<NextMain />);
   });
 }

@@ -14,7 +14,7 @@ import {
 } from "@blueprintjs/core";
 import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
 import classnames from "classnames";
-import * as React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NotificationType, Settings } from "../../types/settings";
 import { toast } from "../toaster";
 import styles from "./Settings.scss";
@@ -29,16 +29,16 @@ const initialDarkMode =
 FocusStyleManager.onlyShowFocusOnTabs();
 
 export default function SettingsEl() {
-  const [settingsDraft, setSettingsDraft] = React.useState<Settings | null>(
+  const [settingsDraft, setSettingsDraft] = useState<Settings | null>(
     null
   );
-  const [settings, setSettings] = React.useState<Settings | null>(null);
-  const [darkMode, setDarkMode] = React.useState(initialDarkMode);
-  const [showAdvancedBreaks, setShowAdvanedBreaks] = React.useState(false);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [darkMode, setDarkMode] = useState(initialDarkMode);
+  const [showAdvancedBreaks, setShowAdvanedBreaks] = useState(false);
   const [showAdvancedAppearance, setShowAdvanedAppearance] =
-    React.useState(false);
+    useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", (event) => {
@@ -46,7 +46,7 @@ export default function SettingsEl() {
       });
   }, [setDarkMode]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
       setSettingsDraft(settings);
@@ -54,7 +54,7 @@ export default function SettingsEl() {
     })();
   }, []);
 
-  const dirty = React.useMemo(() => {
+  const dirty = useMemo(() => {
     return JSON.stringify(settingsDraft) !== JSON.stringify(settings);
   }, [settings, settingsDraft]);
 
@@ -127,7 +127,7 @@ export default function SettingsEl() {
   };
 
   const settingsClassName = classnames(styles.settings, {
-    "bp5-dark": darkMode,
+    "bp6-dark": darkMode,
     [styles.darkMode]: darkMode,
   });
 

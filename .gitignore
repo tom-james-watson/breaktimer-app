@@ -19,3 +19,5 @@ app/renderer/dist
 
 # dotenv
 .env
+
+.claude

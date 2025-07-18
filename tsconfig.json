@@ -4,7 +4,7 @@
     "target": "es2019",
     "baseUrl": "./",
     "rootDir": "./",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "node",
     "noUnusedLocals": true,
@@ -13,7 +13,9 @@
     "resolveJsonModule": true,
     "lib": ["es2020", "dom"],
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "skipLibCheck": true
   },
-  "exclude": ["node_modules"]
+  "include": ["app/**/*"],
+  "exclude": ["node_modules", "dist", "release", "app/renderer/dist"]
 }

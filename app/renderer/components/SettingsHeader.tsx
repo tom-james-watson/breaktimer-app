@@ -1,5 +1,4 @@
 import { Alignment, Button, Navbar } from "@blueprintjs/core";
-import * as React from "react";
 import styles from "./SettingsHeader.scss";
 
 interface Props {
@@ -18,7 +17,7 @@ export default function SettingsHeader(props: Props) {
   };
 
   return (
-    <Navbar className={`${styles.navbar} bp5-dark`} style={style}>
+    <Navbar className={`${styles.navbar} bp6-dark`} style={style}>
       <Navbar.Group align={Alignment.LEFT}>
         <Navbar.Heading>
           <strong>Settings</strong>

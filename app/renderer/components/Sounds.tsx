@@ -1,5 +1,5 @@
 import { Howl } from "howler";
-import * as React from "react";
+import { useEffect } from "react";
 import { SoundType } from "../../types/settings";
 
 export default function Sounds() {
@@ -15,7 +15,7 @@ export default function Sounds() {
     sound.play();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     ipcRenderer.onPlayStartSound((type: string) => {
       playSound(type, true);
     });

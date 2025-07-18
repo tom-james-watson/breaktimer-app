@@ -23,18 +23,18 @@ div.breaksEnabled {
 }
 
 :global {
-  .bp5-tabs {
+  .bp6-tabs {
     height: 100%;
     display: flex;
     flex-direction: column;
   }
 
-  div.bp5-tab-list {
+  div.bp6-tab-list {
     padding: $pt-grid-size * 1.5 $pt-grid-size * 3;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   }
 
-  .bp5-tab-panel {
+  .bp6-tab-panel {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -72,24 +72,24 @@ div.breaksEnabled {
     }
   }
 
-  .bp5-tabs {
+  .bp6-tabs {
     margin-bottom: $pt-grid-size * 1.5;
     flex-shrink: 0;
   }
 
-  .bp5-tab {
+  .bp6-tab {
     font-weight: bold;
   }
 
-  .bp5-control {
+  .bp6-control {
     margin-bottom: 0 !important;
   }
 
-  div.bp5-form-group {
+  div.bp6-form-group {
     margin-bottom: $pt-grid-size * 1.5;
   }
 
-  div.bp5-form-group:last-child {
+  div.bp6-form-group:last-child {
     margin-bottom: 0;
   }
 }

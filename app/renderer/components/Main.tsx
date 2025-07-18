@@ -1,4 +1,3 @@
-import * as React from "react";
 import Settings from "./Settings";
 import Sounds from "./Sounds";
 import Break from "./Break";

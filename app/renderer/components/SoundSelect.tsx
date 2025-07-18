@@ -1,5 +1,4 @@
 import { Button, HTMLSelect } from "@blueprintjs/core";
-import * as React from "react";
 import { SoundType } from "../../types/settings";
 import styles from "./SoundSelect.scss";
 

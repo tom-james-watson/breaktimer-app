@@ -7,13 +7,13 @@ const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const TerserPlugin = require("terser-webpack-plugin");
 const baseConfig = require("./webpack.config.base");
 const CheckNodeEnv = require("../internals/scripts/CheckNodeEnv");
 
 CheckNodeEnv("production");
-module.exports = merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
   devtool: "source-map",
 
   mode: "production",
@@ -192,8 +192,8 @@ module.exports = merge.smart(baseConfig, {
 
     new webpack.DefinePlugin({
       // https://github.com/palantir/blueprint/issues/3739.
-      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
-      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp5"),
+      "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp6"),
+      "process.env.REACT_APP_BLUEPRINT_NAMESPACE": JSON.stringify("bp6"),
     }),
 
     new MiniCssExtractPlugin({

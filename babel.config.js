@@ -2,7 +2,7 @@
 
 const developmentEnvironments = ["development", "test"];
 
-const developmentPlugins = [require("react-hot-loader/babel")];
+const developmentPlugins = [require("react-refresh/babel")];
 
 const productionPlugins = [
   require("babel-plugin-dev-expression"),
@@ -22,7 +22,7 @@ module.exports = (api) => {
     presets: [
       [require("@babel/preset-env")],
       require("@babel/preset-typescript"),
-      [require("@babel/preset-react"), { development }],
+      [require("@babel/preset-react"), { development, runtime: "automatic" }],
     ],
     plugins: [
       [
@@ -60,6 +60,8 @@ module.exports = (api) => {
       require("@babel/plugin-syntax-dynamic-import"),
       require("@babel/plugin-syntax-import-meta"),
       [require("@babel/plugin-proposal-class-properties"), { loose: true }],
+      [require("@babel/plugin-transform-private-methods"), { loose: true }],
+      [require("@babel/plugin-transform-private-property-in-object"), { loose: true }],
       require("@babel/plugin-proposal-json-strings"),
 
       ...(development ? developmentPlugins : productionPlugins),

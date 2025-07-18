@@ -14,7 +14,8 @@
   ],
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "detect",
+      "runtime": "automatic"
     },
     "import/resolver": {
       node: {
@@ -27,5 +28,6 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/indent": 0,
+    "react/react-in-jsx-scope": 0
   }
 }
