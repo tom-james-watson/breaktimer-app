@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "~@blueprintjs/core/lib/scss/variables.scss";
+@use "~@blueprintjs/core/lib/scss/variables.scss" as *;
 
 .workingHoursSettings {
   margin: $pt-grid-size * 3 0;

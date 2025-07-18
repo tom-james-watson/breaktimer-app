@@ -55,12 +55,7 @@ const migrations: Migration[] = [
   },
 ];
 
-const store = new Store<{
-  settings: Settings;
-  appInitialized: boolean;
-  settingsVersion: number;
-  disableEndTime: number | null;
-}>({
+const store = new Store({
   defaults: {
     settings: defaultSettings,
     appInitialized: false,
