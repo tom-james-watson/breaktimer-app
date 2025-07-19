@@ -225,7 +225,7 @@ function BreakNotification(props: BreakNotificationProps) {
               ? "Take a break when ready..."
               : `Starting break in ${secondsRemaining}s...`}
           </h3>
-          {timeSinceLastBreak /** && timeSinceLastBreak > 600 */ && (
+          {timeSinceLastBreak && timeSinceLastBreak > 600 && (
             <p style={{ margin: "4px 0 0 0", fontSize: "14px", opacity: 0.8 }}>
               {formatTimeSinceLastBreak(timeSinceLastBreak)}
             </p>

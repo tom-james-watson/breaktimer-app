@@ -6,7 +6,6 @@ import { Settings } from "../../types/settings";
 import {
   checkIdle,
   checkInWorkingHours,
-  createBreak,
   getBreakTime,
   isHavingBreak,
   startBreakNow,
@@ -203,11 +202,6 @@ export function buildTray(): void {
       label: "Start break now",
       visible: breakTime !== null && inWorkingHours && !havingBreak,
       click: startBreakNow,
-    },
-    {
-      label: "Restart break period",
-      visible: breakTime !== null && inWorkingHours && !havingBreak,
-      click: createBreak.bind(null, false),
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },
