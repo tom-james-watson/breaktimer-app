@@ -154,7 +154,6 @@ function BreakProgress(props: BreakProgressProps) {
 }
 
 interface BreakNotificationProps {
-  breakTitle: string;
   onCountdownOver: () => void;
   onPostponeBreak: () => void;
   onSkipBreak: () => void;
@@ -409,7 +408,6 @@ export default function Break() {
       >
         {ready && !closing && (
           <BreakNotification
-            breakTitle={settings.breakTitle}
             onCountdownOver={handleCountdownOver}
             onPostponeBreak={handlePostponeBreak}
             onSkipBreak={handleSkipBreak}

@@ -356,19 +356,32 @@ export default function SettingsEl() {
               title="Appearance"
               panel={
                 <>
-                  <FormGroup label="Break title">
-                    <InputGroup
-                      id="break-title"
-                      value={settingsDraft.breakTitle}
-                      onChange={handleTextChange.bind(null, "breakTitle")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
                   <FormGroup label="Break message">
                     <InputGroup
                       id="break-message"
                       value={settingsDraft.breakMessage}
                       onChange={handleTextChange.bind(null, "breakMessage")}
+                      disabled={!settingsDraft.breaksEnabled}
+                    />
+                  </FormGroup>
+                  <FormGroup label="Primary color">
+                    <InputGroup
+                      className={styles.colorPicker}
+                      type="color"
+                      value={settingsDraft.backgroundColor}
+                      onChange={handleTextChange.bind(
+                        null,
+                        "backgroundColor"
+                      )}
+                      disabled={!settingsDraft.breaksEnabled}
+                    />
+                  </FormGroup>
+                  <FormGroup label="Text color">
+                    <InputGroup
+                      className={styles.colorPicker}
+                      type="color"
+                      value={settingsDraft.textColor}
+                      onChange={handleTextChange.bind(null, "textColor")}
                       disabled={!settingsDraft.breaksEnabled}
                     />
                   </FormGroup>
@@ -388,27 +401,6 @@ export default function SettingsEl() {
                     isOpen={showAdvancedAppearance}
                     className={styles.collapse}
                   >
-                    <FormGroup label="Primary color">
-                      <InputGroup
-                        className={styles.colorPicker}
-                        type="color"
-                        value={settingsDraft.backgroundColor}
-                        onChange={handleTextChange.bind(
-                          null,
-                          "backgroundColor"
-                        )}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                    <FormGroup label="Text color">
-                      <InputGroup
-                        className={styles.colorPicker}
-                        type="color"
-                        value={settingsDraft.textColor}
-                        onChange={handleTextChange.bind(null, "textColor")}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
                     <FormGroup>
                       <Switch
                         label="Show backdrop"

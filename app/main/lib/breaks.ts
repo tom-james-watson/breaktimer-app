@@ -161,7 +161,7 @@ function doBreak(): void {
   const settings: Settings = getSettings();
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification(settings.breakTitle, settings.breakMessage);
+    showNotification("Time for a break!", settings.breakMessage);
     if (settings.soundType !== SoundType.None) {
       sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
     }
