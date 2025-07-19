@@ -2,7 +2,6 @@ import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
 import path from "path";
 import { endPopupBreak } from "./breaks";
-import { getSettings } from "./store";
 
 let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
@@ -78,25 +77,24 @@ export function createSoundsWindow(): void {
 }
 
 export function createBreakWindows(): void {
-  const settings = getSettings();
-
   const displays = screen.getAllDisplays();
   for (const display of displays) {
-    const size = 400;
+    const notificationWidth = 500;
+    const notificationHeight = 80;
     const breakWindow = new BrowserWindow({
       show: false,
       autoHideMenuBar: true,
       frame: false,
-      x: display.bounds.x + display.bounds.width / 2 - size / 2,
-      y: display.bounds.y + display.bounds.height / 2 - size / 2,
-      width: size,
-      height: size,
+      x: display.bounds.x + display.bounds.width / 2 - notificationWidth / 2,
+      y: display.bounds.y + 50,
+      width: notificationWidth,
+      height: notificationHeight,
       resizable: false,
       focusable: false,
       transparent: true,
       hasShadow: false,
       webPreferences: {
-        devTools: false,
+        devTools: true,
         preload: path.join(__dirname, "../../renderer/preload.js"),
       },
     });
@@ -117,11 +115,6 @@ export function createBreakWindows(): void {
     breakWindow.on("ready-to-show", () => {
       if (!breakWindow) {
         throw new Error('"breakWindow" is not defined');
-      }
-
-      if (settings.showBackdrop) {
-        breakWindow.setSize(display.bounds.width, display.bounds.height);
-        breakWindow.setPosition(display.bounds.x, display.bounds.y);
       }
 
       // Show as inactive to avoid stealing focus

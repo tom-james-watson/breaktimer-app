@@ -32,6 +32,9 @@ process.once("loaded", () => {
     invokeSetSettings: (settings) => {
       return ipcRenderer.invoke("SETTINGS_SET", settings);
     },
+    invokeBreakWindowResize: () => {
+      return ipcRenderer.invoke("BREAK_WINDOW_RESIZE");
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type) => {
         cb(type);

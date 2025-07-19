@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from "electron";
+import { BrowserWindow, ipcMain, IpcMainInvokeEvent, screen } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
@@ -62,4 +62,28 @@ ipcMain.handle(
 ipcMain.handle(IpcChannel.BreakLengthGet, (): number => {
   log.info(IpcChannel.BreakLengthGet);
   return getBreakLengthSeconds();
+});
+
+ipcMain.handle(IpcChannel.BreakWindowResize, (event: IpcMainInvokeEvent): void => {
+  log.info(IpcChannel.BreakWindowResize);
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (window) {
+    const display = screen.getDisplayNearestPoint(window.getBounds());
+    const settings = getSettings();
+    
+    if (settings.showBackdrop) {
+      // Fullscreen for backdrop mode
+      window.setSize(display.bounds.width, display.bounds.height);
+      window.setPosition(display.bounds.x, display.bounds.y);
+    } else {
+      // Centered window for no backdrop mode
+      const windowWidth = 600;
+      const windowHeight = 400;
+      const centerX = display.bounds.x + display.bounds.width / 2 - windowWidth / 2;
+      const centerY = display.bounds.y + display.bounds.height / 2 - windowHeight / 2;
+      
+      window.setSize(windowWidth, windowHeight);
+      window.setPosition(centerX, centerY);
+    }
+  }
 });

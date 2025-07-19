@@ -1,12 +1,9 @@
-import { Button, ButtonGroup, ControlGroup, Spinner } from "@blueprintjs/core";
+import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
+import { motion, useAnimation } from "framer-motion";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
 import { Settings, SoundType } from "../../types/settings";
 import * as styles from "./Break.scss";
-
-const COUNTDOWN_SECS = 10;
-const TICK_MS = 200;
 
 function createRgba(hex: string, a: number) {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -62,8 +59,9 @@ interface BreakProgressProps {
 function BreakProgress(props: BreakProgressProps) {
   const { breakMessage, endBreakEnabled, onEndBreak, settings, textColor } =
     props;
-  const [timeRemaining, setTimeRemaining] =
-    useState<TimeRemaining | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
+    null
+  );
   const [progress, setProgress] = useState<number | null>(null);
 
   useEffect(() => {
@@ -98,7 +96,7 @@ function BreakProgress(props: BreakProgressProps) {
           minutes: Math.floor(msRemaining / 1000 / 60),
           seconds: (msRemaining / 1000) % 60,
         });
-        setTimeout(tick, TICK_MS);
+        setTimeout(tick, 200);
       };
 
       tick();
@@ -108,7 +106,7 @@ function BreakProgress(props: BreakProgressProps) {
   const fadeIn = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
-    transition: { duration: 0.8, delay: 0.5 }
+    transition: { duration: 0.8, delay: 0.5 },
   };
 
   if (timeRemaining === null || progress === null) {
@@ -127,7 +125,8 @@ function BreakProgress(props: BreakProgressProps) {
           <Button
             className={styles.actionButton}
             onClick={onEndBreak}
-            outlined
+            variant="outlined"
+            size="large"
             autoFocus={true}
             style={{ color: textColor }}
           >
@@ -139,95 +138,103 @@ function BreakProgress(props: BreakProgressProps) {
   );
 }
 
-interface BreakCountdownProps {
+interface BreakNotificationProps {
   breakTitle: string;
   onCountdownOver: () => void;
   onPostponeBreak: () => void;
-  onSkipBreak: () => void;
+  onStartBreakNow: () => void;
   postponeBreakEnabled: boolean;
-  skipBreakEnabled: boolean;
   textColor: string;
+  backgroundColor: string;
 }
 
-function BreakCountdown(props: BreakCountdownProps) {
+function BreakNotification(props: BreakNotificationProps) {
   const {
-    breakTitle,
     onCountdownOver,
     onPostponeBreak,
-    onSkipBreak,
+    onStartBreakNow,
     postponeBreakEnabled,
-    skipBreakEnabled,
     textColor,
+    backgroundColor,
   } = props;
-  const [progress, setProgress] = useState<number | null>(null);
+  const [phase, setPhase] = useState<"grace" | "countdown">("grace");
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
 
   useEffect(() => {
-    (async () => {
-      const countdownEndTime = moment().add(COUNTDOWN_SECS, "seconds");
+    const startTime = moment();
 
-      const tick = () => {
-        const now = moment();
+    const tick = () => {
+      const now = moment();
+      const elapsed = now.diff(startTime, "seconds");
 
-        if (now > countdownEndTime) {
-          onCountdownOver();
-          return;
-        }
+      if (elapsed < 60) {
+        // Grace period - first 60 seconds
+        setPhase("grace");
+      } else if (elapsed < 120) {
+        // Countdown period - next 60 seconds
+        setPhase("countdown");
+        setSecondsRemaining(120 - elapsed);
+      } else {
+        // Force break after 2 minutes total
+        onCountdownOver();
+        return;
+      }
 
-        const msRemaining = countdownEndTime.diff(now, "milliseconds");
-        setProgress(1 - msRemaining / 1000 / COUNTDOWN_SECS);
-        setTimeout(tick, TICK_MS);
-      };
+      setTimeout(tick, 1000);
+    };
 
-      tick();
-    })();
+    tick();
   }, [onCountdownOver]);
 
-  const fadeIn = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    transition: { duration: 0.8, delay: 0.5 }
-  };
-
-  if (progress === null) {
-    return null;
-  }
-
   return (
-    <motion.div className={styles.breakCountdown} {...fadeIn}>
-      <h2
-        className={styles.breakTitle}
-        dangerouslySetInnerHTML={{ __html: breakTitle }}
-      />
-      {(skipBreakEnabled || postponeBreakEnabled) && (
-        <ControlGroup>
+    <motion.div
+      className={styles.breakNotification}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.3 }}
+      style={{
+        backgroundColor,
+        color: textColor,
+      }}
+    >
+      <div className={styles.notificationContent}>
+        <div className={styles.notificationText}>
+          {phase === "grace" ? (
+            <h3>Take a break when ready...</h3>
+          ) : (
+            <h3>Starting break in {secondsRemaining}s...</h3>
+          )}
+        </div>
+        <div className={styles.notificationButtons}>
           <ButtonGroup>
-            {skipBreakEnabled && (
-              <Button
-                className={styles.actionButton}
-                onClick={onSkipBreak}
-                icon={<Spinner value={1 - progress} size={16} />}
-                outlined
-                autoFocus={true}
-                style={{ color: textColor }}
-              >
-                Skip
-              </Button>
-            )}
+            <Button
+              className={styles.actionButton}
+              onClick={onStartBreakNow}
+              variant="outlined"
+              autoFocus={true}
+              style={{ color: textColor }}
+              endIcon={
+                phase === "countdown" ? (
+                  <Spinner size={16} value={1 - (60 - secondsRemaining) / 60} />
+                ) : undefined
+              }
+            >
+              Start
+            </Button>
             {postponeBreakEnabled && (
               <Button
                 className={styles.actionButton}
                 onClick={onPostponeBreak}
-                icon={<Spinner value={1 - progress} size={16} />}
-                outlined
-                autoFocus={true}
+                variant="outlined"
                 style={{ color: textColor }}
               >
                 Snooze
               </Button>
             )}
           </ButtonGroup>
-        </ControlGroup>
-      )}
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -235,9 +242,7 @@ function BreakCountdown(props: BreakCountdownProps) {
 export default function Break() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [countingDown, setCountingDown] = useState(true);
-  const [allowPostpone, setAllowPostpone] = useState<boolean | null>(
-    null
-  );
+  const [allowPostpone, setAllowPostpone] = useState<boolean | null>(null);
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
   const controls = useAnimation();
@@ -259,16 +264,16 @@ export default function Break() {
       setSettings(settings);
 
       const newValues = {
-        backgroundOpacity: 0.8,
-        backdropOpacity: 1,
-        width: 250,
-        height: 250,
+        backgroundOpacity: 0.9,
+        backdropOpacity: 0,
+        width: 500,
+        height: 80,
       };
       setAnimValues(newValues);
       controls.start({
-        width: 250,
-        height: 250,
-        transition: { duration: 0.3 }
+        width: 500,
+        height: 80,
+        transition: { duration: 0.3 },
       });
 
       // Skip the countdown if these are disabled
@@ -291,21 +296,37 @@ export default function Break() {
     setCountingDown(false);
   }, []);
 
+  const handleStartBreakNow = useCallback(() => {
+    setCountingDown(false);
+  }, []);
+
   useEffect(() => {
     if (!countingDown) {
-      setAnimValues(prev => ({
+      // Resize window to full screen for break phase
+      const renderer = ipcRenderer as typeof ipcRenderer & {
+        invokeBreakWindowResize?: () => Promise<void>;
+      };
+      if (renderer.invokeBreakWindowResize) {
+        renderer.invokeBreakWindowResize();
+      }
+
+      setAnimValues((prev) => ({
         ...prev,
         backgroundOpacity: 1,
         width: 400,
         height: 400,
       }));
-      controls.start({ width: 400, height: 400, transition: { duration: 0.3 } });
+      controls.start({
+        width: 400,
+        height: 400,
+        transition: { duration: 0.3 },
+      });
     }
   }, [countingDown, controls]);
 
   useEffect(() => {
     if (closing) {
-      setAnimValues(prev => ({
+      setAnimValues((prev) => ({
         ...prev,
         backgroundOpacity: 0,
         width: 0,
@@ -323,10 +344,6 @@ export default function Break() {
     setClosing(true);
   }, []);
 
-  const handleSkipBreak = useCallback(() => {
-    setClosing(true);
-  }, []);
-
   const handleEndBreak = useCallback(() => {
     if (settings && settings?.soundType !== SoundType.None) {
       ipcRenderer.invokeEndSound(settings.soundType);
@@ -338,10 +355,33 @@ export default function Break() {
     return null;
   }
 
+  if (countingDown) {
+    return (
+      <div
+        className={`bp6-dark ${styles.breakContainer}`}
+        style={{ backgroundColor: "transparent" }}
+      >
+        {ready && !closing && (
+          <BreakNotification
+            breakTitle={settings.breakTitle}
+            onCountdownOver={handleCountdownOver}
+            onPostponeBreak={handlePostponeBreak}
+            onStartBreakNow={handleStartBreakNow}
+            postponeBreakEnabled={
+              settings.postponeBreakEnabled && allowPostpone
+            }
+            textColor={settings.textColor}
+            backgroundColor={settings.backgroundColor}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className={`bp6-dark ${styles.breakContainer}`}
-      animate={{ opacity: animValues.backdropOpacity }}
+      animate={{ opacity: 1 }}
       initial={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       style={{
@@ -361,10 +401,10 @@ export default function Break() {
       >
         <motion.div
           className={styles.background}
-          animate={{ 
-            width: animValues.width, 
+          animate={{
+            width: animValues.width,
             height: animValues.height,
-            opacity: animValues.backgroundOpacity
+            opacity: animValues.backgroundOpacity,
           }}
           initial={{ width: 0, height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
@@ -373,29 +413,13 @@ export default function Break() {
           }}
         />
         {ready && !closing && (
-          <>
-            {countingDown ? (
-              <BreakCountdown
-                breakTitle={settings.breakTitle}
-                onCountdownOver={handleCountdownOver}
-                onPostponeBreak={handlePostponeBreak}
-                onSkipBreak={handleSkipBreak}
-                postponeBreakEnabled={
-                  settings.postponeBreakEnabled && allowPostpone
-                }
-                skipBreakEnabled={settings.skipBreakEnabled}
-                textColor={settings.textColor}
-              />
-            ) : (
-              <BreakProgress
-                breakMessage={settings.breakMessage}
-                endBreakEnabled={settings.endBreakEnabled}
-                onEndBreak={handleEndBreak}
-                settings={settings}
-                textColor={settings.textColor}
-              />
-            )}
-          </>
+          <BreakProgress
+            breakMessage={settings.breakMessage}
+            endBreakEnabled={settings.endBreakEnabled}
+            onEndBreak={handleEndBreak}
+            settings={settings}
+            textColor={settings.textColor}
+          />
         )}
       </motion.div>
     </motion.div>
