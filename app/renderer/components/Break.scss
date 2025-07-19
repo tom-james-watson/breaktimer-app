@@ -69,6 +69,10 @@
   text-align: left;
 }
 
+.notificationTitle {
+  margin: 0;
+}
+
 .notificationButtons {
   flex-shrink: 0;
 }
@@ -89,6 +93,7 @@
 .breakTitle {
   margin-top: 0;
   margin-bottom: 0;
+  font-weight: 400;
 }
 
 .breakMessage {

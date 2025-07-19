@@ -5,6 +5,19 @@ import { useCallback, useEffect, useState } from "react";
 import { Settings, SoundType } from "../../types/settings";
 import * as styles from "./Break.scss";
 
+function formatTimeSinceLastBreak(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours > 0) {
+    return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""} since last break`;
+  } else if (minutes > 0) {
+    return `${minutes}m since last break`;
+  } else {
+    return "Less than 1m since last break";
+  }
+}
+
 function createRgba(hex: string, a: number) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -63,6 +76,7 @@ function BreakProgress(props: BreakProgressProps) {
     null
   );
   const [progress, setProgress] = useState<number | null>(null);
+  const [breakStartTime] = useState(new Date());
 
   useEffect(() => {
     if (settings.soundType !== SoundType.None) {
@@ -70,11 +84,8 @@ function BreakProgress(props: BreakProgressProps) {
     }
 
     (async () => {
-      const length = new Date(await ipcRenderer.invokeGetBreakLength());
-      const breakEndTime = moment()
-        .add(length.getHours(), "hours")
-        .add(length.getMinutes(), "minutes")
-        .add(length.getSeconds(), "seconds");
+      const lengthSeconds = await ipcRenderer.invokeGetBreakLength();
+      const breakEndTime = moment().add(lengthSeconds, "seconds");
 
       const startMsRemaining = moment(breakEndTime).diff(
         moment(),
@@ -85,6 +96,10 @@ function BreakProgress(props: BreakProgressProps) {
         const now = moment();
 
         if (now > moment(breakEndTime)) {
+          // Track break completion before ending
+          const breakDurationMs =
+            new Date().getTime() - breakStartTime.getTime();
+          ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
           onEndBreak();
           return;
         }
@@ -101,7 +116,7 @@ function BreakProgress(props: BreakProgressProps) {
 
       tick();
     })();
-  }, [onEndBreak, settings]);
+  }, [onEndBreak, settings, breakStartTime]);
 
   const fadeIn = {
     initial: { opacity: 0 },
@@ -142,8 +157,11 @@ interface BreakNotificationProps {
   breakTitle: string;
   onCountdownOver: () => void;
   onPostponeBreak: () => void;
+  onSkipBreak: () => void;
   onStartBreakNow: () => void;
   postponeBreakEnabled: boolean;
+  skipBreakEnabled: boolean;
+  timeSinceLastBreak: number | null;
   textColor: string;
   backgroundColor: string;
 }
@@ -152,8 +170,11 @@ function BreakNotification(props: BreakNotificationProps) {
   const {
     onCountdownOver,
     onPostponeBreak,
+    onSkipBreak,
     onStartBreakNow,
     postponeBreakEnabled,
+    skipBreakEnabled,
+    timeSinceLastBreak,
     textColor,
     backgroundColor,
   } = props;
@@ -200,10 +221,15 @@ function BreakNotification(props: BreakNotificationProps) {
     >
       <div className={styles.notificationContent}>
         <div className={styles.notificationText}>
-          {phase === "grace" ? (
-            <h3>Take a break when ready...</h3>
-          ) : (
-            <h3>Starting break in {secondsRemaining}s...</h3>
+          <h3 className={styles.notificationTitle}>
+            {phase === "grace"
+              ? "Take a break when ready..."
+              : `Starting break in ${secondsRemaining}s...`}
+          </h3>
+          {timeSinceLastBreak /** && timeSinceLastBreak > 600 */ && (
+            <p style={{ margin: "4px 0 0 0", fontSize: "14px", opacity: 0.8 }}>
+              {formatTimeSinceLastBreak(timeSinceLastBreak)}
+            </p>
           )}
         </div>
         <div className={styles.notificationButtons}>
@@ -232,6 +258,16 @@ function BreakNotification(props: BreakNotificationProps) {
                 Snooze
               </Button>
             )}
+            {skipBreakEnabled && (
+              <Button
+                className={styles.actionButton}
+                onClick={onSkipBreak}
+                variant="outlined"
+                style={{ color: textColor }}
+              >
+                Skip
+              </Button>
+            )}
           </ButtonGroup>
         </div>
       </div>
@@ -243,6 +279,9 @@ export default function Break() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [countingDown, setCountingDown] = useState(true);
   const [allowPostpone, setAllowPostpone] = useState<boolean | null>(null);
+  const [timeSinceLastBreak, setTimeSinceLastBreak] = useState<number | null>(
+    null
+  );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
   const controls = useAnimation();
@@ -255,13 +294,15 @@ export default function Break() {
 
   useEffect(() => {
     const init = async () => {
-      const [allowPostpone, settings] = await Promise.all([
+      const [allowPostpone, settings, timeSince] = await Promise.all([
         ipcRenderer.invokeGetAllowPostpone(),
         ipcRenderer.invokeGetSettings() as Promise<Settings>,
+        ipcRenderer.invokeGetTimeSinceLastBreak(),
       ]);
 
       setAllowPostpone(allowPostpone);
       setSettings(settings);
+      setTimeSinceLastBreak(timeSince);
 
       const newValues = {
         backgroundOpacity: 0.9,
@@ -344,7 +385,12 @@ export default function Break() {
     setClosing(true);
   }, []);
 
-  const handleEndBreak = useCallback(() => {
+  const handleSkipBreak = useCallback(async () => {
+    await ipcRenderer.invokeBreakPostpone();
+    setClosing(true);
+  }, []);
+
+  const handleEndBreak = useCallback(async () => {
     if (settings && settings?.soundType !== SoundType.None) {
       ipcRenderer.invokeEndSound(settings.soundType);
     }
@@ -366,10 +412,13 @@ export default function Break() {
             breakTitle={settings.breakTitle}
             onCountdownOver={handleCountdownOver}
             onPostponeBreak={handlePostponeBreak}
+            onSkipBreak={handleSkipBreak}
             onStartBreakNow={handleStartBreakNow}
             postponeBreakEnabled={
               settings.postponeBreakEnabled && allowPostpone
             }
+            skipBreakEnabled={settings.skipBreakEnabled}
+            timeSinceLastBreak={timeSinceLastBreak}
             textColor={settings.textColor}
             backgroundColor={settings.backgroundColor}
           />

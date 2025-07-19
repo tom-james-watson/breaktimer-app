@@ -22,6 +22,11 @@ let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
 
+// Break tracking
+let lastCompletedBreakTime: Date = new Date(); // Initialize to app start
+let currentBreakStartTime: Date | null = null;
+let hasSkippedOrSnoozedSinceLastBreak = false;
+
 export function getBreakTime(): BreakTime {
   return breakTime;
 }
@@ -29,6 +34,36 @@ export function getBreakTime(): BreakTime {
 export function getBreakLengthSeconds(): number {
   const settings: Settings = getSettings();
   return settings.breakLengthSeconds;
+}
+
+export function getTimeSinceLastBreak(): number | null {
+  if (!hasSkippedOrSnoozedSinceLastBreak) {
+    return null;
+  }
+
+  const now = moment();
+  const lastBreak = moment(lastCompletedBreakTime);
+  return now.diff(lastBreak, "seconds");
+}
+
+export function startBreakTracking(): void {
+  currentBreakStartTime = new Date();
+}
+
+export function completeBreakTracking(breakDurationMs: number): void {
+  if (!currentBreakStartTime) return;
+
+  const settings = getSettings();
+  const requiredDurationMs = settings.breakLengthSeconds * 1000;
+  const halfRequiredDuration = requiredDurationMs / 2;
+
+  // Only count as completed if at least half the break duration was taken
+  if (breakDurationMs >= halfRequiredDuration) {
+    lastCompletedBreakTime = new Date();
+    hasSkippedOrSnoozedSinceLastBreak = false;
+  }
+
+  currentBreakStartTime = null;
 }
 
 function zeroPad(n: number) {
@@ -90,7 +125,9 @@ export function createBreak(isPostpone = false): void {
     postponedCount = 0;
   }
 
-  const seconds = isPostpone ? settings.postponeLengthSeconds : settings.breakFrequencySeconds;
+  const seconds = isPostpone
+    ? settings.postponeLengthSeconds
+    : settings.breakFrequencySeconds;
 
   breakTime = moment().add(seconds, "seconds");
 
@@ -113,11 +150,13 @@ export function getAllowPostpone(): boolean {
 export function postponeBreak(): void {
   postponedCount++;
   havingBreak = false;
+  hasSkippedOrSnoozedSinceLastBreak = true;
   createBreak(true);
 }
 
 function doBreak(): void {
   havingBreak = true;
+  startBreakTracking();
 
   const settings: Settings = getSettings();
 
@@ -133,7 +172,7 @@ function doBreak(): void {
   if (settings.notificationType === NotificationType.Popup) {
     createBreakWindows();
   }
-  
+
   buildTray();
 }
 

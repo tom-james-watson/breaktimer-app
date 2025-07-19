@@ -35,6 +35,12 @@ process.once("loaded", () => {
     invokeBreakWindowResize: () => {
       return ipcRenderer.invoke("BREAK_WINDOW_RESIZE");
     },
+    invokeGetTimeSinceLastBreak: () => {
+      return ipcRenderer.invoke("TIME_SINCE_LAST_BREAK_GET");
+    },
+    invokeCompleteBreakTracking: (breakDurationMs) => {
+      return ipcRenderer.invoke("BREAK_TRACKING_COMPLETE", breakDurationMs);
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type) => {
         cb(type);
