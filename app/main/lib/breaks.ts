@@ -98,11 +98,10 @@ export function createBreak(isPostpone = false): void {
 }
 
 export function endPopupBreak(): void {
-  if (breakTime !== null && breakTime < moment()) {
-    breakTime = null;
-    havingBreak = false;
-    postponedCount = 0;
-  }
+  breakTime = null;
+  havingBreak = false;
+  postponedCount = 0;
+  createBreak();
   buildTray();
 }
 
