@@ -22,6 +22,7 @@ let postponedCount = 0;
 let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
+let startedFromTray = false;
 
 let lastCompletedBreakTime: Date = new Date();
 let currentBreakStartTime: Date | null = null;
@@ -291,7 +292,14 @@ function checkBreak(): void {
 }
 
 export function startBreakNow(): void {
+  startedFromTray = true;
   breakTime = moment();
+}
+
+export function wasStartedFromTray(): boolean {
+  const result = startedFromTray;
+  startedFromTray = false; // Reset the flag after checking
+  return result;
 }
 
 function tick(): void {

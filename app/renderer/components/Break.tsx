@@ -80,7 +80,10 @@ function BreakProgress(props: BreakProgressProps) {
 
   useEffect(() => {
     if (settings.soundType !== SoundType.None) {
-      ipcRenderer.invokeStartSound(settings.soundType, settings.breakSoundVolume);
+      ipcRenderer.invokeStartSound(
+        settings.soundType,
+        settings.breakSoundVolume
+      );
     }
 
     (async () => {
@@ -290,11 +293,13 @@ export default function Break() {
 
   useEffect(() => {
     const init = async () => {
-      const [allowPostpone, settings, timeSince] = await Promise.all([
-        ipcRenderer.invokeGetAllowPostpone(),
-        ipcRenderer.invokeGetSettings() as Promise<Settings>,
-        ipcRenderer.invokeGetTimeSinceLastBreak(),
-      ]);
+      const [allowPostpone, settings, timeSince, startedFromTray] =
+        await Promise.all([
+          ipcRenderer.invokeGetAllowPostpone(),
+          ipcRenderer.invokeGetSettings() as Promise<Settings>,
+          ipcRenderer.invokeGetTimeSinceLastBreak(),
+          ipcRenderer.invokeWasStartedFromTray(),
+        ]);
 
       setAllowPostpone(allowPostpone);
       setSettings(settings);
@@ -313,8 +318,8 @@ export default function Break() {
         transition: { duration: 0.3 },
       });
 
-      // Skip the countdown if immediately start breaks is enabled
-      if (settings.immediatelyStartBreaks) {
+      // Skip the countdown if immediately start breaks is enabled or started from tray
+      if (settings.immediatelyStartBreaks || startedFromTray) {
         setCountingDown(false);
       }
 
@@ -407,9 +412,13 @@ export default function Break() {
             onSkipBreak={handleSkipBreak}
             onStartBreakNow={handleStartBreakNow}
             postponeBreakEnabled={
-              settings.postponeBreakEnabled && allowPostpone && !settings.immediatelyStartBreaks
+              settings.postponeBreakEnabled &&
+              allowPostpone &&
+              !settings.immediatelyStartBreaks
             }
-            skipBreakEnabled={settings.skipBreakEnabled && !settings.immediatelyStartBreaks}
+            skipBreakEnabled={
+              settings.skipBreakEnabled && !settings.immediatelyStartBreaks
+            }
             timeSinceLastBreak={timeSinceLastBreak}
             textColor={settings.textColor}
             backgroundColor={settings.backgroundColor}

@@ -41,6 +41,9 @@ process.once("loaded", () => {
     invokeCompleteBreakTracking: (breakDurationMs) => {
       return ipcRenderer.invoke("BREAK_TRACKING_COMPLETE", breakDurationMs);
     },
+    invokeWasStartedFromTray: () => {
+      return ipcRenderer.invoke("WAS_STARTED_FROM_TRAY_GET");
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type, volume = 1) => {
         cb(type, volume);

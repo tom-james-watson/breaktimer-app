@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, IpcMainInvokeEvent, screen } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
-import { getAllowPostpone, getBreakLengthSeconds, postponeBreak, getTimeSinceLastBreak, completeBreakTracking } from "./breaks";
+import { getAllowPostpone, getBreakLengthSeconds, postponeBreak, getTimeSinceLastBreak, completeBreakTracking, wasStartedFromTray } from "./breaks";
 import { getSettings, setSettings } from "./store";
 import { getWindows } from "./windows";
 
@@ -96,4 +96,9 @@ ipcMain.handle(IpcChannel.TimeSinceLastBreakGet, (): number | null => {
 ipcMain.handle(IpcChannel.BreakTrackingComplete, (event: IpcMainInvokeEvent, breakDurationMs: number): void => {
   log.info(IpcChannel.BreakTrackingComplete, breakDurationMs);
   completeBreakTracking(breakDurationMs);
+});
+
+ipcMain.handle(IpcChannel.WasStartedFromTrayGet, (): boolean => {
+  log.info(IpcChannel.WasStartedFromTrayGet);
+  return wasStartedFromTray();
 });
