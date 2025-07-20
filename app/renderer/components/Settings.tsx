@@ -349,6 +349,21 @@ export default function SettingsEl() {
                         disabled={!settingsDraft.breaksEnabled}
                       />
                     </FormGroup>
+                    <FormGroup>
+                      <Switch
+                        label="Automatically close break window"
+                        checked={settingsDraft.autoCloseBreakWindow}
+                        onChange={handleSwitchChange.bind(
+                          null,
+                          "autoCloseBreakWindow"
+                        )}
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          settingsDraft.notificationType !==
+                            NotificationType.Popup
+                        }
+                      />
+                    </FormGroup>
                   </Collapse>
                 </>
               }
