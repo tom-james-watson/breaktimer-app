@@ -1,4 +1,5 @@
 import { app, dialog, Menu, Tray } from "electron";
+import log from "electron-log";
 import moment from "moment";
 import path from "path";
 import packageJson from "../../../package.json";
@@ -89,8 +90,9 @@ export function buildTray(): void {
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
     if (breaksEnabled) {
+      log.info("Enabled breaks");
       setDisableEndTime(null);
-    } else {
+    } else if (isHavingBreak()) {
       closeBreakWindows();
     }
 
@@ -99,7 +101,22 @@ export function buildTray(): void {
     buildTray();
   };
 
+  const disableIndefinitely = (): void => {
+    log.info("Disabled breaks indefinitely");
+    setBreaksEnabled(false);
+  };
+
   const disableBreaksFor = (duration: number): void => {
+    const minutes = Math.floor(duration / 60000);
+    const hours = Math.floor(minutes / 60);
+    const displayMinutes = minutes % 60;
+
+    if (hours > 0) {
+      log.info(`Disabled breaks for ${hours}h${displayMinutes}m`);
+    } else {
+      log.info(`Disabled breaks for ${minutes}m`);
+    }
+
     setBreaksEnabled(false);
     const endTime = Date.now() + duration;
     setDisableEndTime(endTime);
@@ -175,7 +192,7 @@ export function buildTray(): void {
     {
       label: "Disable...",
       submenu: [
-        { label: "Indefinitely", click: setBreaksEnabled.bind(null, false) },
+        { label: "Indefinitely", click: disableIndefinitely },
         { label: "30 minutes", click: () => disableBreaksFor(30 * 60 * 1000) },
         { label: "1 hour", click: () => disableBreaksFor(60 * 60 * 1000) },
         { label: "2 hours", click: () => disableBreaksFor(2 * 60 * 60 * 1000) },
@@ -201,7 +218,10 @@ export function buildTray(): void {
     {
       label: "Start break now",
       visible: breakTime !== null && inWorkingHours && !havingBreak,
-      click: startBreakNow,
+      click: () => {
+        log.info("Start break now selected");
+        startBreakNow();
+      },
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },

@@ -25,9 +25,9 @@ ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
   return getAllowPostpone();
 });
 
-ipcMain.handle(IpcChannel.BreakPostpone, (): void => {
+ipcMain.handle(IpcChannel.BreakPostpone, (_event: IpcMainInvokeEvent, action?: string): void => {
   log.info(IpcChannel.BreakPostpone);
-  postponeBreak();
+  postponeBreak(action);
 });
 
 ipcMain.handle(

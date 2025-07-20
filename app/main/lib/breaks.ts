@@ -1,4 +1,5 @@
 import { PowerMonitor } from "electron";
+import log from "electron-log";
 import moment from "moment";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
@@ -22,8 +23,7 @@ let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
 
-// Break tracking
-let lastCompletedBreakTime: Date = new Date(); // Initialize to app start
+let lastCompletedBreakTime: Date = new Date();
 let currentBreakStartTime: Date | null = null;
 let hasSkippedOrSnoozedSinceLastBreak = false;
 
@@ -57,10 +57,20 @@ export function completeBreakTracking(breakDurationMs: number): void {
   const requiredDurationMs = settings.breakLengthSeconds * 1000;
   const halfRequiredDuration = requiredDurationMs / 2;
 
-  // Only count as completed if at least half the break duration was taken
   if (breakDurationMs >= halfRequiredDuration) {
     lastCompletedBreakTime = new Date();
     hasSkippedOrSnoozedSinceLastBreak = false;
+    log.info(
+      `Break completed [duration=${Math.round(
+        breakDurationMs / 1000
+      )}s] [required=${settings.breakLengthSeconds}s]`
+    );
+  } else {
+    log.info(
+      `Break too short [duration=${Math.round(
+        breakDurationMs / 1000
+      )}s] [required=${settings.breakLengthSeconds}s]`
+    );
   }
 
   currentBreakStartTime = null;
@@ -135,6 +145,7 @@ export function createBreak(isPostpone = false): void {
 }
 
 export function endPopupBreak(): void {
+  log.info("Break ended");
   breakTime = null;
   havingBreak = false;
   postponedCount = 0;
@@ -147,11 +158,17 @@ export function getAllowPostpone(): boolean {
   return !settings.postponeLimit || postponedCount < settings.postponeLimit;
 }
 
-export function postponeBreak(): void {
+export function postponeBreak(action = "snoozed"): void {
   postponedCount++;
   havingBreak = false;
   hasSkippedOrSnoozedSinceLastBreak = true;
-  createBreak(true);
+  log.info(`Break ${action} [count=${postponedCount}]`);
+
+  if (action === "skipped") {
+    createBreak();
+  } else {
+    createBreak(true);
+  }
 }
 
 function doBreak(): void {
@@ -159,6 +176,7 @@ function doBreak(): void {
   startBreakTracking();
 
   const settings: Settings = getSettings();
+  log.info(`Break started [type=${settings.notificationType}]`);
 
   if (settings.notificationType === NotificationType.Notification) {
     showNotification("Time for a break!", settings.breakMessage);

@@ -146,15 +146,10 @@ export function createBreakWindows(): void {
 }
 
 export function closeBreakWindows(): void {
-  for (const win of breakWindows) {
-    if (!win.isDestroyed()) {
-      try {
-        win.close();
-      } catch (err) {
-        log.warn(err);
-      }
-    }
-  }
-  breakWindows = [];
-  endPopupBreak();
+  const firstWin = breakWindows[0];
+  if (!firstWin) return;
+  if (!firstWin.closable) return;
+
+  // The window's `.close` cleanup function will do everything else we need
+  firstWin.close();
 }

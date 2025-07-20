@@ -188,14 +188,11 @@ function BreakNotification(props: BreakNotificationProps) {
       const elapsed = now.diff(startTime, "seconds");
 
       if (elapsed < 60) {
-        // Grace period - first 60 seconds
         setPhase("grace");
       } else if (elapsed < 120) {
-        // Countdown period - next 60 seconds
         setPhase("countdown");
         setSecondsRemaining(120 - elapsed);
       } else {
-        // Force break after 2 minutes total
         onCountdownOver();
         return;
       }
@@ -380,12 +377,12 @@ export default function Break() {
   }, [controls, closing]);
 
   const handlePostponeBreak = useCallback(async () => {
-    await ipcRenderer.invokeBreakPostpone();
+    await ipcRenderer.invokeBreakPostpone("snoozed");
     setClosing(true);
   }, []);
 
   const handleSkipBreak = useCallback(async () => {
-    await ipcRenderer.invokeBreakPostpone();
+    await ipcRenderer.invokeBreakPostpone("skipped");
     setClosing(true);
   }, []);
 
