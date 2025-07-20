@@ -133,6 +133,10 @@ export function createBreak(isPostpone = false): void {
     createIdleNotification();
     idleStart = null;
     postponedCount = 0;
+
+    lastCompletedBreakTime = new Date();
+    hasSkippedOrSnoozedSinceLastBreak = false;
+    log.info("Break auto-detected via idle reset");
   }
 
   const seconds = isPostpone
