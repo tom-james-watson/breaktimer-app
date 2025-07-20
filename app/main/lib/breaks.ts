@@ -118,8 +118,8 @@ function createIdleNotification() {
 
   if (settings.idleResetNotification) {
     showNotification(
-      "Break countdown reset",
-      `Idle for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
+      "Break automatically detected",
+      `Away for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
         idleSeconds
       )}`
     );
@@ -185,7 +185,11 @@ function doBreak(): void {
   if (settings.notificationType === NotificationType.Notification) {
     showNotification("Time for a break!", settings.breakMessage);
     if (settings.soundType !== SoundType.None) {
-      sendIpc(IpcChannel.SoundStartPlay, settings.soundType, settings.breakSoundVolume);
+      sendIpc(
+        IpcChannel.SoundStartPlay,
+        settings.soundType,
+        settings.breakSoundVolume
+      );
     }
     havingBreak = false;
     createBreak();
@@ -328,7 +332,9 @@ function tick(): void {
 
     if (!shouldHaveBreak && !havingBreak && breakTime) {
       if (checkIdle()) {
-        idleStart = new Date();
+        const idleResetSeconds = getIdleResetSeconds();
+        // Calculate when idle actually started by subtracting idle duration
+        idleStart = new Date(Date.now() - idleResetSeconds * 1000);
       }
       breakTime = null;
       buildTray();

@@ -466,13 +466,13 @@ export default function SettingsEl() {
               }
             />
             <Tab
-              id="idle-reset"
-              title="Idle Reset"
+              id="smart-breaks"
+              title="Smart Breaks"
               panel={
                 <>
                   <FormGroup>
                     <Switch
-                      label="Enable idle reset"
+                      label="Enable smart breaks"
                       checked={settingsDraft.idleResetEnabled}
                       onChange={handleSwitchChange.bind(
                         null,
@@ -482,7 +482,7 @@ export default function SettingsEl() {
                     />
                   </FormGroup>
                   <FormGroup
-                    label="Reset break countdown when idle for"
+                    label="Auto-detect break when away for"
                     labelInfo="(hh:mm:ss)"
                   >
                     <TimePicker
@@ -511,7 +511,7 @@ export default function SettingsEl() {
                   </FormGroup>
                   <FormGroup>
                     <Switch
-                      label="Show notification on idle reset"
+                      label="Show notification when break automatically detected"
                       checked={settingsDraft.idleResetNotification}
                       onChange={handleSwitchChange.bind(
                         null,

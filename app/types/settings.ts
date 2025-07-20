@@ -98,7 +98,7 @@ export const defaultSettings: Settings = {
   },
   idleResetEnabled: true,
   idleResetLengthSeconds: 5 * 60,
-  idleResetNotification: false,
+  idleResetNotification: true,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
