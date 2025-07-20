@@ -145,7 +145,7 @@ function BreakProgress(props: BreakProgressProps) {
             autoFocus={true}
             style={{ color: textColor }}
           >
-            End
+            {progress < 0.5 ? "Cancel" : "End"}
           </Button>
         )}
       </div>
