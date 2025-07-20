@@ -23,11 +23,11 @@ process.once("loaded", () => {
     invokeGetSettings: () => {
       return ipcRenderer.invoke("SETTINGS_GET");
     },
-    invokeEndSound: (type) => {
-      return ipcRenderer.invoke("SOUND_END_PLAY", type);
+    invokeEndSound: (type, volume = 1) => {
+      return ipcRenderer.invoke("SOUND_END_PLAY", type, volume);
     },
-    invokeStartSound: (type) => {
-      return ipcRenderer.invoke("SOUND_START_PLAY", type);
+    invokeStartSound: (type, volume = 1) => {
+      return ipcRenderer.invoke("SOUND_START_PLAY", type, volume);
     },
     invokeSetSettings: (settings) => {
       return ipcRenderer.invoke("SETTINGS_SET", settings);
@@ -42,13 +42,13 @@ process.once("loaded", () => {
       return ipcRenderer.invoke("BREAK_TRACKING_COMPLETE", breakDurationMs);
     },
     onPlayStartSound: (cb) => {
-      ipcRenderer.on("SOUND_START_PLAY", (_event, type) => {
-        cb(type);
+      ipcRenderer.on("SOUND_START_PLAY", (_event, type, volume = 1) => {
+        cb(type, volume);
       });
     },
     onPlayEndSound: (cb) => {
-      ipcRenderer.on("SOUND_END_PLAY", (_event, type) => {
-        cb(type);
+      ipcRenderer.on("SOUND_END_PLAY", (_event, type, volume = 1) => {
+        cb(type, volume);
       });
     },
   });

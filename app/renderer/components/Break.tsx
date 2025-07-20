@@ -80,7 +80,7 @@ function BreakProgress(props: BreakProgressProps) {
 
   useEffect(() => {
     if (settings.soundType !== SoundType.None) {
-      ipcRenderer.invokeStartSound(settings.soundType);
+      ipcRenderer.invokeStartSound(settings.soundType, settings.breakSoundVolume);
     }
 
     (async () => {
@@ -388,7 +388,7 @@ export default function Break() {
 
   const handleEndBreak = useCallback(async () => {
     if (settings && settings?.soundType !== SoundType.None) {
-      ipcRenderer.invokeEndSound(settings.soundType);
+      ipcRenderer.invokeEndSound(settings.soundType, settings.breakSoundVolume);
     }
     setClosing(true);
   }, [settings]);

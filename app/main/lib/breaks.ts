@@ -185,7 +185,7 @@ function doBreak(): void {
   if (settings.notificationType === NotificationType.Notification) {
     showNotification("Time for a break!", settings.breakMessage);
     if (settings.soundType !== SoundType.None) {
-      sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
+      sendIpc(IpcChannel.SoundStartPlay, settings.soundType, settings.breakSoundVolume);
     }
     havingBreak = false;
     createBreak();

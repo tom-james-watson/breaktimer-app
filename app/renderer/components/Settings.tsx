@@ -68,9 +68,7 @@ export default function SettingsEl() {
 
   const handleDateChange = (fieldName: string, newVal: Date): void => {
     const seconds =
-      newVal.getHours() * 3600 +
-      newVal.getMinutes() * 60 +
-      newVal.getSeconds();
+      newVal.getHours() * 3600 + newVal.getMinutes() * 60 + newVal.getSeconds();
 
     let secondsField: keyof Settings;
     if (fieldName === "breakFrequency") {
@@ -194,8 +192,12 @@ export default function SettingsEl() {
                           0,
                           0,
                           0,
-                          Math.floor(settingsDraft.breakFrequencySeconds / 3600),
-                          Math.floor((settingsDraft.breakFrequencySeconds % 3600) / 60),
+                          Math.floor(
+                            settingsDraft.breakFrequencySeconds / 3600
+                          ),
+                          Math.floor(
+                            (settingsDraft.breakFrequencySeconds % 3600) / 60
+                          ),
                           settingsDraft.breakFrequencySeconds % 60
                         )
                       }
@@ -213,7 +215,9 @@ export default function SettingsEl() {
                           0,
                           0,
                           Math.floor(settingsDraft.breakLengthSeconds / 3600),
-                          Math.floor((settingsDraft.breakLengthSeconds % 3600) / 60),
+                          Math.floor(
+                            (settingsDraft.breakLengthSeconds % 3600) / 60
+                          ),
                           settingsDraft.breakLengthSeconds % 60
                         )
                       }
@@ -270,8 +274,12 @@ export default function SettingsEl() {
                             0,
                             0,
                             0,
-                            Math.floor(settingsDraft.postponeLengthSeconds / 3600),
-                            Math.floor((settingsDraft.postponeLengthSeconds % 3600) / 60),
+                            Math.floor(
+                              settingsDraft.postponeLengthSeconds / 3600
+                            ),
+                            Math.floor(
+                              (settingsDraft.postponeLengthSeconds % 3600) / 60
+                            ),
                             settingsDraft.postponeLengthSeconds % 60
                           )
                         }
@@ -357,10 +365,7 @@ export default function SettingsEl() {
                       className={styles.colorPicker}
                       type="color"
                       value={settingsDraft.backgroundColor}
-                      onChange={handleTextChange.bind(
-                        null,
-                        "backgroundColor"
-                      )}
+                      onChange={handleTextChange.bind(null, "backgroundColor")}
                       disabled={!settingsDraft.breaksEnabled}
                     />
                   </FormGroup>
@@ -382,6 +387,22 @@ export default function SettingsEl() {
                           soundType,
                         });
                       }}
+                      disabled={!settingsDraft.breaksEnabled}
+                      volume={settingsDraft.breakSoundVolume}
+                    />
+                  </FormGroup>
+                  <FormGroup label="Break sound volume">
+                    <Slider
+                      min={0}
+                      max={1}
+                      stepSize={0.1}
+                      labelStepSize={0.5}
+                      labelRenderer={(value) => `${Math.round(value * 100)}%`}
+                      onChange={handleSliderChange.bind(
+                        null,
+                        "breakSoundVolume"
+                      )}
+                      value={settingsDraft.breakSoundVolume}
                       disabled={!settingsDraft.breaksEnabled}
                     />
                   </FormGroup>
@@ -471,8 +492,12 @@ export default function SettingsEl() {
                           0,
                           0,
                           0,
-                          Math.floor(settingsDraft.idleResetLengthSeconds / 3600),
-                          Math.floor((settingsDraft.idleResetLengthSeconds % 3600) / 60),
+                          Math.floor(
+                            settingsDraft.idleResetLengthSeconds / 3600
+                          ),
+                          Math.floor(
+                            (settingsDraft.idleResetLengthSeconds % 3600) / 60
+                          ),
                           settingsDraft.idleResetLengthSeconds % 60
                         )
                       }

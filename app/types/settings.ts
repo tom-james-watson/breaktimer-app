@@ -42,6 +42,7 @@ export interface Settings {
   idleResetLengthSeconds: number;
   idleResetNotification: boolean;
   soundType: SoundType;
+  breakSoundVolume: number;
   breakMessage: string;
   backgroundColor: string;
   textColor: string;
@@ -62,9 +63,9 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  breakFrequencySeconds: 28 * 60, // 28 minutes in seconds
-  breakLengthSeconds: 2 * 60, // 2 minutes in seconds
-  postponeLengthSeconds: 3 * 60, // 3 minutes in seconds
+  breakFrequencySeconds: 28 * 60,
+  breakLengthSeconds: 2 * 60,
+  postponeLengthSeconds: 3 * 60,
   postponeLimit: 0,
   workingHoursEnabled: true,
   workingHoursMonday: {
@@ -96,9 +97,10 @@ export const defaultSettings: Settings = {
     ranges: [defaultWorkingRange],
   },
   idleResetEnabled: true,
-  idleResetLengthSeconds: 5 * 60, // 5 minutes in seconds
+  idleResetLengthSeconds: 5 * 60,
   idleResetNotification: false,
   soundType: SoundType.Gong,
+  breakSoundVolume: 1,
   breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
   backgroundColor: "#16a085",
   backdropColor: "#001914",
