@@ -246,24 +246,51 @@ export default function SettingsEl() {
                   >
                     <FormGroup>
                       <Switch
+                        label="Immediately start breaks"
+                        checked={settingsDraft.immediatelyStartBreaks}
+                        onChange={handleSwitchChange.bind(
+                          null,
+                          "immediatelyStartBreaks"
+                        )}
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          settingsDraft.notificationType !==
+                            NotificationType.Popup
+                        }
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Switch
                         label="Allow skip break"
-                        checked={settingsDraft.skipBreakEnabled}
+                        checked={
+                          settingsDraft.skipBreakEnabled &&
+                          !settingsDraft.immediatelyStartBreaks
+                        }
                         onChange={handleSwitchChange.bind(
                           null,
                           "skipBreakEnabled"
                         )}
-                        disabled={!settingsDraft.breaksEnabled}
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          settingsDraft.immediatelyStartBreaks
+                        }
                       />
                     </FormGroup>
                     <FormGroup>
                       <Switch
                         label="Allow snooze break"
-                        checked={settingsDraft.postponeBreakEnabled}
+                        checked={
+                          settingsDraft.postponeBreakEnabled &&
+                          !settingsDraft.immediatelyStartBreaks
+                        }
                         onChange={handleSwitchChange.bind(
                           null,
                           "postponeBreakEnabled"
                         )}
-                        disabled={!settingsDraft.breaksEnabled}
+                        disabled={
+                          !settingsDraft.breaksEnabled ||
+                          settingsDraft.immediatelyStartBreaks
+                        }
                       />
                     </FormGroup>
                     <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
@@ -287,7 +314,8 @@ export default function SettingsEl() {
                         precision={TimePrecision.SECOND}
                         disabled={
                           !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled
+                          !settingsDraft.postponeBreakEnabled ||
+                          settingsDraft.immediatelyStartBreaks
                         }
                       />
                     </FormGroup>
@@ -305,7 +333,8 @@ export default function SettingsEl() {
                         onChange={handlePostponeLimitChange}
                         disabled={
                           !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled
+                          !settingsDraft.postponeBreakEnabled ||
+                          settingsDraft.immediatelyStartBreaks
                         }
                       />
                     </FormGroup>

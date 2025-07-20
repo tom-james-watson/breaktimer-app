@@ -313,11 +313,8 @@ export default function Break() {
         transition: { duration: 0.3 },
       });
 
-      // Skip the countdown if these are disabled
-      if (
-        !settings.skipBreakEnabled &&
-        !(settings.postponeBreakEnabled && allowPostpone)
-      ) {
+      // Skip the countdown if immediately start breaks is enabled
+      if (settings.immediatelyStartBreaks) {
         setCountingDown(false);
       }
 
@@ -410,9 +407,9 @@ export default function Break() {
             onSkipBreak={handleSkipBreak}
             onStartBreakNow={handleStartBreakNow}
             postponeBreakEnabled={
-              settings.postponeBreakEnabled && allowPostpone
+              settings.postponeBreakEnabled && allowPostpone && !settings.immediatelyStartBreaks
             }
-            skipBreakEnabled={settings.skipBreakEnabled}
+            skipBreakEnabled={settings.skipBreakEnabled && !settings.immediatelyStartBreaks}
             timeSinceLastBreak={timeSinceLastBreak}
             textColor={settings.textColor}
             backgroundColor={settings.backgroundColor}
