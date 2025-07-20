@@ -53,7 +53,6 @@ export interface Settings {
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
   immediatelyStartBreaks: boolean;
-  autoCloseBreakWindow: boolean;
 }
 
 export const defaultWorkingRange: WorkingHoursRange = {
@@ -113,7 +112,6 @@ export const defaultSettings: Settings = {
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
   immediatelyStartBreaks: false,
-  autoCloseBreakWindow: false,
 };
 
 export interface DayConfig {

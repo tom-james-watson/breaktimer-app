@@ -65,26 +65,13 @@ interface BreakProgressProps {
   breakMessage: string;
   endBreakEnabled: boolean;
   onEndBreak: () => void;
-  onBreakCompleted: () => void;
-  onContinue: () => void;
-  onAutoClose: () => void;
   settings: Settings;
   textColor: string;
-  breakCompleted: boolean;
 }
 
 function BreakProgress(props: BreakProgressProps) {
-  const {
-    breakMessage,
-    endBreakEnabled,
-    onEndBreak,
-    onBreakCompleted,
-    onContinue,
-    onAutoClose,
-    settings,
-    textColor,
-    breakCompleted,
-  } = props;
+  const { breakMessage, endBreakEnabled, onEndBreak, settings, textColor } =
+    props;
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
     null
   );
@@ -125,14 +112,7 @@ function BreakProgress(props: BreakProgressProps) {
             );
           }
 
-          // Set progress to 100% before completion
-          setProgress(1);
-
-          if (settings.autoCloseBreakWindow) {
-            onAutoClose();
-          } else {
-            onBreakCompleted();
-          }
+          onEndBreak();
           return;
         }
 
@@ -148,7 +128,7 @@ function BreakProgress(props: BreakProgressProps) {
 
       tick();
     })();
-  }, [onEndBreak, onBreakCompleted, settings, breakStartTime, onAutoClose]);
+  }, [onEndBreak, settings, breakStartTime]);
 
   const fadeIn = {
     initial: { opacity: 0 },
@@ -162,40 +142,25 @@ function BreakProgress(props: BreakProgressProps) {
 
   return (
     <motion.div className={styles.breakProgress} {...fadeIn}>
-      {!breakCompleted && (
-        <OuterSpinner value={progress} textColor={textColor} />
-      )}
+      <OuterSpinner value={progress} textColor={textColor} />
       <div className={styles.progressContent}>
         <h1
           className={styles.breakMessage}
           dangerouslySetInnerHTML={{
-            __html: breakCompleted ? "Break complete." : breakMessage,
+            __html: breakMessage,
           }}
         />
-        {breakCompleted ? (
+        {endBreakEnabled && (
           <Button
             className={styles.actionButton}
-            onClick={onContinue}
+            onClick={onEndBreak}
             variant="outlined"
             size="large"
             autoFocus={true}
             style={{ color: textColor }}
           >
-            Continue
+            {progress < 0.5 ? "Cancel" : "End"}
           </Button>
-        ) : (
-          endBreakEnabled && (
-            <Button
-              className={styles.actionButton}
-              onClick={onEndBreak}
-              variant="outlined"
-              size="large"
-              autoFocus={true}
-              style={{ color: textColor }}
-            >
-              {progress < 0.5 ? "Cancel" : "End"}
-            </Button>
-          )
         )}
       </div>
     </motion.div>
@@ -329,7 +294,6 @@ export default function Break() {
   );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
-  const [breakCompleted, setBreakCompleted] = useState(false);
   const controls = useAnimation();
   const [animValues, setAnimValues] = useState({
     width: 0,
@@ -435,21 +399,6 @@ export default function Break() {
     setClosing(true);
   }, []);
 
-  const handleBreakCompleted = useCallback(() => {
-    setBreakCompleted(true);
-    // Animate to smaller size for completion screen
-    setAnimValues((prev) => ({
-      ...prev,
-      width: 350,
-      height: 350,
-    }));
-    controls.start({
-      width: 350,
-      height: 350,
-      transition: { duration: 0.5 },
-    });
-  }, [controls]);
-
   const handleEndBreak = useCallback(async () => {
     // Play end sound for manual break ending (Cancel/End buttons)
     if (settings && settings?.soundType !== SoundType.None) {
@@ -457,16 +406,6 @@ export default function Break() {
     }
     setClosing(true);
   }, [settings]);
-
-  const handleContinue = useCallback(() => {
-    // No sound for continue - sound already played when break completed
-    setClosing(true);
-  }, []);
-
-  const handleAutoClose = useCallback(() => {
-    // No sound for auto-close - sound already played when break completed
-    setClosing(true);
-  }, []);
 
   if (settings === null || allowPostpone === null) {
     return null;
@@ -540,12 +479,8 @@ export default function Break() {
             breakMessage={settings.breakMessage}
             endBreakEnabled={settings.endBreakEnabled}
             onEndBreak={handleEndBreak}
-            onBreakCompleted={handleBreakCompleted}
-            onContinue={handleContinue}
-            onAutoClose={handleAutoClose}
             settings={settings}
             textColor={settings.textColor}
-            breakCompleted={breakCompleted}
           />
         )}
       </motion.div>
