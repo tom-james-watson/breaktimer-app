@@ -144,6 +144,9 @@ export function createBreak(isPostpone = false): void {
     ? settings.postponeLengthSeconds
     : settings.breakFrequencySeconds;
 
+  log.info(
+    `Creating break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`
+  );
   breakTime = moment().add(seconds, "seconds");
 
   buildTray();
@@ -151,10 +154,18 @@ export function createBreak(isPostpone = false): void {
 
 export function endPopupBreak(): void {
   log.info("Break ended");
-  breakTime = null;
+  const existingBreakTime = breakTime;
+  const now = moment();
   havingBreak = false;
-  postponedCount = 0;
-  createBreak();
+
+  // If there's no future break scheduled, create a normal break
+  if (!existingBreakTime || existingBreakTime <= now) {
+    postponedCount = 0;
+    breakTime = null;
+    createBreak();
+  }
+  // If there's already a future break scheduled (from snooze/skip), keep it
+
   buildTray();
 }
 
@@ -170,8 +181,10 @@ export function postponeBreak(action = "snoozed"): void {
   log.info(`Break ${action} [count=${postponedCount}]`);
 
   if (action === "skipped") {
+    log.info("Creating break with normal frequency");
     createBreak();
   } else {
+    log.info("Creating break with postpone length");
     createBreak(true);
   }
 }

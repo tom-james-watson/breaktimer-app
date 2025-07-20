@@ -11,8 +11,8 @@ const { contextBridge, ipcRenderer } = require("electron");
 process.once("loaded", () => {
   contextBridge.exposeInMainWorld("processEnv", { ...process.env });
   contextBridge.exposeInMainWorld("ipcRenderer", {
-    invokeBreakPostpone: () => {
-      return ipcRenderer.invoke("BREAK_POSTPONE");
+    invokeBreakPostpone: (action) => {
+      return ipcRenderer.invoke("BREAK_POSTPONE", action);
     },
     invokeGetAllowPostpone: () => {
       return ipcRenderer.invoke("ALLOW_POSTPONE_GET");

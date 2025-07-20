@@ -1,5 +1,5 @@
 declare const ipcRenderer: {
-  invokeBreakPostpone: (action?: string) => Promise<void>;
+  invokeBreakPostpone: (action: string) => Promise<void>;
   invokeGetAllowPostpone: () => Promise<boolean>;
   invokeGetBreakLength: () => Promise<number>;
   invokeGetSettings: () => Promise<unknown>;
@@ -9,8 +9,12 @@ declare const ipcRenderer: {
   invokeGetTimeSinceLastBreak: () => Promise<number | null>;
   invokeCompleteBreakTracking: (breakDurationMs: number) => Promise<void>;
   invokeWasStartedFromTray: () => Promise<boolean>;
-  onPlayEndSound: (cb: (type: string, volume?: number) => void) => Promise<void>;
-  onPlayStartSound: (cb: (type: string, volume?: number) => void) => Promise<void>;
+  onPlayEndSound: (
+    cb: (type: string, volume?: number) => void
+  ) => Promise<void>;
+  onPlayStartSound: (
+    cb: (type: string, volume?: number) => void
+  ) => Promise<void>;
 };
 
 declare const processEnv: {

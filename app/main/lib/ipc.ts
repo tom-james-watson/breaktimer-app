@@ -2,7 +2,14 @@ import { BrowserWindow, ipcMain, IpcMainInvokeEvent, screen } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
-import { getAllowPostpone, getBreakLengthSeconds, postponeBreak, getTimeSinceLastBreak, completeBreakTracking, wasStartedFromTray } from "./breaks";
+import {
+  completeBreakTracking,
+  getAllowPostpone,
+  getBreakLengthSeconds,
+  getTimeSinceLastBreak,
+  postponeBreak,
+  wasStartedFromTray,
+} from "./breaks";
 import { getSettings, setSettings } from "./store";
 import { getWindows } from "./windows";
 
@@ -25,10 +32,13 @@ ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
   return getAllowPostpone();
 });
 
-ipcMain.handle(IpcChannel.BreakPostpone, (_event: IpcMainInvokeEvent, action?: string): void => {
-  log.info(IpcChannel.BreakPostpone);
-  postponeBreak(action);
-});
+ipcMain.handle(
+  IpcChannel.BreakPostpone,
+  (_event: IpcMainInvokeEvent, action?: string): void => {
+    log.info(IpcChannel.BreakPostpone);
+    postponeBreak(action);
+  }
+);
 
 ipcMain.handle(
   IpcChannel.SoundStartPlay,
@@ -64,39 +74,47 @@ ipcMain.handle(IpcChannel.BreakLengthGet, (): number => {
   return getBreakLengthSeconds();
 });
 
-ipcMain.handle(IpcChannel.BreakWindowResize, (event: IpcMainInvokeEvent): void => {
-  log.info(IpcChannel.BreakWindowResize);
-  const window = BrowserWindow.fromWebContents(event.sender);
-  if (window) {
-    const display = screen.getDisplayNearestPoint(window.getBounds());
-    const settings = getSettings();
-    
-    if (settings.showBackdrop) {
-      // Fullscreen for backdrop mode
-      window.setSize(display.bounds.width, display.bounds.height);
-      window.setPosition(display.bounds.x, display.bounds.y);
-    } else {
-      // Centered window for no backdrop mode
-      const windowWidth = 600;
-      const windowHeight = 400;
-      const centerX = display.bounds.x + display.bounds.width / 2 - windowWidth / 2;
-      const centerY = display.bounds.y + display.bounds.height / 2 - windowHeight / 2;
-      
-      window.setSize(windowWidth, windowHeight);
-      window.setPosition(centerX, centerY);
+ipcMain.handle(
+  IpcChannel.BreakWindowResize,
+  (event: IpcMainInvokeEvent): void => {
+    log.info(IpcChannel.BreakWindowResize);
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (window) {
+      const display = screen.getDisplayNearestPoint(window.getBounds());
+      const settings = getSettings();
+
+      if (settings.showBackdrop) {
+        // Fullscreen for backdrop mode
+        window.setSize(display.bounds.width, display.bounds.height);
+        window.setPosition(display.bounds.x, display.bounds.y);
+      } else {
+        // Centered window for no backdrop mode
+        const windowWidth = 600;
+        const windowHeight = 400;
+        const centerX =
+          display.bounds.x + display.bounds.width / 2 - windowWidth / 2;
+        const centerY =
+          display.bounds.y + display.bounds.height / 2 - windowHeight / 2;
+
+        window.setSize(windowWidth, windowHeight);
+        window.setPosition(centerX, centerY);
+      }
     }
   }
-});
+);
 
 ipcMain.handle(IpcChannel.TimeSinceLastBreakGet, (): number | null => {
   log.info(IpcChannel.TimeSinceLastBreakGet);
   return getTimeSinceLastBreak();
 });
 
-ipcMain.handle(IpcChannel.BreakTrackingComplete, (event: IpcMainInvokeEvent, breakDurationMs: number): void => {
-  log.info(IpcChannel.BreakTrackingComplete, breakDurationMs);
-  completeBreakTracking(breakDurationMs);
-});
+ipcMain.handle(
+  IpcChannel.BreakTrackingComplete,
+  (event: IpcMainInvokeEvent, breakDurationMs: number): void => {
+    log.info(IpcChannel.BreakTrackingComplete, breakDurationMs);
+    completeBreakTracking(breakDurationMs);
+  }
+);
 
 ipcMain.handle(IpcChannel.WasStartedFromTrayGet, (): boolean => {
   log.info(IpcChannel.WasStartedFromTrayGet);
