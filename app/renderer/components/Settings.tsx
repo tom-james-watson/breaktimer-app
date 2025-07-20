@@ -301,18 +301,6 @@ export default function SettingsEl() {
                         }
                       />
                     </FormGroup>
-                    <FormGroup label="Break sound">
-                      <SoundSelect
-                        value={settingsDraft.soundType}
-                        onChange={(soundType) => {
-                          setSettingsDraft({
-                            ...settingsDraft,
-                            soundType,
-                          });
-                        }}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
                     <FormGroup>
                       <Switch
                         label="Allow ending break early"
@@ -352,8 +340,8 @@ export default function SettingsEl() {
               }
             />
             <Tab
-              id="appearance"
-              title="Appearance"
+              id="customization"
+              title="Customization"
               panel={
                 <>
                   <FormGroup label="Break message">
@@ -382,6 +370,18 @@ export default function SettingsEl() {
                       type="color"
                       value={settingsDraft.textColor}
                       onChange={handleTextChange.bind(null, "textColor")}
+                      disabled={!settingsDraft.breaksEnabled}
+                    />
+                  </FormGroup>
+                  <FormGroup label="Break sound">
+                    <SoundSelect
+                      value={settingsDraft.soundType}
+                      onChange={(soundType) => {
+                        setSettingsDraft({
+                          ...settingsDraft,
+                          soundType,
+                        });
+                      }}
                       disabled={!settingsDraft.breaksEnabled}
                     />
                   </FormGroup>
