@@ -94,7 +94,7 @@ export function createBreakWindows(): void {
       transparent: true,
       hasShadow: false,
       webPreferences: {
-        devTools: true,
+        devTools: false,
         preload: path.join(__dirname, "../../renderer/preload.js"),
       },
     });
