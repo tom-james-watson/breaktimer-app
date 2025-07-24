@@ -154,7 +154,7 @@ export function createBreak(isPostpone = false): void {
     : settings.breakFrequencySeconds;
 
   log.info(
-    `Creating break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`,
+    `Creating break... [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`,
   );
   breakTime = moment().add(seconds, "seconds");
 

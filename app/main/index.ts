@@ -1,7 +1,6 @@
 import { app } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
-import electronDebug from "electron-debug";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
@@ -24,7 +23,12 @@ if (!gotTheLock) {
 function checkForUpdates(): void {
   log.info("Checking for updates...");
   autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.on("error", (error) => {
+    log.error(`Auto updater error: ${error}`);
+  });
+  autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+    log.error(`Unable to run auto updater: ${error}`);
+  });
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -36,6 +40,7 @@ if (
   process.env.NODE_ENV === "development" ||
   process.env.DEBUG_PROD === "true"
 ) {
+  const electronDebug = require("electron-debug");
   electronDebug();
 }
 
