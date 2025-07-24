@@ -207,7 +207,7 @@ export function buildTray(): void {
               now.getDate(),
               23,
               59,
-              59
+              59,
             );
             disableBreaksFor(endOfDay.getTime() - now.getTime());
           },

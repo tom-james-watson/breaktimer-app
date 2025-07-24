@@ -47,7 +47,6 @@ export interface Settings {
   backgroundColor: string;
   textColor: string;
   showBackdrop: boolean;
-  backdropColor: string;
   backdropOpacity: number;
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
@@ -99,12 +98,11 @@ export const defaultSettings: Settings = {
   },
   idleResetEnabled: true,
   idleResetLengthSeconds: 5 * 60,
-  idleResetNotification: true,
+  idleResetNotification: false,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
-  breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
+  breakMessage: "Rest your eyes.<br>Stretch your legs.<br>Breathe. Relax.",
   backgroundColor: "#16a085",
-  backdropColor: "#001914",
   textColor: "#ffffff",
   showBackdrop: true,
   backdropOpacity: 0.7,

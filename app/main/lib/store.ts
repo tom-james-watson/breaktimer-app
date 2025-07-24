@@ -28,7 +28,7 @@ const migrations: Migration[] = [
 
         const defaultRange = oldToNew(
           new Date(settings.workingHoursFrom),
-          new Date(settings.workingHoursTo)
+          new Date(settings.workingHoursTo),
         );
 
         [
@@ -72,7 +72,7 @@ const migrations: Migration[] = [
         // Convert Date objects to seconds
         if (settings.breakFrequency) {
           settings.breakFrequencySeconds = extractSeconds(
-            settings.breakFrequency
+            settings.breakFrequency,
           );
           delete settings.breakFrequency;
         }
@@ -84,14 +84,14 @@ const migrations: Migration[] = [
 
         if (settings.postponeLength) {
           settings.postponeLengthSeconds = extractSeconds(
-            settings.postponeLength
+            settings.postponeLength,
           );
           delete settings.postponeLength;
         }
 
         if (settings.idleResetLength) {
           settings.idleResetLengthSeconds = extractSeconds(
-            settings.idleResetLength
+            settings.idleResetLength,
           );
           delete settings.idleResetLength;
         }
@@ -121,7 +121,7 @@ function migrateSettings(settings: any): Settings {
     console.log(
       `Running migrations from version ${currentVersion} to ${
         pendingMigrations[pendingMigrations.length - 1].version
-      }`
+      }`,
     );
 
     let migratedSettings = { ...settings };
@@ -134,7 +134,7 @@ function migrateSettings(settings: any): Settings {
       } catch (error) {
         console.error(
           `Failed to apply migration version ${migration.version}:`,
-          error
+          error,
         );
         break;
       }

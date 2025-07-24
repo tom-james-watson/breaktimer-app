@@ -3,7 +3,7 @@ import AutoLaunch from "auto-launch";
 let app = { name: "BreakTimer" };
 
 if (process.env.APPIMAGE) {
-  app = Object.assign(app, { path: process.env.APPIMAGE })
+  app = Object.assign(app, { path: process.env.APPIMAGE });
 }
 
 const AppLauncher = new AutoLaunch(app);

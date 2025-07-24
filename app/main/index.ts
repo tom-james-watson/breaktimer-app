@@ -1,8 +1,6 @@
-import "core-js/stable";
 import { app } from "electron";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
-import "regenerator-runtime/runtime";
 import electronDebug from "electron-debug";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
@@ -84,7 +82,7 @@ app.on("ready", async () => {
       "BreakTimer runs in the background",
       "The app can be accessed via the system tray",
       undefined,
-      false
+      false,
     );
     setAppInitialized();
   }

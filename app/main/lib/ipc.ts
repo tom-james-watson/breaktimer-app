@@ -37,7 +37,7 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, action?: string): void => {
     log.info(IpcChannel.BreakPostpone);
     postponeBreak(action);
-  }
+  },
 );
 
 ipcMain.handle(
@@ -45,7 +45,7 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
     log.info(IpcChannel.SoundStartPlay);
     sendIpc(IpcChannel.SoundStartPlay, type, volume);
-  }
+  },
 );
 
 ipcMain.handle(
@@ -53,7 +53,7 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
     log.info(IpcChannel.SoundEndPlay);
     sendIpc(IpcChannel.SoundEndPlay, type, volume);
-  }
+  },
 );
 
 ipcMain.handle(IpcChannel.SettingsGet, (): Settings => {
@@ -66,7 +66,7 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, settings: Settings): void => {
     log.info(IpcChannel.SettingsSet);
     setSettings(settings);
-  }
+  },
 );
 
 ipcMain.handle(IpcChannel.BreakLengthGet, (): number => {
@@ -100,7 +100,7 @@ ipcMain.handle(
         window.setPosition(centerX, centerY);
       }
     }
-  }
+  },
 );
 
 ipcMain.handle(IpcChannel.TimeSinceLastBreakGet, (): number | null => {
@@ -113,7 +113,7 @@ ipcMain.handle(
   (event: IpcMainInvokeEvent, breakDurationMs: number): void => {
     log.info(IpcChannel.BreakTrackingComplete, breakDurationMs);
     completeBreakTracking(breakDurationMs);
-  }
+  },
 );
 
 ipcMain.handle(IpcChannel.WasStartedFromTrayGet, (): boolean => {

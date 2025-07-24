@@ -10,10 +10,10 @@ declare const ipcRenderer: {
   invokeCompleteBreakTracking: (breakDurationMs: number) => Promise<void>;
   invokeWasStartedFromTray: () => Promise<boolean>;
   onPlayEndSound: (
-    cb: (type: string, volume?: number) => void
+    cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
   onPlayStartSound: (
-    cb: (type: string, volume?: number) => void
+    cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
 };
 

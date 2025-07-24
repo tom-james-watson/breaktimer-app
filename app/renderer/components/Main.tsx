@@ -1,22 +1,18 @@
-import Settings from "./Settings";
-import Sounds from "./Sounds";
-import Break from "./Break";
+import { Toaster } from "@/components/ui/sonner";
+import Break from "./break";
+import Settings from "./settings";
+import Sounds from "./sounds";
 
 export default function Main() {
   const params = new URLSearchParams(location.search);
   const page = params.get("page");
 
-  if (page === "settings") {
-    return <Settings />;
-  }
-
-  if (page === "sounds") {
-    return <Sounds />;
-  }
-
-  if (page === "break") {
-    return <Break />;
-  }
-
-  return null;
+  return (
+    <>
+      {page === "settings" && <Settings />}
+      {page === "sounds" && <Sounds />}
+      {page === "break" && <Break />}
+      <Toaster />
+    </>
+  );
 }

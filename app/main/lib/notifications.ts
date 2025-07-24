@@ -5,7 +5,7 @@ export function showNotification(
   title: string,
   body: string,
   onClick?: (e: Event) => void,
-  forceClose = true
+  forceClose = true,
 ): void {
   let imgPath;
   if (process.platform !== "darwin") {

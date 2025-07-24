@@ -4,6 +4,9 @@
     "target": "es2019",
     "baseUrl": "./",
     "rootDir": "./",
+    "paths": {
+      "@/*": ["./app/renderer/*"]
+    },
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "node",

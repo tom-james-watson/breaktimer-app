@@ -6,7 +6,7 @@ export default function Sounds() {
   const playSound = (
     type: string,
     isStart: boolean,
-    volume: number = 1
+    volume: number = 1,
   ): void => {
     if (type === SoundType.None) return;
     const sound = new Howl({

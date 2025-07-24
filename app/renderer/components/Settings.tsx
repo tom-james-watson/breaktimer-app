@@ -1,47 +1,23 @@
-import {
-  Button,
-  Collapse,
-  FocusStyleManager,
-  FormGroup,
-  HTMLSelect,
-  InputGroup,
-  Intent,
-  OverlaysProvider,
-  Slider,
-  Switch,
-  Tab,
-  Tabs,
-} from "@blueprintjs/core";
-import { TimePicker, TimePrecision } from "@blueprintjs/datetime";
-import classnames from "classnames";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
-import { NotificationType, Settings } from "../../types/settings";
+import { NotificationType, Settings, SoundType } from "../../types/settings";
 import { toast } from "../toaster";
-import * as styles from "./Settings.scss";
-import SettingsHeader from "./SettingsHeader";
-import { SoundSelect } from "./SoundSelect";
-import WorkingHoursSettings from "./WorkingHoursSettings";
-
-const initialDarkMode =
-  window.matchMedia &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-FocusStyleManager.onlyShowFocusOnTabs();
+import AdvancedCard from "./settings/advanced-card";
+import AudioCard from "./settings/audio-card";
+import BackdropCard from "./settings/backdrop-card";
+import BreaksCard from "./settings/breaks-card";
+import SettingsCard from "./settings/settings-card";
+import SettingsHeader from "./settings/settings-header";
+import SkipCard from "./settings/skip-card";
+import SmartBreaksCard from "./settings/smart-breaks-card";
+import SnoozeCard from "./settings/snooze-card";
+import StartupCard from "./settings/startup-card";
+import ThemeCard from "./settings/theme-card";
+import WorkingHoursSettings from "./settings/working-hours";
 
 export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = useState<Settings | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [darkMode, setDarkMode] = useState(initialDarkMode);
-  const [showAdvancedBreaks, setShowAdvanedBreaks] = useState(false);
-  const [showAdvancedAppearance, setShowAdvanedAppearance] = useState(false);
-
-  useEffect(() => {
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (event) => {
-        setDarkMode(event.matches);
-      });
-  }, [setDarkMode]);
 
   useEffect(() => {
     (async () => {
@@ -59,10 +35,8 @@ export default function SettingsEl() {
     return null;
   }
 
-  const handleNotificationTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ): void => {
-    const notificationType = e.target.value as NotificationType;
+  const handleNotificationTypeChange = (value: string): void => {
+    const notificationType = value as NotificationType;
     setSettingsDraft({ ...settingsDraft, notificationType });
   };
 
@@ -89,16 +63,14 @@ export default function SettingsEl() {
     });
   };
 
-  const handlePostponeLimitChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ): void => {
-    const postponeLimit = Number(e.target.value);
+  const handlePostponeLimitChange = (value: string): void => {
+    const postponeLimit = Number(value);
     setSettingsDraft({ ...settingsDraft, postponeLimit });
   };
 
   const handleTextChange = (
     field: string,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     setSettingsDraft({
       ...settingsDraft,
@@ -106,13 +78,10 @@ export default function SettingsEl() {
     });
   };
 
-  const handleSwitchChange = (
-    field: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleSwitchChange = (field: string, checked: boolean): void => {
     setSettingsDraft({
       ...settingsDraft,
-      [field]: e.target.checked,
+      [field]: checked,
     });
   };
 
@@ -121,460 +90,140 @@ export default function SettingsEl() {
       ...settingsDraft,
       textColor: "#ffffff",
       backgroundColor: "#16a085",
-      backdropColor: "#001914",
       backdropOpacity: 0.7,
     });
   };
 
-  const handleSliderChange = (field: keyof Settings, newVal: number): void => {
+  const handleSliderChange = (
+    field: keyof Settings,
+    values: number[],
+  ): void => {
     setSettingsDraft({
       ...settingsDraft,
-      [field]: newVal,
+      [field]: values[0],
+    });
+  };
+
+  const handleSoundTypeChange = (soundType: SoundType): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      soundType,
     });
   };
 
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
-    toast("Settings saved", Intent.PRIMARY);
+    toast("Settings saved");
     setSettings(settingsDraft);
   };
 
-  const settingsClassName = classnames(styles.settings, {
-    "bp6-dark": darkMode,
-    [styles.darkMode]: darkMode,
-  });
-
   return (
-    <OverlaysProvider>
+    <div className="min-h-screen w-full flex flex-col bg-background">
       <SettingsHeader
         backgroundColor={settingsDraft.backgroundColor}
         handleSave={handleSave}
         showSave={dirty}
         textColor={settingsDraft.textColor}
+        breaksEnabled={settingsDraft.breaksEnabled}
+        onBreaksEnabledChange={(checked) =>
+          handleSwitchChange("breaksEnabled", checked)
+        }
       />
-      <main className={settingsClassName}>
-        <FormGroup className={styles.breaksEnabled}>
-          <Switch
-            label="Enable breaks"
-            checked={settingsDraft.breaksEnabled}
-            onChange={handleSwitchChange.bind(null, "breaksEnabled")}
-          />
-        </FormGroup>
-        <div className={styles.tabs}>
-          <Tabs defaultSelectedTabId="break-settings">
-            <Tab
-              id="break-settings"
-              title="Breaks"
-              panel={
-                <>
-                  <FormGroup label="Notify me with">
-                    <HTMLSelect
-                      value={settingsDraft.notificationType}
-                      options={[
-                        {
-                          value: NotificationType.Popup,
-                          label: "Popup break",
-                        },
-                        {
-                          value: NotificationType.Notification,
-                          label: "Simple notification",
-                        },
-                      ]}
-                      onChange={handleNotificationTypeChange}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break frequency" labelInfo="(hh:mm:ss)">
-                    <TimePicker
-                      onChange={handleDateChange.bind(null, "breakFrequency")}
-                      value={
-                        new Date(
-                          0,
-                          0,
-                          0,
-                          Math.floor(
-                            settingsDraft.breakFrequencySeconds / 3600
-                          ),
-                          Math.floor(
-                            (settingsDraft.breakFrequencySeconds % 3600) / 60
-                          ),
-                          settingsDraft.breakFrequencySeconds % 60
-                        )
-                      }
-                      selectAllOnFocus
-                      precision={TimePrecision.SECOND}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break length" labelInfo="(hh:mm:ss)">
-                    <TimePicker
-                      onChange={handleDateChange.bind(null, "breakLength")}
-                      value={
-                        new Date(
-                          0,
-                          0,
-                          0,
-                          Math.floor(settingsDraft.breakLengthSeconds / 3600),
-                          Math.floor(
-                            (settingsDraft.breakLengthSeconds % 3600) / 60
-                          ),
-                          settingsDraft.breakLengthSeconds % 60
-                        )
-                      }
-                      selectAllOnFocus
-                      precision={TimePrecision.SECOND}
-                      disabled={
-                        !settingsDraft.breaksEnabled ||
-                        settingsDraft.notificationType !==
-                          NotificationType.Popup
-                      }
-                    />
-                  </FormGroup>
-                  <Button
-                    onClick={() => setShowAdvanedBreaks(!showAdvancedBreaks)}
-                    rightIcon={
-                      showAdvancedBreaks ? "chevron-up" : "chevron-down"
-                    }
-                    outlined
-                    className={styles.advanced}
-                  >
-                    Advanced
-                  </Button>
-                  <Collapse
-                    isOpen={showAdvancedBreaks}
-                    className={styles.collapse}
-                  >
-                    <FormGroup>
-                      <Switch
-                        label="Immediately start breaks"
-                        checked={settingsDraft.immediatelyStartBreaks}
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "immediatelyStartBreaks"
-                        )}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          settingsDraft.notificationType !==
-                            NotificationType.Popup
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Allow skip break"
-                        checked={
-                          settingsDraft.skipBreakEnabled &&
-                          !settingsDraft.immediatelyStartBreaks
-                        }
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "skipBreakEnabled"
-                        )}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          settingsDraft.immediatelyStartBreaks
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Allow snooze break"
-                        checked={
-                          settingsDraft.postponeBreakEnabled &&
-                          !settingsDraft.immediatelyStartBreaks
-                        }
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "postponeBreakEnabled"
-                        )}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          settingsDraft.immediatelyStartBreaks
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup label="Snooze length" labelInfo="(hh:mm:ss)">
-                      <TimePicker
-                        onChange={handleDateChange.bind(null, "postponeLength")}
-                        value={
-                          new Date(
-                            0,
-                            0,
-                            0,
-                            Math.floor(
-                              settingsDraft.postponeLengthSeconds / 3600
-                            ),
-                            Math.floor(
-                              (settingsDraft.postponeLengthSeconds % 3600) / 60
-                            ),
-                            settingsDraft.postponeLengthSeconds % 60
-                          )
-                        }
-                        selectAllOnFocus
-                        precision={TimePrecision.SECOND}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled ||
-                          settingsDraft.immediatelyStartBreaks
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup label="Snooze limit">
-                      <HTMLSelect
-                        value={settingsDraft.postponeLimit}
-                        options={[
-                          { value: 1, label: "1" },
-                          { value: 2, label: "2" },
-                          { value: 3, label: "3" },
-                          { value: 4, label: "4" },
-                          { value: 5, label: "5" },
-                          { value: 0, label: "No limit" },
-                        ]}
-                        onChange={handlePostponeLimitChange}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          !settingsDraft.postponeBreakEnabled ||
-                          settingsDraft.immediatelyStartBreaks
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Switch
-                        label="Allow ending break early"
-                        checked={settingsDraft.endBreakEnabled}
-                        onChange={handleSwitchChange.bind(
-                          null,
-                          "endBreakEnabled"
-                        )}
-                        disabled={!settingsDraft.breaksEnabled}
-                      />
-                    </FormGroup>
-                  </Collapse>
-                </>
-              }
-            />
-            <Tab
-              id="working-hours"
-              title="Working Hours"
-              panel={
-                <>
-                  <FormGroup>
-                    <Switch
-                      label="Enable working hours"
-                      checked={settingsDraft.workingHoursEnabled}
-                      onChange={handleSwitchChange.bind(
-                        null,
-                        "workingHoursEnabled"
-                      )}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <WorkingHoursSettings
-                    settingsDraft={settingsDraft}
-                    setSettingsDraft={setSettingsDraft}
-                  />
-                </>
-              }
-            />
-            <Tab
-              id="customization"
-              title="Customization"
-              panel={
-                <>
-                  <FormGroup label="Break message">
-                    <InputGroup
-                      id="break-message"
-                      value={settingsDraft.breakMessage}
-                      onChange={handleTextChange.bind(null, "breakMessage")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Primary color">
-                    <InputGroup
-                      className={styles.colorPicker}
-                      type="color"
-                      value={settingsDraft.backgroundColor}
-                      onChange={handleTextChange.bind(null, "backgroundColor")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Text color">
-                    <InputGroup
-                      className={styles.colorPicker}
-                      type="color"
-                      value={settingsDraft.textColor}
-                      onChange={handleTextChange.bind(null, "textColor")}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break sound">
-                    <SoundSelect
-                      value={settingsDraft.soundType}
-                      onChange={(soundType) => {
-                        setSettingsDraft({
-                          ...settingsDraft,
-                          soundType,
-                        });
-                      }}
-                      disabled={!settingsDraft.breaksEnabled}
-                      volume={settingsDraft.breakSoundVolume}
-                    />
-                  </FormGroup>
-                  <FormGroup label="Break sound volume">
-                    <Slider
-                      min={0}
-                      max={1}
-                      stepSize={0.1}
-                      labelStepSize={0.5}
-                      labelRenderer={(value) => `${Math.round(value * 100)}%`}
-                      onChange={handleSliderChange.bind(
-                        null,
-                        "breakSoundVolume"
-                      )}
-                      value={settingsDraft.breakSoundVolume}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <Button
-                    onClick={() =>
-                      setShowAdvanedAppearance(!showAdvancedAppearance)
-                    }
-                    rightIcon={
-                      showAdvancedAppearance ? "chevron-up" : "chevron-down"
-                    }
-                    outlined
-                    className={styles.advanced}
-                  >
-                    Advanced
-                  </Button>
-                  <Collapse
-                    isOpen={showAdvancedAppearance}
-                    className={styles.collapse}
-                  >
-                    <FormGroup>
-                      <Switch
-                        label="Show backdrop"
-                        checked={settingsDraft.showBackdrop}
-                        onChange={handleSwitchChange.bind(null, "showBackdrop")}
-                        disabled={
-                          !settingsDraft.breaksEnabled ||
-                          settingsDraft.notificationType !==
-                            NotificationType.Popup
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup label="Backdrop color">
-                      <InputGroup
-                        className={styles.colorPicker}
-                        type="color"
-                        value={settingsDraft.backdropColor}
-                        onChange={handleTextChange.bind(null, "backdropColor")}
-                        disabled={!settingsDraft.showBackdrop}
-                      />
-                    </FormGroup>
-                    <FormGroup label="Backdrop opacity">
-                      <Slider
-                        min={0.2}
-                        max={1}
-                        stepSize={0.05}
-                        labelPrecision={2}
-                        labelStepSize={0.2}
-                        onChange={handleSliderChange.bind(
-                          null,
-                          "backdropOpacity"
-                        )}
-                        value={settingsDraft.backdropOpacity}
-                        disabled={!settingsDraft.showBackdrop}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Button onClick={handleResetColors}>Reset colors</Button>
-                    </FormGroup>
-                  </Collapse>
-                </>
-              }
-            />
-            <Tab
-              id="smart-breaks"
-              title="Smart Breaks"
-              panel={
-                <>
-                  <FormGroup>
-                    <Switch
-                      label="Enable smart breaks"
-                      checked={settingsDraft.idleResetEnabled}
-                      onChange={handleSwitchChange.bind(
-                        null,
-                        "idleResetEnabled"
-                      )}
-                      disabled={!settingsDraft.breaksEnabled}
-                    />
-                  </FormGroup>
-                  <FormGroup
-                    label="Auto-detect break when away for"
-                    labelInfo="(hh:mm:ss)"
-                  >
-                    <TimePicker
-                      onChange={handleDateChange.bind(null, "idleResetLength")}
-                      value={
-                        new Date(
-                          0,
-                          0,
-                          0,
-                          Math.floor(
-                            settingsDraft.idleResetLengthSeconds / 3600
-                          ),
-                          Math.floor(
-                            (settingsDraft.idleResetLengthSeconds % 3600) / 60
-                          ),
-                          settingsDraft.idleResetLengthSeconds % 60
-                        )
-                      }
-                      selectAllOnFocus
-                      precision={TimePrecision.SECOND}
-                      disabled={
-                        !settingsDraft.breaksEnabled ||
-                        !settingsDraft.idleResetEnabled
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Switch
-                      label="Show notification when break automatically detected"
-                      checked={settingsDraft.idleResetNotification}
-                      onChange={handleSwitchChange.bind(
-                        null,
-                        "idleResetNotification"
-                      )}
-                      disabled={
-                        !settingsDraft.breaksEnabled ||
-                        !settingsDraft.idleResetEnabled
-                      }
-                    />
-                  </FormGroup>
-                </>
-              }
-            />
+      <main className="grow overflow-auto p-6 space-y-6">
+        <Tabs defaultValue="break-settings" className="w-full">
+          <TabsList
+            className={`grid w-full ${
+              processEnv.SNAP === undefined ? "grid-cols-4" : "grid-cols-3"
+            }`}
+          >
+            <TabsTrigger value="break-settings">General</TabsTrigger>
+            <TabsTrigger value="working-hours">Working Hours</TabsTrigger>
+            <TabsTrigger value="customization">Customization</TabsTrigger>
             {processEnv.SNAP === undefined && (
-              <Tab
-                id="system"
-                title="System"
-                panel={
-                  <>
-                    <FormGroup>
-                      <Switch
-                        label="Start at login"
-                        checked={settingsDraft.autoLaunch}
-                        onChange={handleSwitchChange.bind(null, "autoLaunch")}
-                      />
-                    </FormGroup>
-                  </>
-                }
-              />
+              <TabsTrigger value="system">System</TabsTrigger>
             )}
-          </Tabs>
-        </div>
+          </TabsList>
+
+          <TabsContent value="break-settings" className="mt-6 space-y-8">
+            <BreaksCard
+              settingsDraft={settingsDraft}
+              onNotificationTypeChange={handleNotificationTypeChange}
+              onDateChange={handleDateChange}
+              onTextChange={handleTextChange}
+            />
+
+            <SmartBreaksCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+              onDateChange={handleDateChange}
+            />
+
+            <SnoozeCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+              onDateChange={handleDateChange}
+              onPostponeLimitChange={handlePostponeLimitChange}
+            />
+
+            <SkipCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+            />
+
+            <AdvancedCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+            />
+          </TabsContent>
+
+          <TabsContent value="working-hours" className="mt-6 space-y-6">
+            <SettingsCard
+              title="Working Hours"
+              helperText="Only show breaks during your configured work schedule."
+              toggle={{
+                checked: settingsDraft.workingHoursEnabled,
+                onCheckedChange: (checked) =>
+                  handleSwitchChange("workingHoursEnabled", checked),
+                disabled: !settingsDraft.breaksEnabled,
+              }}
+            >
+              <WorkingHoursSettings
+                settingsDraft={settingsDraft}
+                setSettingsDraft={setSettingsDraft}
+              />
+            </SettingsCard>
+          </TabsContent>
+
+          <TabsContent value="customization" className="mt-6 space-y-8">
+            <ThemeCard
+              settingsDraft={settingsDraft}
+              onTextChange={handleTextChange}
+              onResetColors={handleResetColors}
+            />
+
+            <AudioCard
+              settingsDraft={settingsDraft}
+              onSoundTypeChange={handleSoundTypeChange}
+              onSliderChange={handleSliderChange}
+            />
+
+            <BackdropCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+              onSliderChange={handleSliderChange}
+            />
+          </TabsContent>
+
+          {processEnv.SNAP === undefined && (
+            <TabsContent value="system" className="mt-6 space-y-6">
+              <StartupCard
+                settingsDraft={settingsDraft}
+                onSwitchChange={handleSwitchChange}
+              />
+            </TabsContent>
+          )}
+        </Tabs>
       </main>
-    </OverlaysProvider>
+    </div>
   );
 }

@@ -1,14 +1,5 @@
-import { Position, OverlayToaster, Intent, Toaster } from "@blueprintjs/core";
+import { toast as sonnerToast } from "sonner";
 
-let AppToaster: Toaster;
-
-// Initialize the toaster
-OverlayToaster.create({
-  position: Position.BOTTOM,
-}).then((toaster) => {
-  AppToaster = toaster;
-});
-
-export function toast(message: string, intent: Intent = Intent.NONE) {
-  AppToaster?.show({ message, intent });
+export function toast(message: string) {
+  sonnerToast(message);
 }

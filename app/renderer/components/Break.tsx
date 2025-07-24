@@ -1,296 +1,16 @@
-import { Button, ButtonGroup, Spinner } from "@blueprintjs/core";
 import { motion, useAnimation } from "framer-motion";
-import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { Settings, SoundType } from "../../types/settings";
-import * as styles from "./Break.scss";
-
-function formatTimeSinceLastBreak(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  if (hours > 0) {
-    return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""} since last break`;
-  } else if (minutes > 0) {
-    return `${minutes}m since last break`;
-  } else {
-    return "Less than 1m since last break";
-  }
-}
-
-function createRgba(hex: string, a: number) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
-interface TimeRemaining {
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-interface SpinnerProps {
-  value: number;
-  textColor: string;
-}
-
-function OuterSpinner(props: SpinnerProps) {
-  const { textColor, value } = props;
-
-  return (
-    <div className={`bp6-spinner ${styles.outerSpinner}`}>
-      <svg width="400" height="400" strokeWidth="2" viewBox="2 2 96 96">
-        <path
-          className="bp6-spinner-track"
-          d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
-          style={{ stroke: "none" }}
-        ></path>
-        <path
-          className="bp6-spinner-head"
-          d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"
-          pathLength="100"
-          strokeDasharray="100 100"
-          strokeDashoffset={100 - 100 * value}
-          style={{ stroke: textColor }}
-        ></path>
-      </svg>
-    </div>
-  );
-}
-
-interface BreakProgressProps {
-  breakMessage: string;
-  endBreakEnabled: boolean;
-  onEndBreak: () => void;
-  settings: Settings;
-  textColor: string;
-}
-
-function BreakProgress(props: BreakProgressProps) {
-  const { breakMessage, endBreakEnabled, onEndBreak, settings, textColor } =
-    props;
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
-    null
-  );
-  const [progress, setProgress] = useState<number | null>(null);
-  const [breakStartTime] = useState(new Date());
-
-  useEffect(() => {
-    if (settings.soundType !== SoundType.None) {
-      ipcRenderer.invokeStartSound(
-        settings.soundType,
-        settings.breakSoundVolume
-      );
-    }
-
-    (async () => {
-      const lengthSeconds = await ipcRenderer.invokeGetBreakLength();
-      const breakEndTime = moment().add(lengthSeconds, "seconds");
-
-      const startMsRemaining = moment(breakEndTime).diff(
-        moment(),
-        "milliseconds"
-      );
-
-      const tick = () => {
-        const now = moment();
-
-        if (now > moment(breakEndTime)) {
-          // Track break completion before ending
-          const breakDurationMs =
-            new Date().getTime() - breakStartTime.getTime();
-          ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
-
-          // Play end sound
-          if (settings.soundType !== SoundType.None) {
-            ipcRenderer.invokeEndSound(
-              settings.soundType,
-              settings.breakSoundVolume
-            );
-          }
-
-          onEndBreak();
-          return;
-        }
-
-        const msRemaining = moment(breakEndTime).diff(now, "milliseconds");
-        setProgress(1 - msRemaining / startMsRemaining);
-        setTimeRemaining({
-          hours: Math.floor(msRemaining / 1000 / 3600),
-          minutes: Math.floor(msRemaining / 1000 / 60),
-          seconds: (msRemaining / 1000) % 60,
-        });
-        setTimeout(tick, 200);
-      };
-
-      tick();
-    })();
-  }, [onEndBreak, settings, breakStartTime]);
-
-  const fadeIn = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    transition: { duration: 0.8, delay: 0.5 },
-  };
-
-  if (timeRemaining === null || progress === null) {
-    return null;
-  }
-
-  return (
-    <motion.div className={styles.breakProgress} {...fadeIn}>
-      <OuterSpinner value={progress} textColor={textColor} />
-      <div className={styles.progressContent}>
-        <h1
-          className={styles.breakMessage}
-          dangerouslySetInnerHTML={{
-            __html: breakMessage,
-          }}
-        />
-        {endBreakEnabled && (
-          <Button
-            className={styles.actionButton}
-            onClick={onEndBreak}
-            variant="outlined"
-            size="large"
-            autoFocus={true}
-            style={{ color: textColor }}
-          >
-            {progress < 0.5 ? "Cancel" : "End"}
-          </Button>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-interface BreakNotificationProps {
-  onCountdownOver: () => void;
-  onPostponeBreak: () => void;
-  onSkipBreak: () => void;
-  onStartBreakNow: () => void;
-  postponeBreakEnabled: boolean;
-  skipBreakEnabled: boolean;
-  timeSinceLastBreak: number | null;
-  textColor: string;
-  backgroundColor: string;
-}
-
-function BreakNotification(props: BreakNotificationProps) {
-  const {
-    onCountdownOver,
-    onPostponeBreak,
-    onSkipBreak,
-    onStartBreakNow,
-    postponeBreakEnabled,
-    skipBreakEnabled,
-    timeSinceLastBreak,
-    textColor,
-    backgroundColor,
-  } = props;
-  const [phase, setPhase] = useState<"grace" | "countdown">("grace");
-  const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
-
-  useEffect(() => {
-    const startTime = moment();
-
-    const tick = () => {
-      const now = moment();
-      const elapsed = now.diff(startTime, "seconds");
-
-      if (elapsed < 60) {
-        setPhase("grace");
-      } else if (elapsed < 120) {
-        setPhase("countdown");
-        setSecondsRemaining(120 - elapsed);
-      } else {
-        onCountdownOver();
-        return;
-      }
-
-      setTimeout(tick, 1000);
-    };
-
-    tick();
-  }, [onCountdownOver]);
-
-  return (
-    <motion.div
-      className={styles.breakNotification}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ duration: 0.3 }}
-      style={{
-        backgroundColor,
-        color: textColor,
-      }}
-    >
-      <div className={styles.notificationContent}>
-        <div className={styles.notificationText}>
-          <h3 className={styles.notificationTitle}>
-            {phase === "grace"
-              ? "Take a break when ready..."
-              : `Starting break in ${secondsRemaining}s...`}
-          </h3>
-          {timeSinceLastBreak && timeSinceLastBreak > 600 && (
-            <p style={{ margin: "4px 0 0 0", fontSize: "14px", opacity: 0.8 }}>
-              {formatTimeSinceLastBreak(timeSinceLastBreak)}
-            </p>
-          )}
-        </div>
-        <div className={styles.notificationButtons}>
-          <ButtonGroup>
-            <Button
-              className={styles.actionButton}
-              onClick={onStartBreakNow}
-              variant="outlined"
-              autoFocus={true}
-              style={{ color: textColor }}
-              endIcon={
-                phase === "countdown" ? (
-                  <Spinner size={16} value={1 - (60 - secondsRemaining) / 60} />
-                ) : undefined
-              }
-            >
-              Start
-            </Button>
-            {postponeBreakEnabled && (
-              <Button
-                className={styles.actionButton}
-                onClick={onPostponeBreak}
-                variant="outlined"
-                style={{ color: textColor }}
-              >
-                Snooze
-              </Button>
-            )}
-            {skipBreakEnabled && (
-              <Button
-                className={styles.actionButton}
-                onClick={onSkipBreak}
-                variant="outlined"
-                style={{ color: textColor }}
-              >
-                Skip
-              </Button>
-            )}
-          </ButtonGroup>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+import { BreakNotification } from "./break/break-notification";
+import { BreakProgress } from "./break/break-progress";
+import { createDarkerRgba } from "./break/utils";
 
 export default function Break() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [countingDown, setCountingDown] = useState(true);
   const [allowPostpone, setAllowPostpone] = useState<boolean | null>(null);
   const [timeSinceLastBreak, setTimeSinceLastBreak] = useState<number | null>(
-    null
+    null,
   );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -363,6 +83,7 @@ export default function Break() {
       setAnimValues((prev) => ({
         ...prev,
         backgroundOpacity: 1,
+        backdropOpacity: settings?.showBackdrop ? settings.backdropOpacity : 0,
         width: 400,
         height: 400,
       }));
@@ -372,13 +93,14 @@ export default function Break() {
         transition: { duration: 0.3 },
       });
     }
-  }, [countingDown, controls]);
+  }, [countingDown, controls, settings]);
 
   useEffect(() => {
     if (closing) {
       setAnimValues((prev) => ({
         ...prev,
         backgroundOpacity: 0,
+        backdropOpacity: 0,
         width: 0,
         height: 0,
       }));
@@ -414,7 +136,7 @@ export default function Break() {
   if (countingDown) {
     return (
       <div
-        className={`bp6-dark ${styles.breakContainer}`}
+        className="h-full flex items-center justify-center"
         style={{ backgroundColor: "transparent" }}
       >
         {ready && !closing && (
@@ -441,19 +163,20 @@ export default function Break() {
   }
 
   return (
-    <motion.div
-      className={`bp6-dark ${styles.breakContainer}`}
-      animate={{ opacity: 1 }}
-      initial={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      style={{
-        backgroundColor: settings.showBackdrop
-          ? createRgba(settings.backdropColor, settings.backdropOpacity)
-          : "initial",
-      }}
-    >
+    <div className="h-full flex items-center justify-center relative">
+      {settings.showBackdrop && (
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: animValues.backdropOpacity }}
+          initial={{ opacity: 0 }}
+          transition={{ duration: closing ? 0.5 : 0.3 }}
+          style={{
+            backgroundColor: createDarkerRgba(settings.backgroundColor, 1),
+          }}
+        />
+      )}
       <motion.div
-        className={styles.break}
+        className="flex flex-col justify-center items-center text-center relative p-10 text-balance focus:outline-none"
         animate={{ width: animValues.width, height: animValues.height }}
         initial={{ width: 0, height: 0 }}
         transition={{ duration: 0.3 }}
@@ -462,7 +185,7 @@ export default function Break() {
         }}
       >
         <motion.div
-          className={styles.background}
+          className="absolute top-0 right-0 bottom-0 left-0 rounded-full"
           animate={{
             width: animValues.width,
             height: animValues.height,
@@ -484,6 +207,6 @@ export default function Break() {
           />
         )}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

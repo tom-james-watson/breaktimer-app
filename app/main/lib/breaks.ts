@@ -15,6 +15,15 @@ import { getSettings } from "./store";
 import { buildTray } from "./tray";
 import { createBreakWindows } from "./windows";
 
+// Helper function to strip HTML tags from text
+function stripHtml(html: string): string {
+  // First convert <br> tags to spaces
+  return html
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+}
+
 let powerMonitor: PowerMonitor;
 let breakTime: BreakTime = null;
 let havingBreak = false;
@@ -63,14 +72,14 @@ export function completeBreakTracking(breakDurationMs: number): void {
     hasSkippedOrSnoozedSinceLastBreak = false;
     log.info(
       `Break completed [duration=${Math.round(
-        breakDurationMs / 1000
-      )}s] [required=${settings.breakLengthSeconds}s]`
+        breakDurationMs / 1000,
+      )}s] [required=${settings.breakLengthSeconds}s]`,
     );
   } else {
     log.info(
       `Break too short [duration=${Math.round(
-        breakDurationMs / 1000
-      )}s] [required=${settings.breakLengthSeconds}s]`
+        breakDurationMs / 1000,
+      )}s] [required=${settings.breakLengthSeconds}s]`,
     );
   }
 
@@ -121,8 +130,8 @@ function createIdleNotification() {
     showNotification(
       "Break automatically detected",
       `Away for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
-        idleSeconds
-      )}`
+        idleSeconds,
+      )}`,
     );
   }
 }
@@ -145,7 +154,7 @@ export function createBreak(isPostpone = false): void {
     : settings.breakFrequencySeconds;
 
   log.info(
-    `Creating break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`
+    `Creating break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`,
   );
   breakTime = moment().add(seconds, "seconds");
 
@@ -197,12 +206,12 @@ function doBreak(): void {
   log.info(`Break started [type=${settings.notificationType}]`);
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification("Time for a break!", settings.breakMessage);
+    showNotification("Time for a break!", stripHtml(settings.breakMessage));
     if (settings.soundType !== SoundType.None) {
       sendIpc(
         IpcChannel.SoundStartPlay,
         settings.soundType,
-        settings.breakSoundVolume
+        settings.breakSoundVolume,
       );
     }
     havingBreak = false;
@@ -245,7 +254,7 @@ export function checkInWorkingHours(): boolean {
 
   return todaySettings.ranges.some(
     (range) =>
-      currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes
+      currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes,
   );
 }
 
@@ -260,7 +269,7 @@ export function checkIdle(): boolean {
   const settings: Settings = getSettings();
 
   const state: IdleState = powerMonitor.getSystemIdleState(
-    getIdleResetSeconds()
+    getIdleResetSeconds(),
   ) as IdleState;
 
   if (state === IdleState.Locked) {
@@ -269,7 +278,7 @@ export function checkIdle(): boolean {
       return false;
     } else {
       const lockSeconds = Number(
-        ((+new Date() - +lockStart) / 1000).toFixed(0)
+        ((+new Date() - +lockStart) / 1000).toFixed(0),
       );
       return lockSeconds > getIdleResetSeconds();
     }

@@ -8,10 +8,14 @@ let soundsWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
 const getBrowserWindowUrl = (page: "settings" | "sounds" | "break"): string => {
-  return `file://${path.join(
-    __dirname,
-    `../views/${process.env.NODE_ENV}.html?page=${page}`
-  )}`;
+  if (process.env.NODE_ENV === "development") {
+    return `http://localhost:1212/?page=${page}`;
+  } else {
+    return `file://${path.join(
+      __dirname,
+      "../views/production.html",
+    )}?page=${page}`;
+  }
 };
 
 export function getWindows(): BrowserWindow[] {
@@ -34,10 +38,10 @@ export function createSettingsWindow(): void {
 
   settingsWindow = new BrowserWindow({
     show: false,
-    width: 535,
-    minWidth: 535,
-    height: 600 + (process.platform === "win32" ? 40 : 0),
-    minHeight: 600 + (process.platform === "win32" ? 40 : 0),
+    width: 565,
+    minWidth: 565,
+    height: 625 + (process.platform === "win32" ? 40 : 0),
+    minHeight: 625 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
     icon:
       process.env.NODE_ENV === "development"
@@ -94,7 +98,7 @@ export function createBreakWindows(): void {
       transparent: true,
       hasShadow: false,
       webPreferences: {
-        devTools: false,
+        devTools: true,
         preload: path.join(__dirname, "../../renderer/preload.js"),
       },
     });

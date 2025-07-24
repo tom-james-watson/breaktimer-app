@@ -16,6 +16,7 @@ node_modules
 release
 app/main/dist
 app/renderer/dist
+dist
 
 # dotenv
 .env
