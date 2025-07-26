@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Settings, SoundType } from "../../types/settings";
 import { BreakNotification } from "./break/break-notification";
 import { BreakProgress } from "./break/break-progress";
@@ -14,10 +14,6 @@ export default function Break() {
   );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
-  const [animValues, setAnimValues] = useState({
-    backgroundOpacity: 0,
-    backdropOpacity: 0,
-  });
 
   useEffect(() => {
     const init = async () => {
@@ -32,12 +28,6 @@ export default function Break() {
       setAllowPostpone(allowPostpone);
       setSettings(settings);
       setTimeSinceLastBreak(timeSince);
-
-      const newValues = {
-        backgroundOpacity: 0.9,
-        backdropOpacity: 0,
-      };
-      setAnimValues(newValues);
 
       // Skip the countdown if immediately start breaks is enabled or started from tray
       if (settings.immediatelyStartBreaks || startedFromTray) {
@@ -70,24 +60,11 @@ export default function Break() {
         renderer.invokeBreakWindowResize();
       }
 
-      // Update animation values for break phase
-      setAnimValues((prev) => ({
-        ...prev,
-        backgroundOpacity: 1,
-        backdropOpacity: settings?.showBackdrop
-          ? settings.backdropOpacity
-          : 0,
-      }));
     }
   }, [countingDown, settings]);
 
   useEffect(() => {
     if (closing) {
-      setAnimValues((prev) => ({
-        ...prev,
-        backgroundOpacity: 0,
-        backdropOpacity: 0,
-      }));
       setTimeout(() => {
         window.close();
       }, 500);

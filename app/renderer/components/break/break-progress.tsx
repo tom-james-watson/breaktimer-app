@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Settings, SoundType } from "../../../types/settings";
 import { TimeRemaining } from "./utils";
 
@@ -29,20 +29,19 @@ export function BreakProgress({
   );
   const [progress, setProgress] = useState<number | null>(null);
   const [breakStartTime] = useState(new Date());
-  const [isPrimaryWindow, setIsPrimaryWindow] = useState(false);
   const soundPlayedRef = useRef(false);
+
+  const isPrimaryWindow = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const windowId = urlParams.get('windowId');
+    return windowId === '0' || windowId === null;
+  }, []);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     
-    // Check if this is the primary window (windowId=0 or no windowId)
-    const urlParams = new URLSearchParams(window.location.search);
-    const windowId = urlParams.get('windowId');
-    const isPrimary = windowId === '0' || windowId === null;
-    setIsPrimaryWindow(isPrimary);
-    
     // Only play start sound from primary window and only once per break
-    if (isPrimary && settings.soundType !== SoundType.None && !soundPlayedRef.current) {
+    if (isPrimaryWindow && settings.soundType !== SoundType.None && !soundPlayedRef.current) {
       soundPlayedRef.current = true;
       ipcRenderer.invokeStartSound(
         settings.soundType,
@@ -104,7 +103,7 @@ export function BreakProgress({
         clearTimeout(timeoutId);
       }
     };
-  }, [onEndBreak, settings, breakStartTime, isClosing]);
+  }, [onEndBreak, settings, breakStartTime, isClosing, isPrimaryWindow]);
 
   const fadeIn = {
     initial: { opacity: 0 },
