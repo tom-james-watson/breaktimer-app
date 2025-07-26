@@ -11,8 +11,8 @@ export function showNotification(
   if (process.platform !== "darwin") {
     imgPath =
       process.env.NODE_ENV === "development"
-        ? "resources/tray/icon.png"
-        : path.join(process.resourcesPath, "app/resources/tray/icon.png");
+        ? "resources/tray/icon-color.png"
+        : path.join(process.resourcesPath, "app/resources/tray/icon-color.png");
   }
 
   const notification = new Notification({
