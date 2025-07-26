@@ -21,10 +21,7 @@ export default function AdvancedCard({
             onCheckedChange={(checked) =>
               onSwitchChange("immediatelyStartBreaks", checked)
             }
-            disabled={
-              !settingsDraft.breaksEnabled ||
-              settingsDraft.notificationType !== NotificationType.Popup
-            }
+            disabled={settingsDraft.notificationType !== NotificationType.Popup}
           />
           <Label>Immediately start breaks</Label>
         </div>
@@ -35,7 +32,6 @@ export default function AdvancedCard({
             onCheckedChange={(checked) =>
               onSwitchChange("endBreakEnabled", checked)
             }
-            disabled={!settingsDraft.breaksEnabled}
           />
           <Label>Allow ending break early</Label>
         </div>

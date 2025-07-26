@@ -21,9 +21,7 @@ export default function BackdropCard({
       toggle={{
         checked: settingsDraft.showBackdrop,
         onCheckedChange: (checked) => onSwitchChange("showBackdrop", checked),
-        disabled:
-          !settingsDraft.breaksEnabled ||
-          settingsDraft.notificationType !== NotificationType.Popup,
+        disabled: settingsDraft.notificationType !== NotificationType.Popup,
       }}
     >
       <div className="space-y-2">

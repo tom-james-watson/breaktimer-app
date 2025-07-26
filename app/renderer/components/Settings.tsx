@@ -70,7 +70,7 @@ export default function SettingsEl() {
 
   const handleTextChange = (
     field: string,
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
     setSettingsDraft({
       ...settingsDraft,
@@ -124,10 +124,6 @@ export default function SettingsEl() {
         handleSave={handleSave}
         showSave={dirty}
         textColor={settingsDraft.textColor}
-        breaksEnabled={settingsDraft.breaksEnabled}
-        onBreaksEnabledChange={(checked) =>
-          handleSwitchChange("breaksEnabled", checked)
-        }
       />
       <main className="grow overflow-auto p-6 space-y-6">
         <Tabs defaultValue="break-settings" className="w-full">
@@ -150,6 +146,7 @@ export default function SettingsEl() {
               onNotificationTypeChange={handleNotificationTypeChange}
               onDateChange={handleDateChange}
               onTextChange={handleTextChange}
+              onSwitchChange={handleSwitchChange}
             />
 
             <SmartBreaksCard

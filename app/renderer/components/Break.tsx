@@ -1,5 +1,5 @@
-import { motion, useAnimation } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings, SoundType } from "../../types/settings";
 import { BreakNotification } from "./break/break-notification";
 import { BreakProgress } from "./break/break-progress";
@@ -14,10 +14,7 @@ export default function Break() {
   );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
-  const controls = useAnimation();
   const [animValues, setAnimValues] = useState({
-    width: 0,
-    height: 0,
     backgroundOpacity: 0,
     backdropOpacity: 0,
   });
@@ -39,15 +36,8 @@ export default function Break() {
       const newValues = {
         backgroundOpacity: 0.9,
         backdropOpacity: 0,
-        width: 500,
-        height: 80,
       };
       setAnimValues(newValues);
-      controls.start({
-        width: 500,
-        height: 80,
-        transition: { duration: 0.3 },
-      });
 
       // Skip the countdown if immediately start breaks is enabled or started from tray
       if (settings.immediatelyStartBreaks || startedFromTray) {
@@ -60,7 +50,7 @@ export default function Break() {
     // Delay or the window displays incorrectly.
     // FIXME: work out why and how to avoid this.
     setTimeout(init, 1000);
-  }, [controls]);
+  }, []);
 
   const handleCountdownOver = useCallback(() => {
     setCountingDown(false);
@@ -80,20 +70,16 @@ export default function Break() {
         renderer.invokeBreakWindowResize();
       }
 
+      // Update animation values for break phase
       setAnimValues((prev) => ({
         ...prev,
         backgroundOpacity: 1,
-        backdropOpacity: settings?.showBackdrop ? settings.backdropOpacity : 0,
-        width: 400,
-        height: 400,
+        backdropOpacity: settings?.showBackdrop
+          ? settings.backdropOpacity
+          : 0,
       }));
-      controls.start({
-        width: 400,
-        height: 400,
-        transition: { duration: 0.3 },
-      });
     }
-  }, [countingDown, controls, settings]);
+  }, [countingDown, settings]);
 
   useEffect(() => {
     if (closing) {
@@ -101,15 +87,12 @@ export default function Break() {
         ...prev,
         backgroundOpacity: 0,
         backdropOpacity: 0,
-        width: 0,
-        height: 0,
       }));
-      controls.start({ width: 0, height: 0, transition: { duration: 0.5 } });
       setTimeout(() => {
         window.close();
       }, 500);
     }
-  }, [controls, closing]);
+  }, [closing]);
 
   const handlePostponeBreak = useCallback(async () => {
     await ipcRenderer.invokeBreakPostpone("snoozed");
@@ -122,8 +105,12 @@ export default function Break() {
   }, []);
 
   const handleEndBreak = useCallback(async () => {
-    // Play end sound for manual break ending (Cancel/End buttons)
-    if (settings && settings?.soundType !== SoundType.None) {
+    // Only play end sound from primary window
+    const urlParams = new URLSearchParams(window.location.search);
+    const windowId = urlParams.get("windowId");
+    const isPrimary = windowId === "0" || windowId === null;
+
+    if (isPrimary && settings && settings?.soundType !== SoundType.None) {
       ipcRenderer.invokeEndSound(settings.soundType, settings.breakSoundVolume);
     }
     setClosing(true);
@@ -167,43 +154,44 @@ export default function Break() {
       {settings.showBackdrop && (
         <motion.div
           className="absolute inset-0"
-          animate={{ opacity: animValues.backdropOpacity }}
+          animate={{ 
+            opacity: closing ? 0 : settings.backdropOpacity
+          }}
           initial={{ opacity: 0 }}
-          transition={{ duration: closing ? 0.5 : 0.3 }}
+          transition={{ 
+            duration: 0.5,
+            delay: closing ? 0.3 : 0
+          }}
           style={{
             backgroundColor: createDarkerRgba(settings.backgroundColor, 1),
           }}
         />
       )}
       <motion.div
-        className="flex flex-col justify-center items-center text-center relative p-10 text-balance focus:outline-none"
-        animate={{ width: animValues.width, height: animValues.height }}
-        initial={{ width: 0, height: 0 }}
-        transition={{ duration: 0.3 }}
+        className="flex flex-col justify-center items-center relative p-6 text-balance focus:outline-none w-[500px] rounded-xl"
+        animate={{
+          opacity: closing ? 0 : 1,
+          y: closing ? -20 : 0,
+        }}
+        initial={{ opacity: 0, y: -20 }}
+        transition={{
+          duration: 0.5,
+          ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
+        }}
         style={{
           color: settings.textColor,
+          backgroundColor: settings.backgroundColor,
         }}
       >
-        <motion.div
-          className="absolute top-0 right-0 bottom-0 left-0 rounded-full"
-          animate={{
-            width: animValues.width,
-            height: animValues.height,
-            opacity: animValues.backgroundOpacity,
-          }}
-          initial={{ width: 0, height: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            backgroundColor: settings.backgroundColor,
-          }}
-        />
-        {ready && !closing && (
+        {ready && (
           <BreakProgress
             breakMessage={settings.breakMessage}
+            breakTitle={settings.breakTitle}
             endBreakEnabled={settings.endBreakEnabled}
             onEndBreak={handleEndBreak}
             settings={settings}
             textColor={settings.textColor}
+            isClosing={closing}
           />
         )}
       </motion.div>

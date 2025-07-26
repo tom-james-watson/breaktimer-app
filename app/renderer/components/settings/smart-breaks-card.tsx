@@ -23,7 +23,6 @@ export default function SmartBreaksCard({
         checked: settingsDraft.idleResetEnabled,
         onCheckedChange: (checked) =>
           onSwitchChange("idleResetEnabled", checked),
-        disabled: !settingsDraft.breaksEnabled,
       }}
     >
       <div className="space-y-4">
@@ -39,9 +38,7 @@ export default function SmartBreaksCard({
               date.setSeconds(seconds % 60);
               onDateChange("idleResetLength", date);
             }}
-            disabled={
-              !settingsDraft.breaksEnabled || !settingsDraft.idleResetEnabled
-            }
+            disabled={!settingsDraft.idleResetEnabled}
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -50,9 +47,7 @@ export default function SmartBreaksCard({
             onCheckedChange={(checked) =>
               onSwitchChange("idleResetNotification", checked)
             }
-            disabled={
-              !settingsDraft.breaksEnabled || !settingsDraft.idleResetEnabled
-            }
+            disabled={!settingsDraft.idleResetEnabled}
           />
           <Label>Show notification when break automatically detected</Label>
         </div>

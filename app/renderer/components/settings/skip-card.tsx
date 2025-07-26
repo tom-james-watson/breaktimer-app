@@ -20,8 +20,7 @@ export default function SkipCard({
           !settingsDraft.immediatelyStartBreaks,
         onCheckedChange: (checked) =>
           onSwitchChange("skipBreakEnabled", checked),
-        disabled:
-          !settingsDraft.breaksEnabled || settingsDraft.immediatelyStartBreaks,
+        disabled: settingsDraft.immediatelyStartBreaks,
       }}
     />
   );

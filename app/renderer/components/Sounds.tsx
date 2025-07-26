@@ -11,9 +11,7 @@ export default function Sounds() {
     if (type === SoundType.None) return;
     const sound = new Howl({
       src: [
-        `../../renderer/sounds/${type.toLowerCase()}_${
-          isStart ? "start" : "end"
-        }.wav`,
+        `./sounds/${type.toLowerCase()}_${isStart ? "start" : "end"}.wav`,
       ],
       volume,
     });

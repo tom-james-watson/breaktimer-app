@@ -7,15 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { NotificationType, Settings } from "../../../types/settings";
 import SettingsCard from "./settings-card";
 import TimeInput from "./time-input";
-import { NotificationType, Settings } from "../../../types/settings";
 
 interface BreaksCardProps {
   settingsDraft: Settings;
   onNotificationTypeChange: (value: string) => void;
   onDateChange: (fieldName: string, newVal: Date) => void;
-  onTextChange: (field: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTextChange: (
+    field: string,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onSwitchChange: (field: string, checked: boolean) => void;
 }
 
 export default function BreaksCard({
@@ -23,9 +28,16 @@ export default function BreaksCard({
   onNotificationTypeChange,
   onDateChange,
   onTextChange,
+  onSwitchChange,
 }: BreaksCardProps) {
   return (
-    <SettingsCard title="Breaks">
+    <SettingsCard
+      title="Breaks"
+      toggle={{
+        checked: settingsDraft.breaksEnabled,
+        onCheckedChange: (checked) => onSwitchChange("breaksEnabled", checked),
+      }}
+    >
       <div className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
@@ -83,13 +95,25 @@ export default function BreaksCard({
           </div>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Message</Label>
+          <Label className="text-sm font-medium">Title</Label>
           <Input
-            id="break-message"
+            id="break-title"
             className="text-sm"
+            value={settingsDraft.breakTitle}
+            onChange={onTextChange.bind(null, "breakTitle")}
+            disabled={!settingsDraft.breaksEnabled}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Message</Label>
+          <Textarea
+            id="break-message"
+            className="text-sm resize-none"
+            rows={3}
             value={settingsDraft.breakMessage}
             onChange={onTextChange.bind(null, "breakMessage")}
             disabled={!settingsDraft.breaksEnabled}
+            placeholder="Enter your break message..."
           />
         </div>
       </div>

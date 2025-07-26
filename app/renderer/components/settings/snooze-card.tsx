@@ -33,8 +33,7 @@ export default function SnoozeCard({
           !settingsDraft.immediatelyStartBreaks,
         onCheckedChange: (checked) =>
           onSwitchChange("postponeBreakEnabled", checked),
-        disabled:
-          !settingsDraft.breaksEnabled || settingsDraft.immediatelyStartBreaks,
+        disabled: settingsDraft.immediatelyStartBreaks,
       }}
     >
       <div className="grid grid-cols-2 gap-4">
@@ -51,7 +50,6 @@ export default function SnoozeCard({
               onDateChange("postponeLength", date);
             }}
             disabled={
-              !settingsDraft.breaksEnabled ||
               !settingsDraft.postponeBreakEnabled ||
               settingsDraft.immediatelyStartBreaks
             }
@@ -63,7 +61,6 @@ export default function SnoozeCard({
             value={settingsDraft.postponeLimit.toString()}
             onValueChange={onPostponeLimitChange}
             disabled={
-              !settingsDraft.breaksEnabled ||
               !settingsDraft.postponeBreakEnabled ||
               settingsDraft.immediatelyStartBreaks
             }

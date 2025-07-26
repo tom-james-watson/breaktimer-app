@@ -13,6 +13,7 @@ import {
 import { getSettings, setSettings } from "./store";
 import { getWindows } from "./windows";
 
+
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   const windows: BrowserWindow[] = getWindows();
 
@@ -42,16 +43,14 @@ ipcMain.handle(
 
 ipcMain.handle(
   IpcChannel.SoundStartPlay,
-  (_event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
-    log.info(IpcChannel.SoundStartPlay);
+  (event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
     sendIpc(IpcChannel.SoundStartPlay, type, volume);
   },
 );
 
 ipcMain.handle(
   IpcChannel.SoundEndPlay,
-  (_event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
-    log.info(IpcChannel.SoundEndPlay);
+  (event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {
     sendIpc(IpcChannel.SoundEndPlay, type, volume);
   },
 );
@@ -89,8 +88,8 @@ ipcMain.handle(
         window.setPosition(display.bounds.x, display.bounds.y);
       } else {
         // Centered window for no backdrop mode
-        const windowWidth = 600;
-        const windowHeight = 400;
+        const windowWidth = 500;
+        const windowHeight = 300;
         const centerX =
           display.bounds.x + display.bounds.width / 2 - windowWidth / 2;
         const centerY =

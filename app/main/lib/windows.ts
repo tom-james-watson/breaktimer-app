@@ -7,14 +7,15 @@ let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
-const getBrowserWindowUrl = (page: "settings" | "sounds" | "break"): string => {
+const getBrowserWindowUrl = (page: "settings" | "sounds" | "break", windowId?: number): string => {
+  const windowParam = windowId !== undefined ? `&windowId=${windowId}` : '';
   if (process.env.NODE_ENV === "development") {
-    return `http://localhost:1212/?page=${page}`;
+    return `http://localhost:1212/?page=${page}${windowParam}`;
   } else {
     return `file://${path.join(
       __dirname,
       "../../../dist/renderer/index.html",
-    )}?page=${page}`;
+    )}?page=${page}${windowParam}`;
   }
 };
 
@@ -39,8 +40,8 @@ export function createSettingsWindow(): void {
   settingsWindow = new BrowserWindow({
     title: "BreakTimer — Settings",
     show: false,
-    width: 565,
-    minWidth: 565,
+    width: 570,
+    minWidth: 570,
     height: 625 + (process.platform === "win32" ? 40 : 0),
     minHeight: 625 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
@@ -55,10 +56,13 @@ export function createSettingsWindow(): void {
   });
 
   settingsWindow.loadURL(getBrowserWindowUrl("settings"));
-  
+
   // Force enable devtools keyboard shortcuts
-  settingsWindow.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'F12' || (input.control && input.shift && input.key === 'I')) {
+  settingsWindow.webContents.on("before-input-event", (event, input) => {
+    if (
+      input.key === "F12" ||
+      (input.control && input.shift && input.key === "I")
+    ) {
       settingsWindow?.webContents.toggleDevTools();
     }
   });
@@ -91,7 +95,8 @@ export function createSoundsWindow(): void {
 
 export function createBreakWindows(): void {
   const displays = screen.getAllDisplays();
-  for (const display of displays) {
+  for (let windowIndex = 0; windowIndex < displays.length; windowIndex++) {
+    const display = displays[windowIndex];
     const notificationWidth = 500;
     const notificationHeight = 80;
     const breakWindow = new BrowserWindow({
@@ -123,7 +128,7 @@ export function createBreakWindows(): void {
       app.dock?.hide();
     }
 
-    breakWindow.loadURL(getBrowserWindowUrl("break"));
+    breakWindow.loadURL(getBrowserWindowUrl("break", windowIndex));
 
     breakWindow.on("ready-to-show", () => {
       if (!breakWindow) {

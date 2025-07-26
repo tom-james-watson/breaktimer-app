@@ -26,7 +26,6 @@ export default function ThemeCard({
               type="color"
               value={settingsDraft.backgroundColor}
               onChange={onTextChange.bind(null, "backgroundColor")}
-              disabled={!settingsDraft.breaksEnabled}
             />
           </div>
           <div className="space-y-2">
@@ -36,7 +35,6 @@ export default function ThemeCard({
               type="color"
               value={settingsDraft.textColor}
               onChange={onTextChange.bind(null, "textColor")}
-              disabled={!settingsDraft.breaksEnabled}
             />
           </div>
         </div>

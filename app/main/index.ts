@@ -1,4 +1,5 @@
 import { app } from "electron";
+import electronDebug from "electron-debug";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import { setAutoLauch } from "./lib/auto-launch";
@@ -40,7 +41,6 @@ if (
   process.env.NODE_ENV === "development" ||
   process.env.DEBUG_PROD === "true"
 ) {
-  const electronDebug = require("electron-debug");
   electronDebug();
 }
 

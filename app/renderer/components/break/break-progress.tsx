@@ -1,34 +1,49 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Settings, SoundType } from "../../../types/settings";
 import { TimeRemaining } from "./utils";
-import { OuterSpinner } from "./outer-spinner";
 
 interface BreakProgressProps {
   breakMessage: string;
+  breakTitle: string;
   endBreakEnabled: boolean;
   onEndBreak: () => void;
   settings: Settings;
   textColor: string;
+  isClosing?: boolean;
 }
 
 export function BreakProgress({
   breakMessage,
+  breakTitle,
   endBreakEnabled,
   onEndBreak,
   settings,
   textColor,
+  isClosing = false,
 }: BreakProgressProps) {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
     null,
   );
   const [progress, setProgress] = useState<number | null>(null);
   const [breakStartTime] = useState(new Date());
+  const [isPrimaryWindow, setIsPrimaryWindow] = useState(false);
+  const soundPlayedRef = useRef(false);
 
   useEffect(() => {
-    if (settings.soundType !== SoundType.None) {
+    let timeoutId: NodeJS.Timeout;
+    
+    // Check if this is the primary window (windowId=0 or no windowId)
+    const urlParams = new URLSearchParams(window.location.search);
+    const windowId = urlParams.get('windowId');
+    const isPrimary = windowId === '0' || windowId === null;
+    setIsPrimaryWindow(isPrimary);
+    
+    // Only play start sound from primary window and only once per break
+    if (isPrimary && settings.soundType !== SoundType.None && !soundPlayedRef.current) {
+      soundPlayedRef.current = true;
       ipcRenderer.invokeStartSound(
         settings.soundType,
         settings.breakSoundVolume,
@@ -48,17 +63,19 @@ export function BreakProgress({
         const now = moment();
 
         if (now > moment(breakEndTime)) {
-          // Track break completion before ending
-          const breakDurationMs =
-            new Date().getTime() - breakStartTime.getTime();
-          ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
+          // Only track and play sounds from primary window
+          if (isPrimaryWindow) {
+            const breakDurationMs =
+              new Date().getTime() - breakStartTime.getTime();
+            ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
 
-          // Play end sound
-          if (settings.soundType !== SoundType.None) {
-            ipcRenderer.invokeEndSound(
-              settings.soundType,
-              settings.breakSoundVolume,
-            );
+            // Play end sound
+            if (settings.soundType !== SoundType.None) {
+              ipcRenderer.invokeEndSound(
+                settings.soundType,
+                settings.breakSoundVolume,
+              );
+            }
           }
 
           onEndBreak();
@@ -72,12 +89,22 @@ export function BreakProgress({
           minutes: Math.floor(msRemaining / 1000 / 60),
           seconds: (msRemaining / 1000) % 60,
         });
-        setTimeout(tick, 200);
+        
+        // Don't schedule another tick if we're closing
+        if (!isClosing) {
+          timeoutId = setTimeout(tick, 200);
+        }
       };
 
       tick();
     })();
-  }, [onEndBreak, settings, breakStartTime]);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [onEndBreak, settings, breakStartTime, isClosing]);
 
   const fadeIn = {
     initial: { opacity: 0 },
@@ -89,34 +116,58 @@ export function BreakProgress({
     return null;
   }
 
+  const progressPercentage = (progress || 0) * 100;
+
   return (
     <motion.div
-      className="flex flex-col justify-center items-center text-center z-10 relative"
+      className="flex flex-col h-full w-full z-10 relative space-y-6"
       {...fadeIn}
     >
-      <OuterSpinner value={progress} textColor={textColor} />
-      <div className="z-1">
+      {/* Title and button row */}
+      <div className="flex items-center justify-between">
         <h1
-          className="mt-0 mb-8 font-normal text-3xl"
+          className="text-3xl font-semibold tracking-tight"
           style={{ color: textColor }}
-          dangerouslySetInnerHTML={{
-            __html: breakMessage,
-          }}
-        />
+        >
+          {breakTitle}
+        </h1>
         {endBreakEnabled && (
           <Button
-            className="m-4 !bg-transparent hover:!bg-current/10 active:!bg-current/20"
+            className="!bg-white/10 hover:!bg-white/20 active:!bg-white/30 backdrop-blur-sm border-white/20 transition-all duration-200"
             onClick={onEndBreak}
             variant="outline"
-            size="lg"
             style={{
               color: textColor,
-              borderColor: textColor,
+              borderColor: "rgba(255, 255, 255, 0.2)",
             }}
           >
-            {progress < 0.5 ? "Cancel" : "End"}
+            {progress < 0.5 ? "Cancel Break" : "End Break"}
           </Button>
         )}
+      </div>
+
+      {/* Break message */}
+      <div
+        className="text-lg opacity-80 font-medium whitespace-pre-line"
+        style={{ color: textColor }}
+      >
+        {breakMessage}
+      </div>
+
+      {/* Progress bar */}
+      <div className="w-full mt-3">
+        <div
+          className="w-full h-2 rounded-full overflow-hidden"
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+        >
+          <div
+            className="h-full transition-all duration-300 ease-out"
+            style={{
+              backgroundColor: textColor,
+              width: `${progressPercentage}%`,
+            }}
+          />
+        </div>
       </div>
     </motion.div>
   );

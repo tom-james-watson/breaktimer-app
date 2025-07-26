@@ -44,9 +44,7 @@ export default function WorkingHoursSettings({
           day={day}
           workingHours={settingsDraft[day.key]}
           onChange={(workingHours) => handleDayChange(day, workingHours)}
-          disabled={
-            !settingsDraft.breaksEnabled || !settingsDraft.workingHoursEnabled
-          }
+          disabled={!settingsDraft.workingHoursEnabled}
           onApplyToAll={(targetDays) => handleApplyToAll(day, targetDays)}
         />
       ))}

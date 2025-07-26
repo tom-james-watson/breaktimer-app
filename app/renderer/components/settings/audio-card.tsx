@@ -23,7 +23,6 @@ export default function AudioCard({
           <SoundSelect
             value={settingsDraft.soundType}
             onChange={onSoundTypeChange}
-            disabled={!settingsDraft.breaksEnabled}
             volume={settingsDraft.breakSoundVolume}
           />
         </div>
@@ -38,7 +37,6 @@ export default function AudioCard({
               onValueChange={(values) =>
                 onSliderChange("breakSoundVolume", values)
               }
-              disabled={!settingsDraft.breaksEnabled}
             />
             <div className="flex justify-between text-sm text-muted-foreground mt-1">
               <span>0%</span>
