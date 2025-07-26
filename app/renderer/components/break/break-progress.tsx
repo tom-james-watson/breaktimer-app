@@ -30,6 +30,8 @@ export function BreakProgress({
   const [progress, setProgress] = useState<number | null>(null);
   const [breakStartTime] = useState(new Date());
   const soundPlayedRef = useRef(false);
+  const isClosingRef = useRef(isClosing);
+  isClosingRef.current = isClosing;
 
   const isPrimaryWindow = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -89,8 +91,7 @@ export function BreakProgress({
           seconds: (msRemaining / 1000) % 60,
         });
         
-        // Don't schedule another tick if we're closing
-        if (!isClosing) {
+        if (!isClosingRef.current) {
           timeoutId = setTimeout(tick, 200);
         }
       };
@@ -103,7 +104,7 @@ export function BreakProgress({
         clearTimeout(timeoutId);
       }
     };
-  }, [onEndBreak, settings, breakStartTime, isClosing, isPrimaryWindow]);
+  }, [onEndBreak, settings, breakStartTime, isPrimaryWindow]);
 
   const fadeIn = {
     initial: { opacity: 0 },
