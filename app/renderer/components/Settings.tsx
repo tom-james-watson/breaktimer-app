@@ -130,10 +130,8 @@ export default function SettingsEl() {
         className="w-full h-full flex flex-col"
       >
         <SettingsHeader
-          backgroundColor={settingsDraft.backgroundColor}
           handleSave={handleSave}
           showSave={dirty}
-          textColor={settingsDraft.textColor}
         />
         <div className="flex-1 overflow-auto p-6 min-h-0">
           <TabsContent value="break-settings" className="m-0 space-y-8">

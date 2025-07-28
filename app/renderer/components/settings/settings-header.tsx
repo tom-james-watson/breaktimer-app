@@ -2,36 +2,24 @@ import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Props {
-  backgroundColor: string;
   handleSave: () => void;
   showSave: boolean;
-  textColor: string;
 }
 
 export default function SettingsHeader(props: Props) {
-  const { backgroundColor, handleSave, showSave, textColor } = props;
-
-  const style = {
-    color: textColor,
-    backgroundColor,
-  };
+  const { handleSave, showSave } = props;
 
   return (
-    <div className="border-b border-border" style={style}>
+    <div className="border-b border-border bg-background">
       <nav className="flex items-center justify-between p-4 h-16 min-h-16">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold" style={{ color: textColor }}>
+          <h1 className="text-2xl font-bold text-foreground">
             Settings
           </h1>
         </div>
         {showSave && (
           <div className="flex items-center">
-            <Button
-              variant="outline"
-              onClick={handleSave}
-              className="!bg-transparent hover:!bg-current/10 active:!bg-current/20"
-              style={{ color: textColor, borderColor: textColor }}
-            >
+            <Button variant="outline" onClick={handleSave}>
               Save
             </Button>
           </div>
