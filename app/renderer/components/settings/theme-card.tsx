@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import SettingsCard from "./settings-card";
 import { Settings } from "../../../types/settings";
 
 interface ThemeCardProps {
