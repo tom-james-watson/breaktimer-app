@@ -44,6 +44,12 @@ process.once("loaded", () => {
     invokeWasStartedFromTray: () => {
       return ipcRenderer.invoke("WAS_STARTED_FROM_TRAY_GET");
     },
+    invokeGetAppInitialized: () => {
+      return ipcRenderer.invoke("APP_INITIALIZED_GET");
+    },
+    invokeSetAppInitialized: () => {
+      return ipcRenderer.invoke("APP_INITIALIZED_SET");
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type, volume = 1) => {
         cb(type, volume);

@@ -10,7 +10,7 @@ import {
   postponeBreak,
   wasStartedFromTray,
 } from "./breaks";
-import { getSettings, setSettings } from "./store";
+import { getSettings, setSettings, getAppInitialized, setAppInitialized } from "./store";
 import { getWindows } from "./windows";
 
 
@@ -118,4 +118,14 @@ ipcMain.handle(
 ipcMain.handle(IpcChannel.WasStartedFromTrayGet, (): boolean => {
   log.info(IpcChannel.WasStartedFromTrayGet);
   return wasStartedFromTray();
+});
+
+ipcMain.handle(IpcChannel.AppInitializedGet, (): boolean => {
+  log.info(IpcChannel.AppInitializedGet);
+  return getAppInitialized();
+});
+
+ipcMain.handle(IpcChannel.AppInitializedSet, (): void => {
+  log.info(IpcChannel.AppInitializedSet);
+  setAppInitialized();
 });

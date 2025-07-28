@@ -14,16 +14,22 @@ import SnoozeCard from "./settings/snooze-card";
 import StartupCard from "./settings/startup-card";
 import ThemeCard from "./settings/theme-card";
 import WorkingHoursSettings from "./settings/working-hours";
+import WelcomeModal from "./welcome-modal";
 
 export default function SettingsEl() {
   const [settingsDraft, setSettingsDraft] = useState<Settings | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   useEffect(() => {
     (async () => {
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
       setSettingsDraft(settings);
       setSettings(settings);
+      
+      // Check if this is the first time running the app
+      const appInitialized = await ipcRenderer.invokeGetAppInitialized();
+      setShowWelcomeModal(!appInitialized);
     })();
   }, []);
 
@@ -211,6 +217,10 @@ export default function SettingsEl() {
           )}
         </div>
       </Tabs>
+      <WelcomeModal 
+        open={showWelcomeModal} 
+        onClose={() => setShowWelcomeModal(false)} 
+      />
     </div>
   );
 }

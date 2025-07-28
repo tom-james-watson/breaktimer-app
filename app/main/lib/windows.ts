@@ -7,8 +7,11 @@ let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
-const getBrowserWindowUrl = (page: "settings" | "sounds" | "break", windowId?: number): string => {
-  const windowParam = windowId !== undefined ? `&windowId=${windowId}` : '';
+const getBrowserWindowUrl = (
+  page: "settings" | "sounds" | "break",
+  windowId?: number,
+): string => {
+  const windowParam = windowId !== undefined ? `&windowId=${windowId}` : "";
   if (process.env.NODE_ENV === "development") {
     return `http://localhost:1212/?page=${page}${windowParam}`;
   } else {

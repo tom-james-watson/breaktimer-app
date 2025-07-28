@@ -1,5 +1,7 @@
 export enum IpcChannel {
   AllowPostponeGet = "ALLOW_POSTPONE_GET",
+  AppInitializedSet = "APP_INITIALIZED_SET",
+  AppInitializedGet = "APP_INITIALIZED_GET",
   BreakLengthGet = "BREAK_LENGTH_GET",
   BreakPostpone = "BREAK_POSTPONE",
   BreakWindowResize = "BREAK_WINDOW_RESIZE",

@@ -5,19 +5,26 @@ import { autoUpdater } from "electron-updater";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
-import { showNotification } from "./lib/notifications";
-import { getAppInitialized, setAppInitialized } from "./lib/store";
+import { getAppInitialized } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-app.on("second-instance", () => {
+app.on("second-instance", (event, commandLine, workingDirectory) => {
+  log.info("Second instance detected, opening settings window");
+  log.info(`Command line: ${commandLine}`);
+  log.info(`Working directory: ${workingDirectory}`);
+  createSettingsWindow();
+});
+
+app.on("activate", () => {
+  log.info("App activated, opening settings window");
   createSettingsWindow();
 });
 
 if (!gotTheLock) {
-  log.info("app already running");
+  log.info("App already running");
   app.exit();
 }
 
@@ -83,13 +90,11 @@ app.on("ready", async () => {
     if (process.env.NODE_ENV !== "development") {
       setAutoLauch(true);
     }
-    showNotification(
-      "BreakTimer runs in the background",
-      "The app can be accessed via the system tray",
-      undefined,
-      false,
-    );
-    setAppInitialized();
+    // Show settings window on first launch instead of notification
+    createSettingsWindow();
+    // Don't set app as initialized yet - we'll do that after the user dismisses the modal
+  } else {
+    // App has been initialized before, don't show settings automatically
   }
 
   initBreaks();
