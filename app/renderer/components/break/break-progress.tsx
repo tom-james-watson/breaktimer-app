@@ -35,15 +35,19 @@ export function BreakProgress({
 
   const isPrimaryWindow = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const windowId = urlParams.get('windowId');
-    return windowId === '0' || windowId === null;
+    const windowId = urlParams.get("windowId");
+    return windowId === "0" || windowId === null;
   }, []);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    
+
     // Only play start sound from primary window and only once per break
-    if (isPrimaryWindow && settings.soundType !== SoundType.None && !soundPlayedRef.current) {
+    if (
+      isPrimaryWindow &&
+      settings.soundType !== SoundType.None &&
+      !soundPlayedRef.current
+    ) {
       soundPlayedRef.current = true;
       ipcRenderer.invokeStartSound(
         settings.soundType,
@@ -90,7 +94,7 @@ export function BreakProgress({
           minutes: Math.floor(msRemaining / 1000 / 60),
           seconds: (msRemaining / 1000) % 60,
         });
-        
+
         if (!isClosingRef.current) {
           timeoutId = setTimeout(tick, 200);
         }
