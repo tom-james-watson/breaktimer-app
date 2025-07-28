@@ -32,7 +32,7 @@ export default function AudioCard({
             <Slider
               min={0}
               max={1}
-              step={0.1}
+              step={0.01}
               value={[settingsDraft.breakSoundVolume]}
               onValueChange={(values) =>
                 onSliderChange("breakSoundVolume", values)

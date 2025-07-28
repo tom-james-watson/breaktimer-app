@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
 import { NotificationType, Settings, SoundType } from "../../types/settings";
 import { toast } from "../toaster";
@@ -118,29 +118,19 @@ export default function SettingsEl() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-background">
-      <SettingsHeader
-        backgroundColor={settingsDraft.backgroundColor}
-        handleSave={handleSave}
-        showSave={dirty}
-        textColor={settingsDraft.textColor}
-      />
-      <main className="grow overflow-auto p-6 space-y-6">
-        <Tabs defaultValue="break-settings" className="w-full">
-          <TabsList
-            className={`grid w-full ${
-              processEnv.SNAP === undefined ? "grid-cols-4" : "grid-cols-3"
-            }`}
-          >
-            <TabsTrigger value="break-settings">General</TabsTrigger>
-            <TabsTrigger value="working-hours">Working Hours</TabsTrigger>
-            <TabsTrigger value="customization">Customization</TabsTrigger>
-            {processEnv.SNAP === undefined && (
-              <TabsTrigger value="system">System</TabsTrigger>
-            )}
-          </TabsList>
-
-          <TabsContent value="break-settings" className="mt-6 space-y-8">
+    <div className="h-screen w-full flex flex-col bg-background">
+      <Tabs
+        defaultValue="break-settings"
+        className="w-full h-full flex flex-col"
+      >
+        <SettingsHeader
+          backgroundColor={settingsDraft.backgroundColor}
+          handleSave={handleSave}
+          showSave={dirty}
+          textColor={settingsDraft.textColor}
+        />
+        <div className="flex-1 overflow-auto p-6 min-h-0">
+          <TabsContent value="break-settings" className="m-0 space-y-8">
             <BreaksCard
               settingsDraft={settingsDraft}
               onNotificationTypeChange={handleNotificationTypeChange}
@@ -173,7 +163,7 @@ export default function SettingsEl() {
             />
           </TabsContent>
 
-          <TabsContent value="working-hours" className="mt-6 space-y-6">
+          <TabsContent value="working-hours" className="m-0 space-y-6">
             <SettingsCard
               title="Working Hours"
               helperText="Only show breaks during your configured work schedule."
@@ -191,7 +181,7 @@ export default function SettingsEl() {
             </SettingsCard>
           </TabsContent>
 
-          <TabsContent value="customization" className="mt-6 space-y-8">
+          <TabsContent value="customization" className="m-0 space-y-8">
             <ThemeCard
               settingsDraft={settingsDraft}
               onTextChange={handleTextChange}
@@ -212,15 +202,15 @@ export default function SettingsEl() {
           </TabsContent>
 
           {processEnv.SNAP === undefined && (
-            <TabsContent value="system" className="mt-6 space-y-6">
+            <TabsContent value="system" className="m-0 space-y-6">
               <StartupCard
                 settingsDraft={settingsDraft}
                 onSwitchChange={handleSwitchChange}
               />
             </TabsContent>
           )}
-        </Tabs>
-      </main>
+        </div>
+      </Tabs>
     </div>
   );
 }
