@@ -275,7 +275,6 @@ function tick(): void {
       // case, it's not particularly helpful to show an idle reset
       // notification, so just reset the break
       lockStart = null;
-      breaks = {};
     } else if (secondsSinceLastTick > getIdleResetSeconds()) {
       //  If idleStart exists, it means we were idle before the computer slept.
       //  If it doesn't exist, count the computer going unresponsive as the
@@ -284,7 +283,6 @@ function tick(): void {
         lockStart = null;
         idleStart = lastTick;
       }
-      createBreak(nextBreak);
     }
 
     if (!shouldHaveBreak && !havingBreak && Object.keys(breaks)) {
@@ -294,11 +292,6 @@ function tick(): void {
       buildTray();
       return;
     }
-
-    //if (shouldHaveBreak) {
-    //  createBreak(nextBreak);
-    //  return;
-    //}
 
     if (shouldHaveBreak) {
       checkBreak(nextBreak);
