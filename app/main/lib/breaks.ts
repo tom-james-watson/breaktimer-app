@@ -291,7 +291,6 @@ function tick(): void {
       if (checkIdle()) {
         idleStart = new Date();
       }
-      breaks = {};
       buildTray();
       return;
     }
