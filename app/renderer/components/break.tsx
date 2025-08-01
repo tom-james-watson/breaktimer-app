@@ -59,7 +59,6 @@ export default function Break() {
       if (renderer.invokeBreakWindowResize) {
         renderer.invokeBreakWindowResize();
       }
-
     }
   }, [countingDown, settings]);
 
@@ -131,13 +130,13 @@ export default function Break() {
       {settings.showBackdrop && (
         <motion.div
           className="absolute inset-0"
-          animate={{ 
-            opacity: closing ? 0 : settings.backdropOpacity
+          animate={{
+            opacity: closing ? 0 : settings.backdropOpacity,
           }}
           initial={{ opacity: 0 }}
-          transition={{ 
+          transition={{
             duration: 0.5,
-            delay: closing ? 0.3 : 0
+            delay: closing ? 0.3 : 0,
           }}
           style={{
             backgroundColor: createDarkerRgba(settings.backgroundColor, 1),

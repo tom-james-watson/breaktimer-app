@@ -10,9 +10,7 @@ export default function Sounds() {
   ): void => {
     if (type === SoundType.None) return;
     const sound = new Howl({
-      src: [
-        `./sounds/${type.toLowerCase()}_${isStart ? "start" : "end"}.wav`,
-      ],
+      src: [`./sounds/${type.toLowerCase()}_${isStart ? "start" : "end"}.wav`],
       volume,
     });
     sound.play();

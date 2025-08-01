@@ -10,9 +10,13 @@ import {
   postponeBreak,
   wasStartedFromTray,
 } from "./breaks";
-import { getSettings, setSettings, getAppInitialized, setAppInitialized } from "./store";
+import {
+  getSettings,
+  setSettings,
+  getAppInitialized,
+  setAppInitialized,
+} from "./store";
 import { getWindows } from "./windows";
-
 
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
   const windows: BrowserWindow[] = getWindows();

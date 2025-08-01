@@ -22,7 +22,10 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="max-w-[400px] w-[400px]" showCloseButton={false}>
+      <DialogContent
+        className="max-w-[400px] w-[400px]"
+        showCloseButton={false}
+      >
         <DialogHeader className="text-left">
           <DialogTitle>BreakTimer runs in the background</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-balance pt-2">

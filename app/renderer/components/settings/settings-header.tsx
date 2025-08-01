@@ -13,9 +13,7 @@ export default function SettingsHeader(props: Props) {
     <div className="border-b border-border bg-background">
       <nav className="flex items-center justify-between p-4 h-16 min-h-16">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-foreground">
-            Settings
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
         </div>
         {showSave && (
           <div className="flex items-center">

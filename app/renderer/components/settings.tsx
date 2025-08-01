@@ -26,7 +26,7 @@ export default function SettingsEl() {
       const settings = (await ipcRenderer.invokeGetSettings()) as Settings;
       setSettingsDraft(settings);
       setSettings(settings);
-      
+
       // Check if this is the first time running the app
       const appInitialized = await ipcRenderer.invokeGetAppInitialized();
       setShowWelcomeModal(!appInitialized);
@@ -129,10 +129,7 @@ export default function SettingsEl() {
         defaultValue="break-settings"
         className="w-full h-full flex flex-col"
       >
-        <SettingsHeader
-          handleSave={handleSave}
-          showSave={dirty}
-        />
+        <SettingsHeader handleSave={handleSave} showSave={dirty} />
         <div className="flex-1 overflow-auto p-6 min-h-0">
           <TabsContent value="break-settings" className="m-0 space-y-8">
             <BreaksCard
@@ -215,9 +212,9 @@ export default function SettingsEl() {
           )}
         </div>
       </Tabs>
-      <WelcomeModal 
-        open={showWelcomeModal} 
-        onClose={() => setShowWelcomeModal(false)} 
+      <WelcomeModal
+        open={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
       />
     </div>
   );
