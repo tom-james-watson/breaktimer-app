@@ -261,7 +261,7 @@ export default function BreakTab({
                       precision={TimePrecision.SECOND}
                       disabled={
                         !settings?.breaksEnabled ||
-                        settings?.notificationType !== NotificationType.Popup
+                        b?.notificationType !== NotificationType.Popup
                       }
                     />
                   </FormGroup>
@@ -318,7 +318,7 @@ export default function BreakTab({
                         precision={TimePrecision.SECOND}
                         disabled={
                           !settings?.breaksEnabled ||
-                          !settings?.postponeBreakEnabled
+                          !b?.postponeBreakEnabled
                         }
                       />
                     </FormGroup>
@@ -336,7 +336,7 @@ export default function BreakTab({
                         onChange={handlePostponeLimitChange.bind(null, b.name)}
                         disabled={
                           !settings?.breaksEnabled ||
-                          !settings?.postponeBreakEnabled
+                          !b?.postponeBreakEnabled
                         }
                       />
                     </FormGroup>

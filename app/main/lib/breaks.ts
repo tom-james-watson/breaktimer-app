@@ -1,6 +1,6 @@
 import { PowerMonitor } from "electron";
 import moment from "moment";
-import { Breaks, NOW_KEY } from "../../types/breaks";
+import { Breaks } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
 import {
   Break,
@@ -247,7 +247,8 @@ function checkBreak(b: Break): void {
 }
 
 export function startBreakNow(): void {
-  breaks[NOW_KEY] = moment();
+  const nextBreak = getNextBreak();
+  doBreak(nextBreak);
 }
 
 function tick(): void {
