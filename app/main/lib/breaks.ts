@@ -136,7 +136,7 @@ function createIdleNotification() {
   }
 }
 
-export function createBreak(isPostpone = false): void {
+export function scheduleNextBreak(isPostpone = false): void {
   const settings: Settings = getSettings();
 
   if (idleStart) {
@@ -153,10 +153,11 @@ export function createBreak(isPostpone = false): void {
     ? settings.postponeLengthSeconds
     : settings.breakFrequencySeconds;
 
-  log.info(
-    `Creating break... [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}]`,
-  );
   breakTime = moment().add(seconds, "seconds");
+  
+  log.info(
+    `Scheduling next break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}] [scheduledFor=${breakTime.format('HH:mm:ss')}]`,
+  );
 
   buildTray();
 }
@@ -171,7 +172,7 @@ export function endPopupBreak(): void {
   if (!existingBreakTime || existingBreakTime <= now) {
     postponedCount = 0;
     breakTime = null;
-    createBreak();
+    scheduleNextBreak();
   }
   // If there's already a future break scheduled (from snooze/skip), keep it
 
@@ -191,10 +192,10 @@ export function postponeBreak(action = "snoozed"): void {
 
   if (action === "skipped") {
     log.info("Creating break with normal frequency");
-    createBreak();
+    scheduleNextBreak();
   } else {
     log.info("Creating break with postpone length");
-    createBreak(true);
+    scheduleNextBreak(true);
   }
 }
 
@@ -215,7 +216,7 @@ function doBreak(): void {
       );
     }
     havingBreak = false;
-    createBreak();
+    scheduleNextBreak();
   }
 
   if (settings.notificationType === NotificationType.Popup) {
@@ -357,7 +358,7 @@ function tick(): void {
         lockStart = null;
         idleStart = lastTick;
       }
-      createBreak();
+      scheduleNextBreak();
     }
 
     if (!shouldHaveBreak && !havingBreak && breakTime) {
@@ -372,7 +373,7 @@ function tick(): void {
     }
 
     if (shouldHaveBreak && !breakTime) {
-      createBreak();
+      scheduleNextBreak();
       return;
     }
 
@@ -392,7 +393,7 @@ export function initBreaks(): void {
   const settings: Settings = getSettings();
 
   if (settings.breaksEnabled) {
-    createBreak();
+    scheduleNextBreak();
   }
 
   if (tickInterval) {
