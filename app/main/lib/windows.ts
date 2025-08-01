@@ -43,8 +43,8 @@ export function createSettingsWindow(): void {
   settingsWindow = new BrowserWindow({
     title: "BreakTimer — Settings",
     show: false,
-    width: 570,
-    minWidth: 570,
+    width: 580,
+    minWidth: 580,
     height: 625 + (process.platform === "win32" ? 40 : 0),
     minHeight: 625 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
