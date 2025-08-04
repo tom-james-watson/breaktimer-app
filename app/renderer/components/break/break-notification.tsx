@@ -32,6 +32,7 @@ export function BreakNotification({
 
   useEffect(() => {
     const startTime = moment();
+    let timeoutId: NodeJS.Timeout;
 
     const tick = () => {
       const now = moment();
@@ -47,10 +48,16 @@ export function BreakNotification({
         return;
       }
 
-      setTimeout(tick, 100);
+      timeoutId = setTimeout(tick, 100);
     };
 
     tick();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [onCountdownOver]);
 
   const secondsRemaining = Math.ceil(msRemaining / 1000);
@@ -97,16 +104,17 @@ export function BreakNotification({
               <div
                 className="absolute rounded-md"
                 style={{
-                  top: '-0.5px',
-                  right: '-0.5px',
-                  bottom: '-0.5px',
-                  left: '-0.5px',
+                  top: "-0.5px",
+                  right: "-0.5px",
+                  bottom: "-0.5px",
+                  left: "-0.5px",
                   background: `conic-gradient(from 0deg at 50% 50%, ${textColor} 0deg, ${textColor} ${(progressValue / 100) * 360}deg, transparent ${(progressValue / 100) * 360}deg, transparent 360deg)`,
-                  padding: '2.5px',
-                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                  WebkitMaskComposite: 'xor',
-                  mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                  maskComposite: 'exclude',
+                  padding: "2.5px",
+                  WebkitMask:
+                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
                 }}
               />
             )}
