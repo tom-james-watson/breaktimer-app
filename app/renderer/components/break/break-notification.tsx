@@ -38,7 +38,7 @@ export function BreakNotification({
       const now = moment();
       const elapsedMs = now.diff(startTime, "milliseconds");
 
-      if (elapsedMs < 2000) {
+      if (elapsedMs < 60000) {
         setPhase("grace");
       } else if (elapsedMs < 120000) {
         setPhase("countdown");
