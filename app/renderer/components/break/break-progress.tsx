@@ -137,7 +137,7 @@ export function BreakProgress({
         </h1>
         {endBreakEnabled && (
           <Button
-            className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20"
+            className="!bg-transparent hover:!bg-white/15 active:!bg-white/25 border-white/20"
             onClick={onEndBreak}
             variant="outline"
             style={{

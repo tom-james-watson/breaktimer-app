@@ -119,7 +119,7 @@ export function BreakNotification({
               />
             )}
             <Button
-              className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20 relative z-10"
+              className="!bg-transparent hover:!bg-white/15 active:!bg-white/25 border-white/20 relative z-10"
               onClick={onStartBreakNow}
               variant="outline"
               style={{
@@ -132,7 +132,7 @@ export function BreakNotification({
           </div>
           {postponeBreakEnabled && (
             <Button
-              className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20"
+              className="!bg-transparent hover:!bg-white/15 active:!bg-white/25 border-white/20"
               onClick={onPostponeBreak}
               variant="outline"
               style={{
@@ -145,7 +145,7 @@ export function BreakNotification({
           )}
           {skipBreakEnabled && (
             <Button
-              className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20"
+              className="!bg-transparent hover:!bg-white/15 active:!bg-white/25 border-white/20"
               onClick={onSkipBreak}
               variant="outline"
               style={{
