@@ -28,33 +28,34 @@ export function BreakNotification({
   backgroundColor,
 }: BreakNotificationProps) {
   const [phase, setPhase] = useState<"grace" | "countdown">("grace");
-  const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
+  const [msRemaining, setMsRemaining] = useState<number>(0);
 
   useEffect(() => {
     const startTime = moment();
 
     const tick = () => {
       const now = moment();
-      const elapsed = now.diff(startTime, "seconds");
+      const elapsedMs = now.diff(startTime, "milliseconds");
 
-      if (elapsed < 60) {
+      if (elapsedMs < 2000) {
         setPhase("grace");
-      } else if (elapsed < 120) {
+      } else if (elapsedMs < 120000) {
         setPhase("countdown");
-        setSecondsRemaining(120 - elapsed);
+        setMsRemaining(120000 - elapsedMs);
       } else {
         onCountdownOver();
         return;
       }
 
-      setTimeout(tick, 1000);
+      setTimeout(tick, 100);
     };
 
     tick();
   }, [onCountdownOver]);
 
+  const secondsRemaining = Math.ceil(msRemaining / 1000);
   const progressValue =
-    phase === "countdown" ? ((60 - secondsRemaining) / 60) * 100 : 0;
+    phase === "countdown" ? ((120000 - msRemaining) / 60000) * 100 : 0;
 
   return (
     <motion.div
@@ -68,24 +69,6 @@ export function BreakNotification({
         color: textColor,
       }}
     >
-      {/* Progress bar at top */}
-      {phase === "countdown" && (
-        <div className="absolute top-0 left-0 w-full h-1 z-10">
-          <div
-            className="w-full h-1 rounded-none overflow-hidden"
-            style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-          >
-            <div
-              className="h-full transition-all duration-300 ease-out opacity-80"
-              style={{
-                backgroundColor: textColor,
-                width: `${progressValue}%`,
-              }}
-            />
-          </div>
-        </div>
-      )}
-
       <div className="flex justify-between items-center px-6 py-2 h-full">
         <div className="flex flex-col justify-center">
           <h2
@@ -108,17 +91,37 @@ export function BreakNotification({
 
         {/* Action buttons */}
         <div className="flex justify-center gap-3">
-          <Button
-            className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20"
-            onClick={onStartBreakNow}
-            variant="outline"
-            style={{
-              color: textColor,
-              borderColor: "rgba(255, 255, 255, 0.2)",
-            }}
-          >
-            Start
-          </Button>
+          <div className="relative">
+            {/* Circular progress border */}
+            {phase === "countdown" && (
+              <div
+                className="absolute rounded-md"
+                style={{
+                  top: '-0.5px',
+                  right: '-0.5px',
+                  bottom: '-0.5px',
+                  left: '-0.5px',
+                  background: `conic-gradient(from 0deg at 50% 50%, ${textColor} 0deg, ${textColor} ${(progressValue / 100) * 360}deg, transparent ${(progressValue / 100) * 360}deg, transparent 360deg)`,
+                  padding: '2.5px',
+                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'xor',
+                  mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  maskComposite: 'exclude',
+                }}
+              />
+            )}
+            <Button
+              className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20 relative z-10"
+              onClick={onStartBreakNow}
+              variant="outline"
+              style={{
+                color: textColor,
+                borderColor: "rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              Start
+            </Button>
+          </div>
           {postponeBreakEnabled && (
             <Button
               className="!bg-transparent hover:!bg-white/10 active:!bg-white/20 border-white/20"
