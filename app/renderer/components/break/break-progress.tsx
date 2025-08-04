@@ -96,7 +96,7 @@ export function BreakProgress({
         });
 
         if (!isClosingRef.current) {
-          timeoutId = setTimeout(tick, 200);
+          timeoutId = setTimeout(tick, 50);
         }
       };
 
@@ -165,7 +165,7 @@ export function BreakProgress({
           style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
         >
           <div
-            className="h-full transition-all duration-300 ease-out"
+            className="h-full transition-all duration-75 ease-out"
             style={{
               backgroundColor: textColor,
               width: `${progressPercentage}%`,
