@@ -167,6 +167,7 @@ export function endPopupBreak(): void {
   const existingBreakTime = breakTime;
   const now = moment();
   havingBreak = false;
+  startedFromTray = false;
 
   // If there's no future break scheduled, create a normal break
   if (!existingBreakTime || existingBreakTime <= now) {
@@ -320,9 +321,7 @@ export function startBreakNow(): void {
 }
 
 export function wasStartedFromTray(): boolean {
-  const result = startedFromTray;
-  startedFromTray = false; // Reset the flag after checking
-  return result;
+  return startedFromTray;
 }
 
 function tick(): void {
