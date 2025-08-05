@@ -104,7 +104,8 @@ export function createBreakWindows(): void {
   if (settings.postponeBreakEnabled) buttonCount++;
   if (settings.skipBreakEnabled) buttonCount++;
 
-  const notificationWidth = 450 + (buttonCount - 1) * 50;
+  const notificationWidth =
+    450 + (buttonCount - 1) * 50 + (buttonCount === 3 ? 20 : 0);
 
   const displays = screen.getAllDisplays();
   for (let windowIndex = 0; windowIndex < displays.length; windowIndex++) {
