@@ -53,6 +53,11 @@ ipcMain.handle(IpcChannel.BreakStart, (): void => {
   sendIpc(IpcChannel.BreakStart, breakEndTime);
 });
 
+ipcMain.handle(IpcChannel.BreakEnd, (): void => {
+  log.info(IpcChannel.BreakEnd);
+  sendIpc(IpcChannel.BreakEnd);
+});
+
 ipcMain.handle(
   IpcChannel.SoundStartPlay,
   (event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {

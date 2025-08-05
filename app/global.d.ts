@@ -12,6 +12,7 @@ declare const ipcRenderer: {
   invokeGetAppInitialized: () => Promise<boolean>;
   invokeSetAppInitialized: () => Promise<void>;
   invokeBreakStart: () => Promise<void>;
+  invokeBreakEnd: () => Promise<void>;
   onPlayEndSound: (
     cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
@@ -19,6 +20,7 @@ declare const ipcRenderer: {
     cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
   onBreakStart: (cb: (breakEndTime: number) => void) => void;
+  onBreakEnd: (cb: () => void) => void;
 };
 
 declare const processEnv: {

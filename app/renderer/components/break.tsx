@@ -46,7 +46,13 @@ export default function Break() {
       setCountingDown(false);
     };
 
+    // Listen for break end broadcasts from other windows
+    const handleBreakEnd = () => {
+      setClosing(true);
+    };
+
     ipcRenderer.onBreakStart(handleBreakStart);
+    ipcRenderer.onBreakEnd(handleBreakEnd);
 
     // Delay or the window displays incorrectly.
     // FIXME: work out why and how to avoid this.
@@ -100,7 +106,9 @@ export default function Break() {
     if (isPrimary && settings && settings?.soundType !== SoundType.None) {
       ipcRenderer.invokeEndSound(settings.soundType, settings.breakSoundVolume);
     }
-    setClosing(true);
+
+    // Broadcast to all windows to start their closing animations
+    await ipcRenderer.invokeBreakEnd();
   }, [settings]);
 
   if (settings === null || allowPostpone === null) {
