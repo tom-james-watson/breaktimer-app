@@ -24,9 +24,10 @@ BreakTimer is a cross-platform desktop application built with Electron that help
 
 - **Entry Point**: `index.tsx` - React application entry point
 - **Components**: React components for UI (Break, Settings, etc.)
-- **Styling**: SCSS files for component styling
+- **Styling**: CSS with Tailwind CSS for component styling
 - **Sounds**: Audio files for break notifications
 - **Preload**: `preload.js` - Secure context bridge for IPC
+- **Fonts**: Inter font bundled locally in `public/fonts/`
 
 ### Types (`app/types/`)
 
@@ -61,8 +62,8 @@ DEBUG_PROD=true npm run start  # Start production with debugging
 ```bash
 npm run lint                   # Run ESLint
 npm run typecheck              # Run TypeScript compiler check
-npm run prettier-check         # Check code formatting
-npm run prettier-fix           # Fix code formatting
+npm run format-check           # Check code formatting
+npm run format                 # Fix code formatting
 ```
 
 ### Testing
@@ -86,10 +87,12 @@ npm run package-linux        # Package for Linux
 - **Electron** - Desktop application framework
 - **React 19** - UI framework for renderer process with new JSX transform
 - **TypeScript 5.8** - Primary language
-- **Blueprint.js v6** - UI component library
+- **shadcn/ui** - Modern UI component library with Radix UI primitives
+- **Tailwind CSS** - Utility-first CSS framework for styling
+- **Inter Font** - Typography font bundled locally (WOFF2 format)
 - **Framer Motion** - Animation library for smooth transitions
-- **SCSS** - Styling
-- **Webpack 5** - Module bundler
+- **Vite** - Frontend build tool and dev server for renderer process
+- **Webpack 5** - Module bundler for main process
 - **electron-store** - Settings persistence
 - **Howler.js** - Audio playback
 - **moment.js** - Date/time handling
@@ -114,29 +117,44 @@ Settings are managed through electron-store with TypeScript interfaces defined i
 
 ## Build System
 
-- Uses Webpack 5 with separate configurations for main/renderer processes
-- Babel for transpilation with TypeScript support
+- **Main Process**: Uses Webpack 5 for building the Electron main process
+- **Renderer Process**: Uses Vite for fast development and optimized production builds
+- Babel for transpiliation with TypeScript support
 - React Fast Refresh for hot module replacement (replaced react-hot-loader)
 - Production builds are optimized and minified
 - TypeScript configured with `skipLibCheck: true` to avoid node_modules type checking
 
 ## Recent Updates
 
+### UI and Styling
+
+- **Migrated to shadcn/ui** - Modern component library with Radix UI primitives
+- **Added Tailwind CSS** - Utility-first CSS framework for consistent styling
+- **Bundled Inter font locally** - High-quality typography with WOFF2 format for offline use
+- **Enhanced button interactions** - Improved hover/active states for better UX
+
 ### Animation System
 
 - **Replaced react-spring with framer-motion** for better performance and modern API
 - Break window animations now use `motion.div` components
+- **Smooth progress animations** - 50ms updates for notification progress, 100ms for break window
 - Fixed infinite loop issues by using functional state updates in useEffect hooks
+
+### Window Management
+
+- **Dynamic notification sizing** - Window width adjusts based on enabled buttons (450px-550px)
+- **Circular progress border** - Start button shows countdown progress around its border
+- Improved timer cleanup to prevent flickering during hot reloads
 
 ### Dependencies
 
 - **React 19** with new JSX transform (`"jsx": "react-jsx"`)
-- **Blueprint.js v6** with updated CSS class names (`bp6-*` instead of `bp5-*`)
 - **TypeScript 5.8** with improved type checking
 - **Framer Motion** for smooth animations
+- **Vite** for fast development builds
 
 ### Development Experience
 
 - Fixed tsconfig.json to only check app code, not node_modules
-- All Blueprint CSS classes updated to v6 naming convention
+- Updated script names (`npm run format` instead of `prettier-fix`)
 - Improved build configuration for better hot reloading
