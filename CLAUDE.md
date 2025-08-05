@@ -4,34 +4,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BreakTimer is a cross-platform desktop application built with Electron that helps users manage periodic breaks. The app runs as a system tray application and can display break reminders as notifications or fullscreen overlays.
+Cross-platform Electron desktop app for managing periodic breaks. Runs as system tray application with notifications and fullscreen overlays.
 
 ## Architecture
 
 ### Main Process (`app/main/`)
 
-- **Entry Point**: `index.ts` - Main application entry point
-- **Core Logic**: `lib/` directory contains the main business logic:
+- **Entry Point**: `index.ts`
+- **Core Logic**: `lib/` directory:
   - `breaks.ts` - Break scheduling and management
   - `ipc.ts` - Inter-process communication handlers
-  - `store.ts` - Settings persistence using electron-store
+  - `store.ts` - Settings persistence
   - `tray.ts` - System tray integration
   - `windows.ts` - Window management
-  - `notifications.ts` - Native notification system
-  - `auto-launch.ts` - Auto-startup functionality
+  - `notifications.ts` - Native notifications
+  - `auto-launch.ts` - Auto-startup
 
 ### Renderer Process (`app/renderer/`)
 
-- **Entry Point**: `index.tsx` - React application entry point
-- **Components**: React components for UI (Break, Settings, etc.)
-- **Styling**: CSS with Tailwind CSS for component styling
-- **Sounds**: Audio files for break notifications
-- **Preload**: `preload.js` - Secure context bridge for IPC
-- **Fonts**: Inter font bundled locally in `public/fonts/`
+- **Entry Point**: `index.tsx`
+- **Components**: React components (Break, Settings, etc.)
+- **Styling**: CSS with Tailwind CSS
+- **Sounds**: Audio files for notifications
+- **Preload**: `preload.js` - Secure IPC bridge
+- **Fonts**: Inter font bundled in `public/fonts/`
 
 ### Types (`app/types/`)
 
-- Shared TypeScript type definitions for IPC, settings, and breaks
+- Shared TypeScript definitions for IPC, settings, breaks
 
 ## Common Development Commands
 
@@ -99,7 +99,7 @@ npm run package-linux        # Package for Linux
 
 ## IPC Communication
 
-The app uses a typed IPC system defined in `app/types/ipc.ts`. Main process handlers are in `app/main/lib/ipc.ts`, providing secure communication between main and renderer processes for:
+Typed IPC system in `app/types/ipc.ts` with handlers in `app/main/lib/ipc.ts`:
 
 - Settings management
 - Break control
@@ -108,7 +108,7 @@ The app uses a typed IPC system defined in `app/types/ipc.ts`. Main process hand
 
 ## Settings Architecture
 
-Settings are managed through electron-store with TypeScript interfaces defined in `app/types/settings.ts`. The store persists user preferences including:
+electron-store with TypeScript interfaces in `app/types/settings.ts`:
 
 - Break intervals and duration
 - Working hours
@@ -117,44 +117,51 @@ Settings are managed through electron-store with TypeScript interfaces defined i
 
 ## Build System
 
-- **Main Process**: Uses Webpack 5 for building the Electron main process
-- **Renderer Process**: Uses Vite for fast development and optimized production builds
-- Babel for transpiliation with TypeScript support
-- React Fast Refresh for hot module replacement (replaced react-hot-loader)
-- Production builds are optimized and minified
-- TypeScript configured with `skipLibCheck: true` to avoid node_modules type checking
+- **Main Process**: Webpack 5
+- **Renderer Process**: Vite
+- Babel + TypeScript
+- React Fast Refresh
+- TypeScript `skipLibCheck: true`
 
 ## Recent Updates
 
 ### UI and Styling
 
-- **Migrated to shadcn/ui** - Modern component library with Radix UI primitives
-- **Added Tailwind CSS** - Utility-first CSS framework for consistent styling
-- **Bundled Inter font locally** - High-quality typography with WOFF2 format for offline use
-- **Enhanced button interactions** - Improved hover/active states for better UX
+- **shadcn/ui** - Modern component library with Radix UI primitives
+- **Tailwind CSS** - Utility-first CSS framework
+- **Inter font** - Bundled locally (WOFF2)
+- **Enhanced button interactions** - Improved hover/active states
 
 ### Animation System
 
-- **Replaced react-spring with framer-motion** for better performance and modern API
-- Break window animations now use `motion.div` components
-- **Smooth progress animations** - 50ms updates for notification progress, 100ms for break window
-- Fixed infinite loop issues by using functional state updates in useEffect hooks
+- **framer-motion** - Replaced react-spring
+- `motion.div` components for break windows
+- **Smooth progress** - 50ms notification, 100ms break window updates
+- Fixed infinite loops with functional state updates
 
 ### Window Management
 
-- **Dynamic notification sizing** - Window width adjusts based on enabled buttons (450px-550px)
-- **Circular progress border** - Start button shows countdown progress around its border
-- Improved timer cleanup to prevent flickering during hot reloads
+- **Dynamic notification sizing** - 450px-550px based on enabled buttons
+- **Circular progress border** - Around Start button
+- **Multi-screen sync** - Break starts synchronized across displays
+- Timer cleanup prevents hot reload flickering
 
 ### Dependencies
 
-- **React 19** with new JSX transform (`"jsx": "react-jsx"`)
-- **TypeScript 5.8** with improved type checking
-- **Framer Motion** for smooth animations
-- **Vite** for fast development builds
+- **React 19** - New JSX transform
+- **TypeScript 5.8**
+- **Framer Motion**
+- **Vite**
 
 ### Development Experience
 
-- Fixed tsconfig.json to only check app code, not node_modules
-- Updated script names (`npm run format` instead of `prettier-fix`)
-- Improved build configuration for better hot reloading
+- tsconfig.json excludes node_modules
+- Improved hot reloading
+
+## Development Workflow
+
+**IMPORTANT**: Always run after non-trivial changes:
+
+```bash
+npm run format && npm run lint && npm run typecheck
+```

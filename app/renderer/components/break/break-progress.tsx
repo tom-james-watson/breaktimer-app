@@ -13,6 +13,7 @@ interface BreakProgressProps {
   settings: Settings;
   textColor: string;
   isClosing?: boolean;
+  sharedBreakEndTime?: number | null;
 }
 
 export function BreakProgress({
@@ -23,6 +24,7 @@ export function BreakProgress({
   settings,
   textColor,
   isClosing = false,
+  sharedBreakEndTime = null,
 }: BreakProgressProps) {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
     null,
@@ -56,8 +58,14 @@ export function BreakProgress({
     }
 
     (async () => {
-      const lengthSeconds = await ipcRenderer.invokeGetBreakLength();
-      const breakEndTime = moment().add(lengthSeconds, "seconds");
+      // Use shared end time if available (from synchronized break start), otherwise calculate it
+      let breakEndTime: moment.Moment;
+      if (sharedBreakEndTime) {
+        breakEndTime = moment(sharedBreakEndTime);
+      } else {
+        const lengthSeconds = await ipcRenderer.invokeGetBreakLength();
+        breakEndTime = moment().add(lengthSeconds, "seconds");
+      }
 
       const startMsRemaining = moment(breakEndTime).diff(
         moment(),
@@ -73,14 +81,6 @@ export function BreakProgress({
             const breakDurationMs =
               new Date().getTime() - breakStartTime.getTime();
             ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
-
-            // Play end sound
-            if (settings.soundType !== SoundType.None) {
-              ipcRenderer.invokeEndSound(
-                settings.soundType,
-                settings.breakSoundVolume,
-              );
-            }
           }
 
           onEndBreak();
@@ -108,7 +108,13 @@ export function BreakProgress({
         clearTimeout(timeoutId);
       }
     };
-  }, [onEndBreak, settings, breakStartTime, isPrimaryWindow]);
+  }, [
+    onEndBreak,
+    settings,
+    breakStartTime,
+    isPrimaryWindow,
+    sharedBreakEndTime,
+  ]);
 
   const fadeIn = {
     initial: { opacity: 0 },

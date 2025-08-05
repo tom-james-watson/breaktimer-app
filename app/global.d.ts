@@ -11,12 +11,14 @@ declare const ipcRenderer: {
   invokeWasStartedFromTray: () => Promise<boolean>;
   invokeGetAppInitialized: () => Promise<boolean>;
   invokeSetAppInitialized: () => Promise<void>;
+  invokeBreakStart: () => Promise<void>;
   onPlayEndSound: (
     cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
   onPlayStartSound: (
     cb: (type: string, volume?: number) => void,
   ) => Promise<void>;
+  onBreakStart: (cb: (breakEndTime: number) => void) => void;
 };
 
 declare const processEnv: {

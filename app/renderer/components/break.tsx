@@ -14,6 +14,9 @@ export default function Break() {
   );
   const [ready, setReady] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [sharedBreakEndTime, setSharedBreakEndTime] = useState<number | null>(
+    null,
+  );
 
   useEffect(() => {
     const init = async () => {
@@ -37,6 +40,14 @@ export default function Break() {
       setReady(true);
     };
 
+    // Listen for break start broadcasts from other windows
+    const handleBreakStart = (breakEndTime: number) => {
+      setSharedBreakEndTime(breakEndTime);
+      setCountingDown(false);
+    };
+
+    ipcRenderer.onBreakStart(handleBreakStart);
+
     // Delay or the window displays incorrectly.
     // FIXME: work out why and how to avoid this.
     setTimeout(init, 1000);
@@ -46,8 +57,8 @@ export default function Break() {
     setCountingDown(false);
   }, []);
 
-  const handleStartBreakNow = useCallback(() => {
-    setCountingDown(false);
+  const handleStartBreakNow = useCallback(async () => {
+    await ipcRenderer.invokeBreakStart();
   }, []);
 
   useEffect(() => {
@@ -168,6 +179,7 @@ export default function Break() {
             settings={settings}
             textColor={settings.textColor}
             isClosing={closing}
+            sharedBreakEndTime={sharedBreakEndTime}
           />
         )}
       </motion.div>

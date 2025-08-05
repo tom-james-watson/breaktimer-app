@@ -45,6 +45,14 @@ ipcMain.handle(
   },
 );
 
+ipcMain.handle(IpcChannel.BreakStart, (): void => {
+  log.info(IpcChannel.BreakStart);
+  // Send break end time so all windows sync their progress to the same timeline
+  const breakLengthMs = getBreakLengthSeconds() * 1000;
+  const breakEndTime = Date.now() + breakLengthMs;
+  sendIpc(IpcChannel.BreakStart, breakEndTime);
+});
+
 ipcMain.handle(
   IpcChannel.SoundStartPlay,
   (event: IpcMainInvokeEvent, type: SoundType, volume: number = 1): void => {

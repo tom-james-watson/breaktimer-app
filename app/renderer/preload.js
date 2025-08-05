@@ -50,6 +50,9 @@ process.once("loaded", () => {
     invokeSetAppInitialized: () => {
       return ipcRenderer.invoke("APP_INITIALIZED_SET");
     },
+    invokeBreakStart: () => {
+      return ipcRenderer.invoke("BREAK_START");
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type, volume = 1) => {
         cb(type, volume);
@@ -58,6 +61,11 @@ process.once("loaded", () => {
     onPlayEndSound: (cb) => {
       ipcRenderer.on("SOUND_END_PLAY", (_event, type, volume = 1) => {
         cb(type, volume);
+      });
+    },
+    onBreakStart: (cb) => {
+      ipcRenderer.on("BREAK_START", (_event, breakEndTime) => {
+        cb(breakEndTime);
       });
     },
   });
