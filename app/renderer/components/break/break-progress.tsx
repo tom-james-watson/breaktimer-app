@@ -16,6 +16,30 @@ interface BreakProgressProps {
   sharedBreakEndTime?: number | null;
 }
 
+function TimeDisplay({
+  seconds,
+  textColor,
+}: {
+  seconds: number;
+  textColor: string;
+}) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return (
+    <div
+      className="text-sm font-medium opacity-60 flex-shrink-0 tabular-nums flex items-center gap-0.5"
+      style={{ color: textColor }}
+    >
+      <span style={{ color: textColor }}>{minutes}</span>
+      <span style={{ color: textColor }}>:</span>
+      <span style={{ color: textColor }}>
+        {String(remainingSeconds).padStart(2, "0")}
+      </span>
+    </div>
+  );
+}
+
 export function BreakProgress({
   breakMessage,
   breakTitle,
@@ -126,6 +150,12 @@ export function BreakProgress({
 
   const progressPercentage = (progress || 0) * 100;
 
+  const elapsedSeconds =
+    settings.breakLengthSeconds -
+    (timeRemaining?.hours || 0) * 3600 -
+    (timeRemaining?.minutes || 0) * 60 -
+    Math.floor(timeRemaining?.seconds || 0);
+
   return (
     <motion.div
       className="flex flex-col h-full w-full z-10 relative space-y-6"
@@ -162,8 +192,14 @@ export function BreakProgress({
         {breakMessage}
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full mt-3">
+      <div className="w-full">
+        <div className="flex justify-between items-center mb-2">
+          <TimeDisplay seconds={elapsedSeconds} textColor={textColor} />
+          <TimeDisplay
+            seconds={settings.breakLengthSeconds}
+            textColor={textColor}
+          />
+        </div>
         <div
           className="w-full h-2 rounded-full overflow-hidden"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
