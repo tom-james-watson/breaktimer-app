@@ -76,12 +76,10 @@ export function BreakProgress({
         const now = moment();
 
         if (now > moment(breakEndTime)) {
-          // Only track and play sounds from primary window
-          if (isPrimaryWindow) {
-            const breakDurationMs =
-              new Date().getTime() - breakStartTime.getTime();
-            ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
-          }
+          // Always track break completion, regardless of which window triggers it
+          const breakDurationMs =
+            new Date().getTime() - breakStartTime.getTime();
+          ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
 
           onEndBreak();
           return;
