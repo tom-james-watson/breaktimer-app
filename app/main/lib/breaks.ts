@@ -154,9 +154,9 @@ export function scheduleNextBreak(isPostpone = false): void {
     : settings.breakFrequencySeconds;
 
   breakTime = moment().add(seconds, "seconds");
-  
+
   log.info(
-    `Scheduling next break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}] [scheduledFor=${breakTime.format('HH:mm:ss')}]`,
+    `Scheduling next break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}] [scheduledFor=${breakTime.format("HH:mm:ss")}]`,
   );
 
   buildTray();

@@ -62,7 +62,7 @@ export function BreakNotification({
 
   const secondsRemaining = Math.ceil(msRemaining / 1000);
   const progressValue =
-    phase === "countdown" ? ((120000 - msRemaining) / 60000) * 100 : 0;
+    phase === "countdown" ? ((60000 - msRemaining) / 60000) * 100 : 0;
 
   return (
     <motion.div

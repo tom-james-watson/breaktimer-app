@@ -2,6 +2,7 @@ import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
 import path from "path";
 import { endPopupBreak } from "./breaks";
+import { getSettings } from "./store";
 
 let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
@@ -97,10 +98,17 @@ export function createSoundsWindow(): void {
 }
 
 export function createBreakWindows(): void {
+  const settings = getSettings();
+
+  let buttonCount = 1;
+  if (settings.postponeBreakEnabled) buttonCount++;
+  if (settings.skipBreakEnabled) buttonCount++;
+
+  const notificationWidth = 450 + (buttonCount - 1) * 50;
+
   const displays = screen.getAllDisplays();
   for (let windowIndex = 0; windowIndex < displays.length; windowIndex++) {
     const display = displays[windowIndex];
-    const notificationWidth = 500;
     const notificationHeight = 80;
     const breakWindow = new BrowserWindow({
       show: false,
