@@ -40,6 +40,7 @@ module.exports = [
         // Electron globals
         ipcRenderer: "readonly",
         processEnv: "readonly",
+        processPlatform: "readonly",
         // React types
         React: "readonly",
       },
@@ -100,6 +101,7 @@ module.exports = [
         // Electron globals
         ipcRenderer: "readonly",
         processEnv: "readonly",
+        processPlatform: "readonly",
       },
     },
     plugins: {

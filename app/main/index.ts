@@ -1,10 +1,11 @@
-import { app } from "electron";
+import { app, shell } from "electron";
 import electronDebug from "electron-debug";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
+import { showNotification } from "./lib/notifications";
 import { getAppInitialized } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
@@ -28,15 +29,60 @@ if (!gotTheLock) {
   app.exit();
 }
 
+function getDownloadUrl(): string {
+  switch (process.platform) {
+    case "win32":
+      return "https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe";
+    case "linux":
+      return "https://github.com/tom-james-watson/breaktimer-app/releases/latest";
+    default:
+      throw new Error("Download URL should not be called for macOS");
+  }
+}
+
+function shouldAutoInstall(): boolean {
+  const isAppImage = process.env.APPIMAGE !== undefined;
+  const isMac = process.platform === "darwin";
+
+  return isMac || isAppImage;
+}
+
 function checkForUpdates(): void {
   log.info("Checking for updates...");
   autoUpdater.logger = log;
+
   autoUpdater.on("error", (error) => {
     log.error(`Auto updater error: ${error}`);
   });
-  autoUpdater.checkForUpdatesAndNotify().catch((error) => {
-    log.error(`Unable to run auto updater: ${error}`);
-  });
+
+  if (shouldAutoInstall()) {
+    autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+      log.error(`Unable to run auto updater: ${error}`);
+    });
+  } else {
+    autoUpdater.autoDownload = false;
+
+    autoUpdater.on("update-available", (info) => {
+      log.info("Update available:", info);
+
+      const downloadUrl = getDownloadUrl();
+
+      showNotification(
+        "Update Available",
+        "A new version of BreakTimer is available. Click to download.",
+        () => {
+          shell.openExternal(downloadUrl).catch((error) => {
+            log.error(`Failed to open download URL: ${error}`);
+          });
+        },
+        false,
+      );
+    });
+
+    autoUpdater.checkForUpdates().catch((error) => {
+      log.error(`Unable to check for updates: ${error}`);
+    });
+  }
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -101,7 +147,7 @@ app.on("ready", async () => {
   initTray();
   createSoundsWindow();
 
-  if (process.env.NODE_ENV !== "development" && process.platform !== "win32") {
+  if (process.env.NODE_ENV !== "development") {
     checkForUpdates();
   }
 });

@@ -27,6 +27,8 @@ declare const processEnv: {
   [key: string]: string;
 };
 
+declare const processPlatform: string;
+
 declare module "*.scss" {
   const content: { [className: string]: string };
   export = content;
