@@ -1,22 +1,23 @@
 import { app, dialog, Menu, Tray } from "electron";
+import log from "electron-log";
 import moment from "moment";
 import path from "path";
 import packageJson from "../../../package.json";
 import { Settings } from "../../types/settings";
 import {
-    checkIdle,
-    checkInWorkingHours,
-    createBreak,
-    getBreakTime,
-    startBreakNow
+  checkIdle,
+  checkInWorkingHours,
+  getBreakTime,
+  isHavingBreak,
+  startBreakNow,
 } from "./breaks";
 import {
-    getDisableEndTime,
-    getSettings,
-    setDisableEndTime,
-    setSettings
+  getDisableEndTime,
+  getSettings,
+  setDisableEndTime,
+  setSettings,
 } from "./store";
-import { createSettingsWindow } from "./windows";
+import { closeBreakWindows, createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
@@ -59,22 +60,22 @@ function getDisableTimeRemaining(): string {
 }
 
 export function buildTray(): void {
-    if (!tray) {
-      let imgPath;
+  if (!tray) {
+    let imgPath;
 
-      if (process.platform === "darwin") {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/tray-IconTemplate.png"
-            : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
-      } else {
-        imgPath =
-          process.env.NODE_ENV === "development"
-            ? "resources/tray/icon.png"
-            : path.join(app.getAppPath(), "..", "tray", "icon.png");
-      }
+    if (process.platform === "darwin") {
+      imgPath =
+        process.env.NODE_ENV === "development"
+          ? "resources/tray/tray-IconTemplate.png"
+          : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
+    } else {
+      imgPath =
+        process.env.NODE_ENV === "development"
+          ? "resources/tray/icon.png"
+          : path.join(app.getAppPath(), "..", "tray", "icon.png");
+    }
 
-      tray = new Tray(imgPath);
+    tray = new Tray(imgPath);
 
     // On windows, context menu will not show on left click by default
     if (process.platform === "win32") {
@@ -89,14 +90,33 @@ export function buildTray(): void {
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
     if (breaksEnabled) {
+      log.info("Enabled breaks");
       setDisableEndTime(null);
+    } else if (isHavingBreak()) {
+      closeBreakWindows();
     }
+
     settings = getSettings();
     setSettings({ ...settings, breaksEnabled });
     buildTray();
   };
 
+  const disableIndefinitely = (): void => {
+    log.info("Disabled breaks indefinitely");
+    setBreaksEnabled(false);
+  };
+
   const disableBreaksFor = (duration: number): void => {
+    const minutes = Math.floor(duration / 60000);
+    const hours = Math.floor(minutes / 60);
+    const displayMinutes = minutes % 60;
+
+    if (hours > 0) {
+      log.info(`Disabled breaks for ${hours}h${displayMinutes}m`);
+    } else {
+      log.info(`Disabled breaks for ${minutes}m`);
+    }
+
     setBreaksEnabled(false);
     const endTime = Date.now() + duration;
     setDisableEndTime(endTime);
@@ -121,6 +141,7 @@ export function buildTray(): void {
   const breakTime = getBreakTime();
   const inWorkingHours = checkInWorkingHours();
   const idle = checkIdle();
+  const havingBreak = isHavingBreak();
   const minsLeft = breakTime?.diff(moment(), "minutes");
 
   let nextBreak = "";
@@ -140,7 +161,11 @@ export function buildTray(): void {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: nextBreak,
-      visible: breakTime !== null && inWorkingHours && settings.breaksEnabled,
+      visible:
+        breakTime !== null &&
+        inWorkingHours &&
+        settings.breaksEnabled &&
+        !havingBreak,
       enabled: false,
     },
     {
@@ -167,7 +192,7 @@ export function buildTray(): void {
     {
       label: "Disable...",
       submenu: [
-        { label: "Indefinitely", click: setBreaksEnabled.bind(null, false) },
+        { label: "Indefinitely", click: disableIndefinitely },
         { label: "30 minutes", click: () => disableBreaksFor(30 * 60 * 1000) },
         { label: "1 hour", click: () => disableBreaksFor(60 * 60 * 1000) },
         { label: "2 hours", click: () => disableBreaksFor(2 * 60 * 60 * 1000) },
@@ -182,7 +207,7 @@ export function buildTray(): void {
               now.getDate(),
               23,
               59,
-              59
+              59,
             );
             disableBreaksFor(endOfDay.getTime() - now.getTime());
           },
@@ -192,13 +217,11 @@ export function buildTray(): void {
     },
     {
       label: "Start break now",
-      visible: breakTime !== null && inWorkingHours,
-      click: startBreakNow,
-    },
-    {
-      label: "Restart break period",
-      visible: breakTime !== null && inWorkingHours,
-      click: createBreak.bind(null, false),
+      visible: breakTime !== null && inWorkingHours && !havingBreak,
+      click: () => {
+        log.info("Start break now selected");
+        startBreakNow();
+      },
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },

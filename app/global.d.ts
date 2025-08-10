@@ -1,18 +1,33 @@
 declare const ipcRenderer: {
-  invokeBreakPostpone: () => Promise<void>;
+  invokeBreakPostpone: (action: string) => Promise<void>;
   invokeGetAllowPostpone: () => Promise<boolean>;
-  invokeGetBreakLength: () => Promise<Date>;
+  invokeGetBreakLength: () => Promise<number>;
   invokeGetSettings: () => Promise<unknown>;
-  invokeEndSound: (type: string) => Promise<unknown>;
-  invokeStartSound: (type: string) => Promise<unknown>;
+  invokeEndSound: (type: string, volume?: number) => Promise<unknown>;
+  invokeStartSound: (type: string, volume?: number) => Promise<unknown>;
   invokeSetSettings: (settings: unknown) => Promise<void>;
-  onPlayEndSound: (cb: (type: string) => void) => Promise<void>;
-  onPlayStartSound: (cb: (type: string) => void) => Promise<void>;
+  invokeGetTimeSinceLastBreak: () => Promise<number | null>;
+  invokeCompleteBreakTracking: (breakDurationMs: number) => Promise<void>;
+  invokeWasStartedFromTray: () => Promise<boolean>;
+  invokeGetAppInitialized: () => Promise<boolean>;
+  invokeSetAppInitialized: () => Promise<void>;
+  invokeBreakStart: () => Promise<void>;
+  invokeBreakEnd: () => Promise<void>;
+  onPlayEndSound: (
+    cb: (type: string, volume?: number) => void,
+  ) => Promise<void>;
+  onPlayStartSound: (
+    cb: (type: string, volume?: number) => void,
+  ) => Promise<void>;
+  onBreakStart: (cb: (breakEndTime: number) => void) => void;
+  onBreakEnd: (cb: () => void) => void;
 };
 
 declare const processEnv: {
   [key: string]: string;
 };
+
+declare const processPlatform: string;
 
 declare module "*.scss" {
   const content: { [className: string]: string };

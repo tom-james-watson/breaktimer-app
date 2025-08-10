@@ -29,14 +29,6 @@ We do not offer support for enterprise environments or commercial deployment. Th
     - [BreakTimer.rpm](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.rpm) (untested)
     - [BreakTimer.tar.gz](https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.tar.gz)
 
-## Screenshots
-
-## ![break panel](screenshots/break.png)
-
-## ![settings panel](screenshots/settings.png)
-
-![notification](screenshots/notification.png)
-
 ## FAQ
 
 ### Can I donate to BreakTimer?

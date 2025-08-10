@@ -1,4 +1,5 @@
 import { PowerMonitor } from "electron";
+import log from "electron-log";
 import moment from "moment";
 import { BreakTime } from "../../types/breaks";
 import { IpcChannel } from "../../types/ipc";
@@ -14,6 +15,15 @@ import { getSettings } from "./store";
 import { buildTray } from "./tray";
 import { createBreakWindows } from "./windows";
 
+// Helper function to strip HTML tags from text
+function stripHtml(html: string): string {
+  // First convert <br> tags to spaces
+  return html
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+}
+
 let powerMonitor: PowerMonitor;
 let breakTime: BreakTime = null;
 let havingBreak = false;
@@ -21,14 +31,59 @@ let postponedCount = 0;
 let idleStart: Date | null = null;
 let lockStart: Date | null = null;
 let lastTick: Date | null = null;
+let startedFromTray = false;
+
+let lastCompletedBreakTime: Date = new Date();
+let currentBreakStartTime: Date | null = null;
+let hasSkippedOrSnoozedSinceLastBreak = false;
 
 export function getBreakTime(): BreakTime {
   return breakTime;
 }
 
-export function getBreakLength(): Date {
+export function getBreakLengthSeconds(): number {
   const settings: Settings = getSettings();
-  return settings.breakLength;
+  return settings.breakLengthSeconds;
+}
+
+export function getTimeSinceLastBreak(): number | null {
+  if (!hasSkippedOrSnoozedSinceLastBreak) {
+    return null;
+  }
+
+  const now = moment();
+  const lastBreak = moment(lastCompletedBreakTime);
+  return now.diff(lastBreak, "seconds");
+}
+
+export function startBreakTracking(): void {
+  currentBreakStartTime = new Date();
+}
+
+export function completeBreakTracking(breakDurationMs: number): void {
+  if (!currentBreakStartTime) return;
+
+  const settings = getSettings();
+  const requiredDurationMs = settings.breakLengthSeconds * 1000;
+  const halfRequiredDuration = requiredDurationMs / 2;
+
+  if (breakDurationMs >= halfRequiredDuration) {
+    lastCompletedBreakTime = new Date();
+    hasSkippedOrSnoozedSinceLastBreak = false;
+    log.info(
+      `Break completed [duration=${Math.round(
+        breakDurationMs / 1000,
+      )}s] [required=${settings.breakLengthSeconds}s]`,
+    );
+  } else {
+    log.info(
+      `Break too short [duration=${Math.round(
+        breakDurationMs / 1000,
+      )}s] [required=${settings.breakLengthSeconds}s]`,
+    );
+  }
+
+  currentBreakStartTime = null;
 }
 
 function zeroPad(n: number) {
@@ -36,20 +91,18 @@ function zeroPad(n: number) {
   return nStr.length === 1 ? `0${nStr}` : nStr;
 }
 
-function getSeconds(date: Date): number {
-  return (
-    date.getHours() * 60 * 60 + date.getMinutes() * 60 + date.getSeconds() || 1
-  ); // can't be 0
+function getSecondsFromSettings(seconds: number): number {
+  return seconds || 1; // can't be 0
 }
 
 function getIdleResetSeconds(): number {
   const settings: Settings = getSettings();
-  return getSeconds(new Date(settings.idleResetLength));
+  return getSecondsFromSettings(settings.idleResetLengthSeconds);
 }
 
 function getBreakSeconds(): number {
   const settings: Settings = getSettings();
-  return getSeconds(new Date(settings.breakFrequency));
+  return getSecondsFromSettings(settings.breakFrequencySeconds);
 }
 
 function createIdleNotification() {
@@ -75,41 +128,56 @@ function createIdleNotification() {
 
   if (settings.idleResetNotification) {
     showNotification(
-      "Break countdown reset",
-      `Idle for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
-        idleSeconds
-      )}`
+      "Break automatically detected",
+      `Away for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
+        idleSeconds,
+      )}`,
     );
   }
 }
 
-export function createBreak(isPostpone = false): void {
+export function scheduleNextBreak(isPostpone = false): void {
   const settings: Settings = getSettings();
 
   if (idleStart) {
     createIdleNotification();
     idleStart = null;
     postponedCount = 0;
+
+    lastCompletedBreakTime = new Date();
+    hasSkippedOrSnoozedSinceLastBreak = false;
+    log.info("Break auto-detected via idle reset");
   }
 
-  const freq = new Date(
-    isPostpone ? settings.postponeLength : settings.breakFrequency
-  );
+  const seconds = isPostpone
+    ? settings.postponeLengthSeconds
+    : settings.breakFrequencySeconds;
 
-  breakTime = moment()
-    .add(freq.getHours(), "hours")
-    .add(freq.getMinutes(), "minutes")
-    .add(freq.getSeconds(), "seconds");
+  breakTime = moment().add(seconds, "seconds");
+
+  log.info(
+    `Scheduling next break [isPostpone=${isPostpone}] [seconds=${seconds}] [postponeLength=${settings.postponeLengthSeconds}] [frequency=${settings.breakFrequencySeconds}] [scheduledFor=${breakTime.format("HH:mm:ss")}]`,
+  );
 
   buildTray();
 }
 
 export function endPopupBreak(): void {
-  if (breakTime !== null && breakTime < moment()) {
-    breakTime = null;
-    havingBreak = false;
+  log.info("Break ended");
+  const existingBreakTime = breakTime;
+  const now = moment();
+  havingBreak = false;
+  startedFromTray = false;
+
+  // If there's no future break scheduled, create a normal break
+  if (!existingBreakTime || existingBreakTime <= now) {
     postponedCount = 0;
+    breakTime = null;
+    scheduleNextBreak();
   }
+  // If there's already a future break scheduled (from snooze/skip), keep it
+
+  buildTray();
 }
 
 export function getAllowPostpone(): boolean {
@@ -117,29 +185,46 @@ export function getAllowPostpone(): boolean {
   return !settings.postponeLimit || postponedCount < settings.postponeLimit;
 }
 
-export function postponeBreak(): void {
+export function postponeBreak(action = "snoozed"): void {
   postponedCount++;
   havingBreak = false;
-  createBreak(true);
+  hasSkippedOrSnoozedSinceLastBreak = true;
+  log.info(`Break ${action} [count=${postponedCount}]`);
+
+  if (action === "skipped") {
+    log.info("Creating break with normal frequency");
+    scheduleNextBreak();
+  } else {
+    log.info("Creating break with postpone length");
+    scheduleNextBreak(true);
+  }
 }
 
 function doBreak(): void {
   havingBreak = true;
+  startBreakTracking();
 
   const settings: Settings = getSettings();
+  log.info(`Break started [type=${settings.notificationType}]`);
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification(settings.breakTitle, settings.breakMessage);
+    showNotification("Time for a break!", stripHtml(settings.breakMessage));
     if (settings.soundType !== SoundType.None) {
-      sendIpc(IpcChannel.SoundStartPlay, settings.soundType);
+      sendIpc(
+        IpcChannel.SoundStartPlay,
+        settings.soundType,
+        settings.breakSoundVolume,
+      );
     }
     havingBreak = false;
-    createBreak();
+    scheduleNextBreak();
   }
 
   if (settings.notificationType === NotificationType.Popup) {
     createBreakWindows();
   }
+
+  buildTray();
 }
 
 export function checkInWorkingHours(): boolean {
@@ -171,7 +256,7 @@ export function checkInWorkingHours(): boolean {
 
   return todaySettings.ranges.some(
     (range) =>
-      currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes
+      currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes,
   );
 }
 
@@ -186,7 +271,7 @@ export function checkIdle(): boolean {
   const settings: Settings = getSettings();
 
   const state: IdleState = powerMonitor.getSystemIdleState(
-    getIdleResetSeconds()
+    getIdleResetSeconds(),
   ) as IdleState;
 
   if (state === IdleState.Locked) {
@@ -195,7 +280,7 @@ export function checkIdle(): boolean {
       return false;
     } else {
       const lockSeconds = Number(
-        ((+new Date() - +lockStart) / 1000).toFixed(0)
+        ((+new Date() - +lockStart) / 1000).toFixed(0),
       );
       return lockSeconds > getIdleResetSeconds();
     }
@@ -208,6 +293,10 @@ export function checkIdle(): boolean {
   }
 
   return state === IdleState.Idle;
+}
+
+export function isHavingBreak(): boolean {
+  return havingBreak;
 }
 
 function checkShouldHaveBreak(): boolean {
@@ -227,7 +316,12 @@ function checkBreak(): void {
 }
 
 export function startBreakNow(): void {
+  startedFromTray = true;
   breakTime = moment();
+}
+
+export function wasStartedFromTray(): boolean {
+  return startedFromTray;
 }
 
 function tick(): void {
@@ -263,12 +357,14 @@ function tick(): void {
         lockStart = null;
         idleStart = lastTick;
       }
-      createBreak();
+      scheduleNextBreak();
     }
 
     if (!shouldHaveBreak && !havingBreak && breakTime) {
       if (checkIdle()) {
-        idleStart = new Date();
+        const idleResetSeconds = getIdleResetSeconds();
+        // Calculate when idle actually started by subtracting idle duration
+        idleStart = new Date(Date.now() - idleResetSeconds * 1000);
       }
       breakTime = null;
       buildTray();
@@ -276,7 +372,7 @@ function tick(): void {
     }
 
     if (shouldHaveBreak && !breakTime) {
-      createBreak();
+      scheduleNextBreak();
       return;
     }
 
@@ -296,7 +392,7 @@ export function initBreaks(): void {
   const settings: Settings = getSettings();
 
   if (settings.breaksEnabled) {
-    createBreak();
+    scheduleNextBreak();
   }
 
   if (tickInterval) {

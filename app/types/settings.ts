@@ -26,9 +26,9 @@ export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  breakFrequency: Date;
-  breakLength: Date;
-  postponeLength: Date;
+  breakFrequencySeconds: number;
+  breakLengthSeconds: number;
+  postponeLengthSeconds: number;
   postponeLimit: number;
   workingHoursEnabled: boolean;
   workingHoursMonday: WorkingHours;
@@ -39,19 +39,20 @@ export interface Settings {
   workingHoursSaturday: WorkingHours;
   workingHoursSunday: WorkingHours;
   idleResetEnabled: boolean;
-  idleResetLength: Date;
+  idleResetLengthSeconds: number;
   idleResetNotification: boolean;
   soundType: SoundType;
+  breakSoundVolume: number;
   breakTitle: string;
   breakMessage: string;
   backgroundColor: string;
   textColor: string;
   showBackdrop: boolean;
-  backdropColor: string;
   backdropOpacity: number;
   endBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
+  immediatelyStartBreaks: boolean;
 }
 
 export const defaultWorkingRange: WorkingHoursRange = {
@@ -63,9 +64,9 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  breakFrequency: new Date(0, 0, 0, 0, 28),
-  breakLength: new Date(0, 0, 0, 0, 2),
-  postponeLength: new Date(0, 0, 0, 0, 3),
+  breakFrequencySeconds: 28 * 60,
+  breakLengthSeconds: 2 * 60,
+  postponeLengthSeconds: 3 * 60,
   postponeLimit: 0,
   workingHoursEnabled: true,
   workingHoursMonday: {
@@ -97,19 +98,20 @@ export const defaultSettings: Settings = {
     ranges: [defaultWorkingRange],
   },
   idleResetEnabled: true,
-  idleResetLength: new Date(0, 0, 0, 0, 5),
+  idleResetLengthSeconds: 5 * 60,
   idleResetNotification: false,
   soundType: SoundType.Gong,
-  breakTitle: "Time for a break!",
-  breakMessage: "Rest your eyes. Stretch your legs. Breathe. Relax.",
+  breakSoundVolume: 1,
+  breakTitle: "Time for a break.",
+  breakMessage: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
   backgroundColor: "#16a085",
-  backdropColor: "#001914",
   textColor: "#ffffff",
   showBackdrop: true,
   backdropOpacity: 0.7,
   endBreakEnabled: true,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
+  immediatelyStartBreaks: false,
 };
 
 export interface DayConfig {

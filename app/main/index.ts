@@ -1,31 +1,88 @@
-import "core-js/stable";
-import { app } from "electron";
+import { app, shell } from "electron";
+import electronDebug from "electron-debug";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
-import "regenerator-runtime/runtime";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
-import { getAppInitialized, setAppInitialized } from "./lib/store";
+import { getAppInitialized } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-app.on("second-instance", () => {
+app.on("second-instance", (event, commandLine, workingDirectory) => {
+  log.info("Second instance detected, opening settings window");
+  log.info(`Command line: ${commandLine}`);
+  log.info(`Working directory: ${workingDirectory}`);
+  createSettingsWindow();
+});
+
+app.on("activate", () => {
+  log.info("App activated, opening settings window");
   createSettingsWindow();
 });
 
 if (!gotTheLock) {
-  log.info("app already running");
+  log.info("App already running");
   app.exit();
+}
+
+function getDownloadUrl(): string {
+  switch (process.platform) {
+    case "win32":
+      return "https://github.com/tom-james-watson/breaktimer-app/releases/latest/download/BreakTimer.exe";
+    case "linux":
+      return "https://github.com/tom-james-watson/breaktimer-app/releases/latest";
+    default:
+      throw new Error("Download URL should not be called for macOS");
+  }
+}
+
+function shouldAutoInstall(): boolean {
+  const isAppImage = process.env.APPIMAGE !== undefined;
+  const isMac = process.platform === "darwin";
+
+  return isMac || isAppImage;
 }
 
 function checkForUpdates(): void {
   log.info("Checking for updates...");
   autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on("error", (error) => {
+    log.error(`Auto updater error: ${error}`);
+  });
+
+  if (shouldAutoInstall()) {
+    autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+      log.error(`Unable to run auto updater: ${error}`);
+    });
+  } else {
+    autoUpdater.autoDownload = false;
+
+    autoUpdater.on("update-available", (info) => {
+      log.info("Update available:", info);
+
+      const downloadUrl = getDownloadUrl();
+
+      showNotification(
+        "Update Available",
+        "A new version of BreakTimer is available. Click to download.",
+        () => {
+          shell.openExternal(downloadUrl).catch((error) => {
+            log.error(`Failed to open download URL: ${error}`);
+          });
+        },
+        false,
+      );
+    });
+
+    autoUpdater.checkForUpdates().catch((error) => {
+      log.error(`Unable to check for updates: ${error}`);
+    });
+  }
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -37,7 +94,7 @@ if (
   process.env.NODE_ENV === "development" ||
   process.env.DEBUG_PROD === "true"
 ) {
-  require("electron-debug")();
+  electronDebug();
 }
 
 // function installExtensions() {
@@ -70,7 +127,7 @@ app.on("ready", async () => {
   }
 
   if (process.platform === "darwin") {
-    app.dock.hide();
+    app.dock?.hide();
   }
 
   const appInitialized = getAppInitialized();
@@ -79,20 +136,18 @@ app.on("ready", async () => {
     if (process.env.NODE_ENV !== "development") {
       setAutoLauch(true);
     }
-    showNotification(
-      "BreakTimer runs in the background",
-      "The app can be accessed via the system tray",
-      undefined,
-      false
-    );
-    setAppInitialized();
+    // Show settings window on first launch instead of notification
+    createSettingsWindow();
+    // Don't set app as initialized yet - we'll do that after the user dismisses the modal
+  } else {
+    // App has been initialized before, don't show settings automatically
   }
 
   initBreaks();
   initTray();
   createSoundsWindow();
 
-  if (process.env.NODE_ENV !== "development" && process.platform !== "win32") {
+  if (process.env.NODE_ENV !== "development") {
     checkForUpdates();
   }
 });

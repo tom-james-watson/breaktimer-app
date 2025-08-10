@@ -28,7 +28,7 @@ const migrations: Migration[] = [
 
         const defaultRange = oldToNew(
           new Date(settings.workingHoursFrom),
-          new Date(settings.workingHoursTo)
+          new Date(settings.workingHoursTo),
         );
 
         [
@@ -53,14 +53,55 @@ const migrations: Migration[] = [
       return settings;
     },
   },
+  {
+    version: 2,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrate: (settings: any) => {
+      // Date to seconds migration
+      if (settings.breakFrequency && !settings.breakFrequencySeconds) {
+        console.log("Migrating date-based settings to seconds");
+
+        const extractSeconds = (dateValue: string | Date): number => {
+          const date = new Date(dateValue);
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const seconds = date.getSeconds();
+          return hours * 3600 + minutes * 60 + seconds;
+        };
+
+        // Convert Date objects to seconds
+        if (settings.breakFrequency) {
+          settings.breakFrequencySeconds = extractSeconds(
+            settings.breakFrequency,
+          );
+          delete settings.breakFrequency;
+        }
+
+        if (settings.breakLength) {
+          settings.breakLengthSeconds = extractSeconds(settings.breakLength);
+          delete settings.breakLength;
+        }
+
+        if (settings.postponeLength) {
+          settings.postponeLengthSeconds = extractSeconds(
+            settings.postponeLength,
+          );
+          delete settings.postponeLength;
+        }
+
+        if (settings.idleResetLength) {
+          settings.idleResetLengthSeconds = extractSeconds(
+            settings.idleResetLength,
+          );
+          delete settings.idleResetLength;
+        }
+      }
+      return settings;
+    },
+  },
 ];
 
-const store = new Store<{
-  settings: Settings;
-  appInitialized: boolean;
-  settingsVersion: number;
-  disableEndTime: number | null;
-}>({
+const store = new Store({
   defaults: {
     settings: defaultSettings,
     appInitialized: false,
@@ -80,7 +121,7 @@ function migrateSettings(settings: any): Settings {
     console.log(
       `Running migrations from version ${currentVersion} to ${
         pendingMigrations[pendingMigrations.length - 1].version
-      }`
+      }`,
     );
 
     let migratedSettings = { ...settings };
@@ -93,7 +134,7 @@ function migrateSettings(settings: any): Settings {
       } catch (error) {
         console.error(
           `Failed to apply migration version ${migration.version}:`,
-          error
+          error,
         );
         break;
       }

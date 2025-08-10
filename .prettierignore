@@ -1,0 +1,15 @@
+# Built code
+dist/
+release/
+app/main/dist/
+app/renderer/dist/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Package files
+package-lock.json
