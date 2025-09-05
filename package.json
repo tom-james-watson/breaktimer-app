@@ -153,7 +153,7 @@
     "concurrently": "^9.2.0",
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.6",
-    "electron": "^37.2.6",
+    "electron": "^37.3.1",
     "electron-builder": "^26.0.12",
     "electron-debug": "^4.1.0",
     "electron-devtools-installer": "^4.0.0",
