@@ -16,10 +16,6 @@ export interface WorkingHours {
 export enum SoundType {
   None = "NONE",
   Gong = "GONG",
-  Blip = "BLIP",
-  Bloop = "BLOOP",
-  Ping = "PING",
-  Scifi = "SCIFI",
 }
 
 export interface Settings {
