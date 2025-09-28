@@ -81,6 +81,16 @@ macOS: `/Users/<USERNAME>/Library/Application Support/BreakTimer`
 
 Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer`
 
+### How to export or import configuration?
+
+The configuration for Breaktimer can be found in `config.json` file. The file can be synced, replaced or symlinked with an existing configuration.
+
+Linux: `/home/<USERNAME>/.config/BreakTimer/config.json`
+
+macOS: `/Users/<USERNAME>/Library/Application Support/BreakTimer/config.json`
+
+Windows: `C:\Users\<USERNAME>\AppData\Roaming\BreakTimer\config.json`
+
 ## Development
 
 See [./DEVELOPMENT.md](DEVELOPMENT.md).
