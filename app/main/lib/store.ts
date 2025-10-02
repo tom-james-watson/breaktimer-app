@@ -1,5 +1,5 @@
 import Store from "electron-store";
-import { defaultSettings, Settings } from "../../types/settings";
+import { defaultSettings, Settings, SoundType } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
 
@@ -95,6 +95,21 @@ const migrations: Migration[] = [
           );
           delete settings.idleResetLength;
         }
+      }
+      return settings;
+    },
+  },
+  {
+    version: 3,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrate: (settings: any) => {
+      // Sound type migration - convert removed sound types to Gong
+      if (
+        settings.soundType &&
+        !Object.values(SoundType).includes(settings.soundType)
+      ) {
+        console.log(`Migrating sound type from ${settings.soundType} to GONG`);
+        settings.soundType = SoundType.Gong;
       }
       return settings;
     },
