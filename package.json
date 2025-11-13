@@ -118,9 +118,11 @@
         "rpm",
         "tar.gz"
       ],
+      "executableName": "breaktimer",
       "category": "Utility"
     },
     "snap": {
+      "allowNativeWayland": true,
       "base": "core22",
       "autoStart": true
     },
