@@ -121,6 +121,7 @@
       "category": "Utility"
     },
     "snap": {
+      "base": "core22",
       "autoStart": true
     },
     "directories": {
@@ -156,7 +157,7 @@
     "concurrently": "^9.2.0",
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.6",
-    "electron": "^39.1.2",
+    "electron": "^37.9.0",
     "electron-builder": "^26.1.0",
     "electron-debug": "^4.1.0",
     "electron-devtools-installer": "^4.0.0",
