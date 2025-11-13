@@ -41,10 +41,10 @@ function getDownloadUrl(): string {
 }
 
 function shouldAutoInstall(): boolean {
-  const isAppImage = process.env.APPIMAGE !== undefined;
   const isMac = process.platform === "darwin";
+  const isLinux = process.platform === "linux";
 
-  return isMac || isAppImage;
+  return isMac || isLinux;
 }
 
 function checkForUpdates(): void {
