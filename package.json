@@ -63,11 +63,14 @@
     ],
     "asar": true,
     "artifactName": "${productName}.${ext}",
+    "afterPack": "./scripts/afterPack.js",
     "mac": {
+      "icon": "resources/icon.icns",
       "entitlements": "./internals/build/entitlements.mac.plist",
       "entitlementsInherit": "./internals/build/entitlements.mac.plist",
       "extendInfo": {
-        "LSUIElement": 1
+        "LSUIElement": 1,
+        "CFBundleIconName": "AppIcon"
       },
       "gatekeeperAssess": false,
       "hardenedRuntime": true,
@@ -154,7 +157,7 @@
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.6",
     "electron": "^37.3.1",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^26.1.0",
     "electron-debug": "^4.1.0",
     "electron-devtools-installer": "^4.0.0",
     "electron-log": "^5.4.1",
