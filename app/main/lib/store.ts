@@ -2,6 +2,7 @@ import Store from "electron-store";
 import { defaultSettings, Settings } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
 import { initBreaks } from "./breaks";
+import { HistoryItem } from "../../types/history";
 
 interface Migration {
   version: number;
@@ -107,6 +108,7 @@ const store = new Store({
     appInitialized: false,
     settingsVersion: 0,
     disableEndTime: null,
+    history: [] as HistoryItem[],
   },
 });
 

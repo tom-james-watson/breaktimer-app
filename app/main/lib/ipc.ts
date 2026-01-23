@@ -146,3 +146,9 @@ ipcMain.handle(IpcChannel.AppInitializedSet, (): void => {
   log.info(IpcChannel.AppInitializedSet);
   setAppInitialized();
 });
+
+ipcMain.handle(IpcChannel.HistoryGet, () => {
+  log.info(IpcChannel.HistoryGet);
+  const { getHistory } = require("./db");
+  return getHistory();
+});

@@ -57,6 +57,9 @@ process.once("loaded", () => {
     invokeBreakEnd: () => {
       return ipcRenderer.invoke("BREAK_END");
     },
+    invokeGetHistory: () => {
+      return ipcRenderer.invoke("HISTORY_GET");
+    },
     onPlayStartSound: (cb) => {
       ipcRenderer.on("SOUND_START_PLAY", (_event, type, volume = 1) => {
         cb(type, volume);

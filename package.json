@@ -147,10 +147,12 @@
   "homepage": "https://github.com/tom-james-watson/breaktimer-app",
   "devDependencies": {
     "@types/auto-launch": "^5.0.2",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/howler": "^2.2.4",
     "@types/node": "^18.19.119",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "@vitejs/plugin-react": "^4.7.0",
@@ -192,6 +194,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@tailwindcss/vite": "^4.1.11",
     "auto-launch": "^5.0.5",
+    "better-sqlite3": "^12.6.2",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.3.2",
     "clsx": "^2.1.1",
@@ -207,6 +210,7 @@
     "source-map-support": "^0.5.9",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^13.0.0"
   }
 }

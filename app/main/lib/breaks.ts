@@ -12,6 +12,7 @@ import {
 import { sendIpc } from "./ipc";
 import { showNotification } from "./notifications";
 import { getSettings } from "./store";
+import { addHistoryEvent } from "./db";
 import { buildTray } from "./tray";
 import { createBreakWindows } from "./windows";
 
@@ -70,6 +71,10 @@ export function completeBreakTracking(breakDurationMs: number): void {
   if (breakDurationMs >= halfRequiredDuration) {
     lastCompletedBreakTime = new Date();
     hasSkippedOrSnoozedSinceLastBreak = false;
+
+    // Track completed break in history
+    addHistoryEvent("completed", Date.now(), breakDurationMs);
+
     log.info(
       `Break completed [duration=${Math.round(
         breakDurationMs / 1000,
@@ -146,6 +151,10 @@ export function scheduleNextBreak(isPostpone = false): void {
 
     lastCompletedBreakTime = new Date();
     hasSkippedOrSnoozedSinceLastBreak = false;
+
+    // Track idle-reset event in history
+    addHistoryEvent("idle-reset", Date.now());
+
     log.info("Break auto-detected via idle reset");
   }
 
@@ -169,6 +178,13 @@ export function endPopupBreak(): void {
   havingBreak = false;
   startedFromTray = false;
 
+  // Track cancelled break (user ended it early)
+  if (currentBreakStartTime) {
+    const breakDuration = Date.now() - currentBreakStartTime.getTime();
+    addHistoryEvent("cancelled", Date.now(), breakDuration);
+    currentBreakStartTime = null;
+  }
+
   // If there's no future break scheduled, create a normal break
   if (!existingBreakTime || existingBreakTime <= now) {
     postponedCount = 0;
@@ -189,6 +205,14 @@ export function postponeBreak(action = "snoozed"): void {
   postponedCount++;
   havingBreak = false;
   hasSkippedOrSnoozedSinceLastBreak = true;
+
+  // Track skip or snooze event in history
+  if (action === "skipped") {
+    addHistoryEvent("skipped", Date.now());
+  } else {
+    addHistoryEvent("snoozed", Date.now());
+  }
+
   log.info(`Break ${action} [count=${postponedCount}]`);
 
   if (action === "skipped") {

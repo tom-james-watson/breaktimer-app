@@ -4,6 +4,7 @@ import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
+import { initDatabase, cleanupHistory } from "./lib/db";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
 import { getAppInitialized } from "./lib/store";
@@ -143,9 +144,15 @@ app.on("ready", async () => {
     // App has been initialized before, don't show settings automatically
   }
 
+  initDatabase();
   initBreaks();
   initTray();
   createSoundsWindow();
+
+  // Cleanup old history asynchronously (don't block startup)
+  setTimeout(() => {
+    cleanupHistory();
+  }, 5000); // Run after 5 seconds
 
   if (process.env.NODE_ENV !== "development") {
     checkForUpdates();
