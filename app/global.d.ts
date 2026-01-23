@@ -22,6 +22,7 @@ declare const ipcRenderer: {
   ) => Promise<void>;
   onBreakStart: (cb: (breakEndTime: number) => void) => void;
   onBreakEnd: (cb: () => void) => void;
+  onHistoryUpdated: (cb: () => void) => void;
 };
 
 declare const processEnv: {

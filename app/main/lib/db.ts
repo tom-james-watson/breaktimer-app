@@ -4,6 +4,8 @@ import log from "electron-log";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { HistoryEventType, HistoryItem } from "../../types/history";
+import { sendIpc } from "./ipc";
+import { IpcChannel } from "../../types/ipc";
 
 let db: Database.Database | null = null;
 
@@ -73,6 +75,9 @@ export function addHistoryEvent(
     `History event added: ${type} at ${new Date(timestamp).toISOString()}${duration_ms ? ` (duration: ${duration_ms}ms)` : ""
     }`
   );
+
+  // Notify all windows that history was updated (LiveData pattern)
+  sendIpc(IpcChannel.HistoryUpdated);
 }
 
 /**

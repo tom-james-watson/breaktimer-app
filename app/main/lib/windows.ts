@@ -6,10 +6,11 @@ import { getSettings } from "./store";
 
 let settingsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
+let dashboardWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
 const getBrowserWindowUrl = (
-  page: "settings" | "sounds" | "break",
+  page: "settings" | "sounds" | "break" | "dashboard",
   windowId?: number,
 ): string => {
   const windowParam = windowId !== undefined ? `&windowId=${windowId}` : "";
@@ -30,6 +31,9 @@ export function getWindows(): BrowserWindow[] {
   }
   if (soundsWindow !== null) {
     windows.push(soundsWindow);
+  }
+  if (dashboardWindow !== null) {
+    windows.push(dashboardWindow);
   }
   windows.push(...breakWindows);
   return windows;
@@ -182,4 +186,54 @@ export function closeBreakWindows(): void {
 
   // The window's `.close` cleanup function will do everything else we need
   firstWin.close();
+}
+
+export function createDashboardWindow(): void {
+  if (dashboardWindow) {
+    dashboardWindow.show();
+    dashboardWindow.focus();
+    return;
+  }
+
+  dashboardWindow = new BrowserWindow({
+    title: "BreakTimer — Dashboard",
+    show: false,
+    width: 800,
+    minWidth: 600,
+    height: 600,
+    minHeight: 400,
+    autoHideMenuBar: true,
+    icon:
+      process.env.NODE_ENV === "development"
+        ? path.join(__dirname, "../../../resources/tray/icon.png")
+        : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
+    webPreferences: {
+      devTools: true,
+      preload: path.join(__dirname, "../../renderer/preload.js"),
+    },
+  });
+
+  dashboardWindow.loadURL(getBrowserWindowUrl("dashboard"));
+
+  // Force enable devtools keyboard shortcuts
+  dashboardWindow.webContents.on("before-input-event", (event, input) => {
+    if (
+      input.key === "F12" ||
+      (input.control && input.shift && input.key === "I")
+    ) {
+      dashboardWindow?.webContents.toggleDevTools();
+    }
+  });
+
+  dashboardWindow.on("ready-to-show", () => {
+    if (!dashboardWindow) {
+      throw new Error('"dashboardWindow" is not defined');
+    }
+    dashboardWindow.show();
+    dashboardWindow.focus();
+  });
+
+  dashboardWindow.on("closed", () => {
+    dashboardWindow = null;
+  });
 }

@@ -80,5 +80,10 @@ process.once("loaded", () => {
         cb();
       });
     },
+    onHistoryUpdated: (cb) => {
+      ipcRenderer.on("HISTORY_UPDATED", () => {
+        cb();
+      });
+    },
   });
 });

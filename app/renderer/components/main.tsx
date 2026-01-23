@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Break from "./break";
 import Settings from "./settings";
 import Sounds from "./sounds";
+import Dashboard from "./dashboard";
 
 export default function Main() {
   const params = new URLSearchParams(location.search);
@@ -12,6 +13,7 @@ export default function Main() {
       {page === "settings" && <Settings />}
       {page === "sounds" && <Sounds />}
       {page === "break" && <Break />}
+      {page === "dashboard" && <Dashboard />}
       <Toaster />
     </>
   );
