@@ -99,6 +99,42 @@ const migrations: Migration[] = [
       return settings;
     },
   },
+  {
+    version: 3,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrate: (settings: any) => {
+      if (!Array.isArray(settings.breakSchedules)) {
+        const frequencySeconds =
+          settings.breakFrequencySeconds ??
+          defaultSettings.breakSchedules[0].frequencySeconds;
+        const lengthSeconds =
+          settings.breakLengthSeconds ??
+          defaultSettings.breakSchedules[0].lengthSeconds;
+        const title =
+          settings.breakTitle ?? defaultSettings.breakSchedules[0].title;
+        const message =
+          settings.breakMessage ?? defaultSettings.breakSchedules[0].message;
+
+        settings.breakSchedules = [
+          {
+            id: "default",
+            enabled: true,
+            frequencySeconds,
+            lengthSeconds,
+            title,
+            message,
+          },
+        ];
+      }
+
+      delete settings.breakFrequencySeconds;
+      delete settings.breakLengthSeconds;
+      delete settings.breakTitle;
+      delete settings.breakMessage;
+
+      return settings;
+    },
+  },
 ];
 
 const store = new Store({

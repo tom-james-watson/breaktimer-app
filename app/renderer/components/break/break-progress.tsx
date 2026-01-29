@@ -8,6 +8,7 @@ import { TimeRemaining } from "./utils";
 interface BreakProgressProps {
   breakMessage: string;
   breakTitle: string;
+  breakLengthSeconds: number;
   endBreakEnabled: boolean;
   onEndBreak: () => void;
   settings: Settings;
@@ -19,6 +20,7 @@ interface BreakProgressProps {
 export function BreakProgress({
   breakMessage,
   breakTitle,
+  breakLengthSeconds,
   endBreakEnabled,
   onEndBreak,
   settings,
@@ -57,14 +59,13 @@ export function BreakProgress({
       );
     }
 
-    (async () => {
+    (() => {
       // Use shared end time if available (from synchronized break start), otherwise calculate it
       let breakEndTime: moment.Moment;
       if (sharedBreakEndTime) {
         breakEndTime = moment(sharedBreakEndTime);
       } else {
-        const lengthSeconds = await ipcRenderer.invokeGetBreakLength();
-        breakEndTime = moment().add(lengthSeconds, "seconds");
+        breakEndTime = moment().add(breakLengthSeconds, "seconds");
       }
 
       const startMsRemaining = moment(breakEndTime).diff(
@@ -112,6 +113,7 @@ export function BreakProgress({
     breakStartTime,
     isPrimaryWindow,
     sharedBreakEndTime,
+    breakLengthSeconds,
   ]);
 
   const fadeIn = {

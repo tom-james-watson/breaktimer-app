@@ -21,6 +21,9 @@ process.once("loaded", () => {
     invokeGetBreakLength: () => {
       return ipcRenderer.invoke("BREAK_LENGTH_GET");
     },
+    invokeGetActiveBreak: () => {
+      return ipcRenderer.invoke("ACTIVE_BREAK_GET");
+    },
     invokeGetSettings: () => {
       return ipcRenderer.invoke("SETTINGS_GET");
     },
@@ -68,8 +71,8 @@ process.once("loaded", () => {
       });
     },
     onBreakStart: (cb) => {
-      ipcRenderer.on("BREAK_START", (_event, breakEndTime) => {
-        cb(breakEndTime);
+      ipcRenderer.on("BREAK_START", (_event, payload) => {
+        cb(payload);
       });
     },
     onBreakEnd: (cb) => {

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
+import { ActiveBreak } from "../../types/breaks";
 import { Settings, SoundType } from "../../types/settings";
 import { BreakNotification } from "./break/break-notification";
 import { BreakProgress } from "./break/break-progress";
@@ -17,20 +18,23 @@ export default function Break() {
   const [sharedBreakEndTime, setSharedBreakEndTime] = useState<number | null>(
     null,
   );
+  const [activeBreak, setActiveBreak] = useState<ActiveBreak | null>(null);
 
   useEffect(() => {
     const init = async () => {
-      const [allowPostpone, settings, timeSince, startedFromTray] =
+      const [allowPostpone, settings, timeSince, startedFromTray, activeBreak] =
         await Promise.all([
           ipcRenderer.invokeGetAllowPostpone(),
           ipcRenderer.invokeGetSettings() as Promise<Settings>,
           ipcRenderer.invokeGetTimeSinceLastBreak(),
           ipcRenderer.invokeWasStartedFromTray(),
+          ipcRenderer.invokeGetActiveBreak() as Promise<ActiveBreak | null>,
         ]);
 
       setAllowPostpone(allowPostpone);
       setSettings(settings);
       setTimeSinceLastBreak(timeSince);
+      setActiveBreak(activeBreak);
 
       // Skip the countdown if immediately start breaks is enabled or started from tray
       if (settings.immediatelyStartBreaks || startedFromTray) {
@@ -41,8 +45,12 @@ export default function Break() {
     };
 
     // Listen for break start broadcasts from other windows
-    const handleBreakStart = (breakEndTime: number) => {
-      setSharedBreakEndTime(breakEndTime);
+    const handleBreakStart = (payload: {
+      breakEndTime: number;
+      activeBreak: ActiveBreak | null;
+    }) => {
+      setSharedBreakEndTime(payload.breakEndTime);
+      setActiveBreak(payload.activeBreak);
       setCountingDown(false);
     };
 
@@ -180,8 +188,19 @@ export default function Break() {
       >
         {ready && (
           <BreakProgress
-            breakMessage={settings.breakMessage}
-            breakTitle={settings.breakTitle}
+            breakMessage={
+              activeBreak?.message ??
+              settings.breakSchedules[0]?.message ??
+              ""
+            }
+            breakTitle={
+              activeBreak?.title ?? settings.breakSchedules[0]?.title ?? ""
+            }
+            breakLengthSeconds={
+              activeBreak?.lengthSeconds ??
+              settings.breakSchedules[0]?.lengthSeconds ??
+              0
+            }
             endBreakEnabled={settings.endBreakEnabled}
             onEndBreak={handleEndBreak}
             settings={settings}

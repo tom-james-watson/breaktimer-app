@@ -5,6 +5,7 @@ import { Settings, SoundType } from "../../types/settings";
 import {
   completeBreakTracking,
   getAllowPostpone,
+  getActiveBreak,
   getBreakLengthSeconds,
   getTimeSinceLastBreak,
   postponeBreak,
@@ -37,6 +38,11 @@ ipcMain.handle(IpcChannel.AllowPostponeGet, (): boolean => {
   return getAllowPostpone();
 });
 
+ipcMain.handle(IpcChannel.ActiveBreakGet, () => {
+  log.info(IpcChannel.ActiveBreakGet);
+  return getActiveBreak();
+});
+
 ipcMain.handle(
   IpcChannel.BreakPostpone,
   (_event: IpcMainInvokeEvent, action?: string): void => {
@@ -50,7 +56,10 @@ ipcMain.handle(IpcChannel.BreakStart, (): void => {
   // Send break end time so all windows sync their progress to the same timeline
   const breakLengthMs = getBreakLengthSeconds() * 1000;
   const breakEndTime = Date.now() + breakLengthMs;
-  sendIpc(IpcChannel.BreakStart, breakEndTime);
+  sendIpc(IpcChannel.BreakStart, {
+    breakEndTime,
+    activeBreak: getActiveBreak(),
+  });
 });
 
 ipcMain.handle(IpcChannel.BreakEnd, (): void => {

@@ -8,6 +8,7 @@ import {
   checkIdle,
   checkInWorkingHours,
   getBreakTime,
+  getNextBreakInfo,
   isHavingBreak,
   startBreakNow,
 } from "./breaks";
@@ -21,6 +22,22 @@ import { closeBreakWindows, createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
+
+function getScheduleLabel(
+  schedules: Settings["breakSchedules"],
+  scheduleId: string,
+): string {
+  const index = schedules.findIndex((schedule) => schedule.id === scheduleId);
+  const schedule = schedules[index];
+  const title = schedule?.title?.trim();
+
+  if (title) {
+    return title;
+  }
+
+  const displayIndex = index >= 0 ? index + 1 : 1;
+  return `Break ${displayIndex}`;
+}
 
 const rootPath = path.dirname(app.getPath("exe"));
 const resourcesPath =
@@ -139,6 +156,10 @@ export function buildTray(): void {
   };
 
   const breakTime = getBreakTime();
+  const nextBreakInfo = getNextBreakInfo();
+  const enabledSchedules = settings.breakSchedules.filter(
+    (schedule) => schedule.enabled,
+  );
   const inWorkingHours = checkInWorkingHours();
   const idle = checkIdle();
   const havingBreak = isHavingBreak();
@@ -146,13 +167,17 @@ export function buildTray(): void {
 
   let nextBreak = "";
 
-  if (minsLeft !== undefined) {
+  if (minsLeft !== undefined && nextBreakInfo) {
+    const scheduleLabel = getScheduleLabel(
+      enabledSchedules,
+      nextBreakInfo.schedule.id,
+    );
     if (minsLeft > 1) {
-      nextBreak = `Next break in ${minsLeft} minutes`;
+      nextBreak = `Next "${scheduleLabel}" in ${minsLeft} minutes`;
     } else if (minsLeft === 1) {
-      nextBreak = `Next break in 1 minute`;
+      nextBreak = `Next "${scheduleLabel}" in 1 minute`;
     } else {
-      nextBreak = `Next break in less than a minute`;
+      nextBreak = `Next "${scheduleLabel}" in less than a minute`;
     }
   }
 
@@ -217,11 +242,20 @@ export function buildTray(): void {
     },
     {
       label: "Start break now",
-      visible: breakTime !== null && inWorkingHours && !havingBreak,
-      click: () => {
-        log.info("Start break now selected");
-        startBreakNow();
-      },
+      visible:
+        breakTime !== null &&
+        inWorkingHours &&
+        !havingBreak &&
+        enabledSchedules.length > 0,
+      submenu: enabledSchedules.map((schedule) => ({
+        label: getScheduleLabel(enabledSchedules, schedule.id),
+        click: () => {
+          log.info(
+            `Start break now selected [scheduleId=${schedule.id}]`,
+          );
+          startBreakNow(schedule.id);
+        },
+      })),
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },

@@ -22,12 +22,20 @@ export enum SoundType {
   Scifi = "SCIFI",
 }
 
+export interface BreakSchedule {
+  id: string;
+  enabled: boolean;
+  frequencySeconds: number;
+  lengthSeconds: number;
+  title: string;
+  message: string;
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
-  breakFrequencySeconds: number;
-  breakLengthSeconds: number;
+  breakSchedules: BreakSchedule[];
   postponeLengthSeconds: number;
   postponeLimit: number;
   workingHoursEnabled: boolean;
@@ -43,8 +51,6 @@ export interface Settings {
   idleResetNotification: boolean;
   soundType: SoundType;
   breakSoundVolume: number;
-  breakTitle: string;
-  breakMessage: string;
   backgroundColor: string;
   textColor: string;
   showBackdrop: boolean;
@@ -64,8 +70,16 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
-  breakFrequencySeconds: 28 * 60,
-  breakLengthSeconds: 2 * 60,
+  breakSchedules: [
+    {
+      id: "default",
+      enabled: true,
+      frequencySeconds: 28 * 60,
+      lengthSeconds: 2 * 60,
+      title: "Time for a break.",
+      message: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
+    },
+  ],
   postponeLengthSeconds: 3 * 60,
   postponeLimit: 0,
   workingHoursEnabled: true,
@@ -102,8 +116,6 @@ export const defaultSettings: Settings = {
   idleResetNotification: false,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
-  breakTitle: "Time for a break.",
-  breakMessage: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
   backgroundColor: "#16a085",
   textColor: "#ffffff",
   showBackdrop: true,

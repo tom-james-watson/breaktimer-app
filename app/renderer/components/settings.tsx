@@ -1,6 +1,11 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
-import { NotificationType, Settings, SoundType } from "../../types/settings";
+import {
+  BreakSchedule,
+  NotificationType,
+  Settings,
+  SoundType,
+} from "../../types/settings";
 import { toast } from "../toaster";
 import AdvancedCard from "./settings/advanced-card";
 import AudioCard from "./settings/audio-card";
@@ -51,11 +56,7 @@ export default function SettingsEl() {
       newVal.getHours() * 3600 + newVal.getMinutes() * 60 + newVal.getSeconds();
 
     let secondsField: keyof Settings;
-    if (fieldName === "breakFrequency") {
-      secondsField = "breakFrequencySeconds";
-    } else if (fieldName === "breakLength") {
-      secondsField = "breakLengthSeconds";
-    } else if (fieldName === "postponeLength") {
+    if (fieldName === "postponeLength") {
       secondsField = "postponeLengthSeconds";
     } else if (fieldName === "idleResetLength") {
       secondsField = "idleResetLengthSeconds";
@@ -117,6 +118,53 @@ export default function SettingsEl() {
     });
   };
 
+  const handleScheduleChange = (
+    scheduleId: string,
+    patch: Partial<BreakSchedule>,
+  ): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      breakSchedules: settingsDraft.breakSchedules.map((schedule) =>
+        schedule.id === scheduleId ? { ...schedule, ...patch } : schedule,
+      ),
+    });
+  };
+
+  const handleScheduleAdd = (): void => {
+    const fallbackSchedule =
+      settingsDraft.breakSchedules[settingsDraft.breakSchedules.length - 1] ??
+      settingsDraft.breakSchedules[0];
+    const scheduleCount = settingsDraft.breakSchedules.length + 1;
+    const newSchedule: BreakSchedule = {
+      id: `schedule-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      enabled: true,
+      frequencySeconds: fallbackSchedule?.frequencySeconds ?? 15 * 60,
+      lengthSeconds: fallbackSchedule?.lengthSeconds ?? 30,
+      title: `Break ${scheduleCount}`,
+      message:
+        fallbackSchedule?.message ??
+        "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
+    };
+
+    setSettingsDraft({
+      ...settingsDraft,
+      breakSchedules: [...settingsDraft.breakSchedules, newSchedule],
+    });
+  };
+
+  const handleScheduleRemove = (scheduleId: string): void => {
+    if (settingsDraft.breakSchedules.length <= 1) {
+      return;
+    }
+
+    setSettingsDraft({
+      ...settingsDraft,
+      breakSchedules: settingsDraft.breakSchedules.filter(
+        (schedule) => schedule.id !== scheduleId,
+      ),
+    });
+  };
+
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
     toast("Settings saved");
@@ -135,8 +183,9 @@ export default function SettingsEl() {
             <BreaksCard
               settingsDraft={settingsDraft}
               onNotificationTypeChange={handleNotificationTypeChange}
-              onDateChange={handleDateChange}
-              onTextChange={handleTextChange}
+              onScheduleChange={handleScheduleChange}
+              onScheduleAdd={handleScheduleAdd}
+              onScheduleRemove={handleScheduleRemove}
               onSwitchChange={handleSwitchChange}
             />
 
