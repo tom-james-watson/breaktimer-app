@@ -25,6 +25,7 @@ export enum SoundType {
 export interface BreakSchedule {
   id: string;
   enabled: boolean;
+  notificationType: NotificationType;
   frequencySeconds: number;
   lengthSeconds: number;
   title: string;
@@ -74,6 +75,7 @@ export const defaultSettings: Settings = {
     {
       id: "default",
       enabled: true,
+      notificationType: NotificationType.Popup,
       frequencySeconds: 28 * 60,
       lengthSeconds: 2 * 60,
       title: "Time for a break.",

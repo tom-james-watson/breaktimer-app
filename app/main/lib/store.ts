@@ -114,11 +114,15 @@ const migrations: Migration[] = [
           settings.breakTitle ?? defaultSettings.breakSchedules[0].title;
         const message =
           settings.breakMessage ?? defaultSettings.breakSchedules[0].message;
+        const notificationType =
+          settings.notificationType ??
+          defaultSettings.breakSchedules[0].notificationType;
 
         settings.breakSchedules = [
           {
             id: "default",
             enabled: true,
+            notificationType,
             frequencySeconds,
             lengthSeconds,
             title,
@@ -131,6 +135,23 @@ const migrations: Migration[] = [
       delete settings.breakLengthSeconds;
       delete settings.breakTitle;
       delete settings.breakMessage;
+
+      return settings;
+    },
+  },
+  {
+    version: 4,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrate: (settings: any) => {
+      if (Array.isArray(settings.breakSchedules)) {
+        settings.breakSchedules = settings.breakSchedules.map((schedule: any) => ({
+          ...schedule,
+          notificationType:
+            schedule.notificationType ??
+            settings.notificationType ??
+            defaultSettings.breakSchedules[0].notificationType,
+        }));
+      }
 
       return settings;
     },

@@ -1,18 +1,20 @@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import SettingsCard from "./settings-card";
-import { NotificationType, Settings } from "../../../types/settings";
+import { Settings } from "../../../types/settings";
 
 interface BackdropCardProps {
   settingsDraft: Settings;
   onSwitchChange: (field: string, checked: boolean) => void;
   onSliderChange: (field: keyof Settings, values: number[]) => void;
+  hasPopupBreaks: boolean;
 }
 
 export default function BackdropCard({
   settingsDraft,
   onSwitchChange,
   onSliderChange,
+  hasPopupBreaks,
 }: BackdropCardProps) {
   return (
     <SettingsCard
@@ -21,7 +23,7 @@ export default function BackdropCard({
       toggle={{
         checked: settingsDraft.showBackdrop,
         onCheckedChange: (checked) => onSwitchChange("showBackdrop", checked),
-        disabled: settingsDraft.notificationType !== NotificationType.Popup,
+        disabled: !hasPopupBreaks,
       }}
     >
       <div className="space-y-2">

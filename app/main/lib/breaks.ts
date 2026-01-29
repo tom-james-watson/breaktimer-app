@@ -358,10 +358,10 @@ function doBreak(scheduleId: string): void {
   };
 
   log.info(
-    `Break started [type=${settings.notificationType}] [scheduleId=${schedule.id}]`,
+    `Break started [type=${schedule.notificationType}] [scheduleId=${schedule.id}]`,
   );
 
-  if (settings.notificationType === NotificationType.Notification) {
+  if (schedule.notificationType === NotificationType.Notification) {
     showNotification(schedule.title, stripHtml(schedule.message));
     if (settings.soundType !== SoundType.None) {
       sendIpc(
@@ -375,7 +375,7 @@ function doBreak(scheduleId: string): void {
     scheduleNextBreak(schedule.id);
   }
 
-  if (settings.notificationType === NotificationType.Popup) {
+  if (schedule.notificationType === NotificationType.Popup) {
     createBreakWindows();
   }
 

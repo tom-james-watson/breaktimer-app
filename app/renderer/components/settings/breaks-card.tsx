@@ -16,7 +16,6 @@ import TimeInput from "./time-input";
 
 interface BreaksCardProps {
   settingsDraft: Settings;
-  onNotificationTypeChange: (value: string) => void;
   onScheduleChange: (
     scheduleId: string,
     patch: Partial<BreakSchedule>,
@@ -28,7 +27,6 @@ interface BreaksCardProps {
 
 export default function BreaksCard({
   settingsDraft,
-  onNotificationTypeChange,
   onScheduleChange,
   onScheduleAdd,
   onScheduleRemove,
@@ -45,34 +43,13 @@ export default function BreaksCard({
       }}
     >
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Type</Label>
-          <Select
-            value={settingsDraft.notificationType}
-            onValueChange={onNotificationTypeChange}
-            disabled={!settingsDraft.breaksEnabled}
-          >
-            <SelectTrigger style={{ width: 145 }}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={NotificationType.Popup}>
-                Popup break
-              </SelectItem>
-              <SelectItem value={NotificationType.Notification}>
-                Simple notification
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="space-y-4">
           {settingsDraft.breakSchedules.map((schedule, index) => {
             const scheduleDisabled =
               !settingsDraft.breaksEnabled || !schedule.enabled;
             const lengthDisabled =
               scheduleDisabled ||
-              settingsDraft.notificationType !== NotificationType.Popup;
+              schedule.notificationType !== NotificationType.Popup;
             const scheduleLabel =
               schedule.title?.trim() || `Break ${index + 1}`;
 
@@ -105,7 +82,31 @@ export default function BreaksCard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Type</Label>
+                    <Select
+                      value={schedule.notificationType}
+                      onValueChange={(value) =>
+                        onScheduleChange(schedule.id, {
+                          notificationType: value as NotificationType,
+                        })
+                      }
+                      disabled={scheduleDisabled}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={NotificationType.Popup}>
+                          Popup break
+                        </SelectItem>
+                        <SelectItem value={NotificationType.Notification}>
+                          Simple notification
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Frequency</Label>
                     <TimeInput

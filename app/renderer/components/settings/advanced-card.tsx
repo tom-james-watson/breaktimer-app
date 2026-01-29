@@ -1,16 +1,18 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import SettingsCard from "./settings-card";
-import { NotificationType, Settings } from "../../../types/settings";
+import { Settings } from "../../../types/settings";
 
 interface AdvancedCardProps {
   settingsDraft: Settings;
   onSwitchChange: (field: string, checked: boolean) => void;
+  hasPopupBreaks: boolean;
 }
 
 export default function AdvancedCard({
   settingsDraft,
   onSwitchChange,
+  hasPopupBreaks,
 }: AdvancedCardProps) {
   return (
     <SettingsCard title="Advanced">
@@ -21,7 +23,7 @@ export default function AdvancedCard({
             onCheckedChange={(checked) =>
               onSwitchChange("immediatelyStartBreaks", checked)
             }
-            disabled={settingsDraft.notificationType !== NotificationType.Popup}
+            disabled={!hasPopupBreaks}
           />
           <Label>Immediately start breaks</Label>
         </div>
@@ -32,6 +34,7 @@ export default function AdvancedCard({
             onCheckedChange={(checked) =>
               onSwitchChange("endBreakEnabled", checked)
             }
+            disabled={!hasPopupBreaks}
           />
           <Label>Allow ending break early</Label>
         </div>

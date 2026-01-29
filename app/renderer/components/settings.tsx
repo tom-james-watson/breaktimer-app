@@ -1,11 +1,6 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
-import {
-  BreakSchedule,
-  NotificationType,
-  Settings,
-  SoundType,
-} from "../../types/settings";
+import { BreakSchedule, NotificationType, Settings, SoundType } from "../../types/settings";
 import { toast } from "../toaster";
 import AdvancedCard from "./settings/advanced-card";
 import AudioCard from "./settings/audio-card";
@@ -45,11 +40,6 @@ export default function SettingsEl() {
   if (settings === null || settingsDraft === null) {
     return null;
   }
-
-  const handleNotificationTypeChange = (value: string): void => {
-    const notificationType = value as NotificationType;
-    setSettingsDraft({ ...settingsDraft, notificationType });
-  };
 
   const handleDateChange = (fieldName: string, newVal: Date): void => {
     const seconds =
@@ -138,6 +128,8 @@ export default function SettingsEl() {
     const newSchedule: BreakSchedule = {
       id: `schedule-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       enabled: true,
+      notificationType:
+        fallbackSchedule?.notificationType ?? NotificationType.Popup,
       frequencySeconds: fallbackSchedule?.frequencySeconds ?? 15 * 60,
       lengthSeconds: fallbackSchedule?.lengthSeconds ?? 30,
       title: `Break ${scheduleCount}`,
@@ -165,6 +157,11 @@ export default function SettingsEl() {
     });
   };
 
+  const hasPopupBreaks = settingsDraft.breakSchedules.some(
+    (schedule) =>
+      schedule.enabled && schedule.notificationType === NotificationType.Popup,
+  );
+
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
     toast("Settings saved");
@@ -182,7 +179,6 @@ export default function SettingsEl() {
           <TabsContent value="break-settings" className="m-0 space-y-8">
             <BreaksCard
               settingsDraft={settingsDraft}
-              onNotificationTypeChange={handleNotificationTypeChange}
               onScheduleChange={handleScheduleChange}
               onScheduleAdd={handleScheduleAdd}
               onScheduleRemove={handleScheduleRemove}
@@ -210,6 +206,7 @@ export default function SettingsEl() {
             <AdvancedCard
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
+              hasPopupBreaks={hasPopupBreaks}
             />
           </TabsContent>
 
@@ -248,6 +245,7 @@ export default function SettingsEl() {
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
               onSliderChange={handleSliderChange}
+              hasPopupBreaks={hasPopupBreaks}
             />
           </TabsContent>
 
