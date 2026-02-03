@@ -59,6 +59,8 @@ export default function SettingsEl() {
       secondsField = "postponeLengthSeconds";
     } else if (fieldName === "idleResetLength") {
       secondsField = "idleResetLengthSeconds";
+    } else if (fieldName === "automaticallyStartBreaksDelaySeconds") {
+      secondsField = "automaticallyStartBreaksDelaySeconds";
     } else {
       return;
     }
@@ -161,6 +163,7 @@ export default function SettingsEl() {
             <AdvancedCard
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
+              onDateChange={handleDateChange}
             />
           </TabsContent>
 
