@@ -1,3 +1,4 @@
+import { useI18n } from "../../lib/i18n";
 import SettingsCard from "./settings-card";
 import { Settings } from "../../../types/settings";
 
@@ -10,10 +11,12 @@ export default function StartupCard({
   settingsDraft,
   onSwitchChange,
 }: StartupCardProps) {
+  const { t } = useI18n();
+
   return (
     <SettingsCard
-      title="Start at login"
-      helperText="Automatically start BreakTimer when you log into your computer."
+      title={t("settings.startup.title")}
+      helperText={t("settings.startup.helper")}
       toggle={{
         checked: settingsDraft.autoLaunch,
         onCheckedChange: (checked) => onSwitchChange("autoLaunch", checked),

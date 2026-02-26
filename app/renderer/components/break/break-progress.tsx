@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "../../lib/i18n";
 import { Settings, SoundType } from "../../../types/settings";
 import { TimeRemaining } from "./utils";
 
@@ -26,6 +27,7 @@ export function BreakProgress({
   isClosing = false,
   sharedBreakEndTime = null,
 }: BreakProgressProps) {
+  const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
     null,
   );
@@ -149,7 +151,7 @@ export function BreakProgress({
               borderColor: "rgba(255, 255, 255, 0.2)",
             }}
           >
-            {progress < 0.5 ? "Cancel Break" : "End Break"}
+            {progress < 0.5 ? t("break.progress.cancel") : t("break.progress.end")}
           </Button>
         )}
       </div>

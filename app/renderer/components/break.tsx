@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
+import { I18nProvider } from "../lib/i18n";
 import { Settings, SoundType } from "../../types/settings";
 import { BreakNotification } from "./break/break-notification";
 import { BreakProgress } from "./break/break-progress";
@@ -117,80 +118,84 @@ export default function Break() {
 
   if (countingDown) {
     return (
-      <div
-        className="h-full flex items-center justify-center"
-        style={{ backgroundColor: "transparent" }}
-      >
-        {ready && !closing && (
-          <BreakNotification
-            onCountdownOver={handleCountdownOver}
-            onPostponeBreak={handlePostponeBreak}
-            onSkipBreak={handleSkipBreak}
-            onStartBreakNow={handleStartBreakNow}
-            postponeBreakEnabled={
-              settings.postponeBreakEnabled &&
-              allowPostpone &&
-              !settings.immediatelyStartBreaks
-            }
-            skipBreakEnabled={
-              settings.skipBreakEnabled && !settings.immediatelyStartBreaks
-            }
-            timeSinceLastBreak={timeSinceLastBreak}
-            textColor={settings.textColor}
-            backgroundColor={settings.backgroundColor}
-          />
-        )}
-      </div>
+      <I18nProvider language={settings.language}>
+        <div
+          className="h-full flex items-center justify-center"
+          style={{ backgroundColor: "transparent" }}
+        >
+          {ready && !closing && (
+            <BreakNotification
+              onCountdownOver={handleCountdownOver}
+              onPostponeBreak={handlePostponeBreak}
+              onSkipBreak={handleSkipBreak}
+              onStartBreakNow={handleStartBreakNow}
+              postponeBreakEnabled={
+                settings.postponeBreakEnabled &&
+                allowPostpone &&
+                !settings.immediatelyStartBreaks
+              }
+              skipBreakEnabled={
+                settings.skipBreakEnabled && !settings.immediatelyStartBreaks
+              }
+              timeSinceLastBreak={timeSinceLastBreak}
+              textColor={settings.textColor}
+              backgroundColor={settings.backgroundColor}
+            />
+          )}
+        </div>
+      </I18nProvider>
     );
   }
 
   return (
-    <div className="h-full flex items-center justify-center relative">
-      {settings.showBackdrop && (
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            opacity: closing ? 0 : settings.backdropOpacity,
-          }}
-          initial={{ opacity: 0 }}
-          transition={{
-            duration: 0.5,
-            delay: closing ? 0.3 : 0,
-          }}
-          style={{
-            backgroundColor: createDarkerRgba(settings.backgroundColor, 1),
-          }}
-        />
-      )}
-      <motion.div
-        className="flex flex-col justify-center items-center relative p-6 text-balance focus:outline-none w-[500px] rounded-xl"
-        animate={{
-          opacity: closing ? 0 : 1,
-          y: closing ? -20 : 0,
-        }}
-        initial={{ opacity: 0, y: -20 }}
-        transition={{
-          duration: 0.5,
-          ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
-        }}
-        style={{
-          color: settings.textColor,
-          backgroundColor: settings.backgroundColor,
-        }}
-      >
-        {ready && (
-          <BreakProgress
-            breakMessage={settings.breakMessage}
-            breakTitle={settings.breakTitle}
-            endBreakEnabled={settings.endBreakEnabled}
-            onEndBreak={handleEndBreak}
-            settings={settings}
-            textColor={settings.textColor}
-            isClosing={closing}
-            sharedBreakEndTime={sharedBreakEndTime}
+    <I18nProvider language={settings.language}>
+      <div className="h-full flex items-center justify-center relative">
+        {settings.showBackdrop && (
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              opacity: closing ? 0 : settings.backdropOpacity,
+            }}
+            initial={{ opacity: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: closing ? 0.3 : 0,
+            }}
+            style={{
+              backgroundColor: createDarkerRgba(settings.backgroundColor, 1),
+            }}
           />
         )}
-      </motion.div>
-    </div>
+        <motion.div
+          className="flex flex-col justify-center items-center relative p-6 text-balance focus:outline-none w-[500px] rounded-xl"
+          animate={{
+            opacity: closing ? 0 : 1,
+            y: closing ? -20 : 0,
+          }}
+          initial={{ opacity: 0, y: -20 }}
+          transition={{
+            duration: 0.5,
+            ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
+          }}
+          style={{
+            color: settings.textColor,
+            backgroundColor: settings.backgroundColor,
+          }}
+        >
+          {ready && (
+            <BreakProgress
+              breakMessage={settings.breakMessage}
+              breakTitle={settings.breakTitle}
+              endBreakEnabled={settings.endBreakEnabled}
+              onEndBreak={handleEndBreak}
+              settings={settings}
+              textColor={settings.textColor}
+              isClosing={closing}
+              sharedBreakEndTime={sharedBreakEndTime}
+            />
+          )}
+        </motion.div>
+      </div>
+    </I18nProvider>
   );
 }

@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Play } from "lucide-react";
+import { useI18n } from "../lib/i18n";
 import { SoundType } from "../../types/settings";
 
 interface SoundSelectProps {
@@ -22,6 +23,8 @@ export function SoundSelect({
   disabled,
   volume = 1,
 }: SoundSelectProps) {
+  const { t } = useI18n();
+
   const playSound = (soundType: SoundType) => {
     if (soundType === SoundType.None) return;
     ipcRenderer.invokeStartSound(soundType, volume);
@@ -34,12 +37,24 @@ export function SoundSelect({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={SoundType.None}>None</SelectItem>
-          <SelectItem value={SoundType.Gong}>Gong</SelectItem>
-          <SelectItem value={SoundType.Blip}>Blip</SelectItem>
-          <SelectItem value={SoundType.Bloop}>Bloop</SelectItem>
-          <SelectItem value={SoundType.Ping}>Ping</SelectItem>
-          <SelectItem value={SoundType.Scifi}>Sci-fi</SelectItem>
+          <SelectItem value={SoundType.None}>
+            {t("settings.sound.none")}
+          </SelectItem>
+          <SelectItem value={SoundType.Gong}>
+            {t("settings.sound.gong")}
+          </SelectItem>
+          <SelectItem value={SoundType.Blip}>
+            {t("settings.sound.blip")}
+          </SelectItem>
+          <SelectItem value={SoundType.Bloop}>
+            {t("settings.sound.bloop")}
+          </SelectItem>
+          <SelectItem value={SoundType.Ping}>
+            {t("settings.sound.ping")}
+          </SelectItem>
+          <SelectItem value={SoundType.Scifi}>
+            {t("settings.sound.scifi")}
+          </SelectItem>
         </SelectContent>
       </Select>
       {value !== SoundType.None && (

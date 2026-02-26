@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useI18n } from "../../lib/i18n";
 import { formatTimeSinceLastBreak } from "./utils";
 
 const GRACE_PERIOD_MS = 60000;
@@ -30,6 +31,7 @@ export function BreakNotification({
   textColor,
   backgroundColor,
 }: BreakNotificationProps) {
+  const { t } = useI18n();
   const [phase, setPhase] = useState<"grace" | "countdown">("grace");
   const [msRemaining, setMsRemaining] = useState<number>(0);
 
@@ -101,15 +103,15 @@ export function BreakNotification({
             style={{ color: textColor }}
           >
             {phase === "grace"
-              ? "Start your break when ready..."
-              : `Break starting in ${secondsRemaining}s...`}
+              ? t("break.notification.grace")
+              : t("break.notification.countdown", { seconds: secondsRemaining })}
           </h2>
           {timeSinceLastBreak && (
             <p
               className="text-sm opacity-80 font-medium"
               style={{ color: textColor }}
             >
-              {formatTimeSinceLastBreak(timeSinceLastBreak)}
+              {formatTimeSinceLastBreak(timeSinceLastBreak, t)}
             </p>
           )}
         </div>
@@ -129,7 +131,7 @@ export function BreakNotification({
                 borderColor: "rgba(255, 255, 255, 0.2)",
               }}
             >
-              Start
+              {t("break.notification.start")}
             </Button>
           </div>
           {postponeBreakEnabled && (
@@ -147,7 +149,7 @@ export function BreakNotification({
                   borderColor: "rgba(255, 255, 255, 0.2)",
                 }}
               >
-                Snooze
+                {t("break.notification.snooze")}
               </Button>
             </div>
           )}
@@ -166,7 +168,7 @@ export function BreakNotification({
                   borderColor: "rgba(255, 255, 255, 0.2)",
                 }}
               >
-                Skip
+                {t("break.notification.skip")}
               </Button>
             </div>
           )}

@@ -1,12 +1,14 @@
 import { FormGroup } from "@/components/ui/form-group";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { getDayLabel } from "../../../i18n";
 import {
   DayConfig,
   defaultWorkingRange,
   WorkingHours,
   WorkingHoursRange,
 } from "../../../types/settings";
+import { useI18n } from "../../lib/i18n";
 import TimeRange from "./time-range";
 
 interface DaySettingsProps {
@@ -24,6 +26,8 @@ export default function DaySettings({
   disabled,
   onApplyToAll,
 }: DaySettingsProps) {
+  const { language } = useI18n();
+
   const handleAddRange = () => {
     onChange({
       ...workingHours,
@@ -57,7 +61,7 @@ export default function DaySettings({
             }
             disabled={disabled}
           />
-          <Label>{day.label}</Label>
+          <Label>{getDayLabel(day.key, language)}</Label>
         </div>
         {workingHours.enabled && (
           <>

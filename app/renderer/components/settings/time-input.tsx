@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { useI18n } from "../../lib/i18n";
 
 export interface TimeInputProps {
   value: number; // Value in seconds
@@ -16,6 +17,7 @@ export default function TimeInput({
   disabled = false,
   className,
 }: TimeInputProps) {
+  const { t } = useI18n();
   const hoursRef = useRef<HTMLInputElement>(null);
   const minutesRef = useRef<HTMLInputElement>(null);
   const secondsRef = useRef<HTMLInputElement>(null);
@@ -228,7 +230,9 @@ export default function TimeInput({
         maxLength={2}
         className="w-6 text-center bg-transparent border-none outline-none focus:ring-0 p-0"
       />
-      <span className="text-muted-foreground text-xs self-end">h</span>
+      <span className="text-muted-foreground text-xs self-end">
+        {t("time.unit.hoursShort")}
+      </span>
 
       <span className="text-muted-foreground mx-1">:</span>
 
@@ -246,7 +250,9 @@ export default function TimeInput({
         maxLength={2}
         className="w-6 text-center bg-transparent border-none outline-none focus:ring-0 p-0"
       />
-      <span className="text-muted-foreground text-xs self-end">m</span>
+      <span className="text-muted-foreground text-xs self-end">
+        {t("time.unit.minutesShort")}
+      </span>
 
       {precision === "seconds" && (
         <>
@@ -265,7 +271,9 @@ export default function TimeInput({
             maxLength={2}
             className="w-6 text-center bg-transparent border-none outline-none focus:ring-0 p-0"
           />
-          <span className="text-muted-foreground text-xs self-end">s</span>
+          <span className="text-muted-foreground text-xs self-end">
+            {t("time.unit.secondsShort")}
+          </span>
         </>
       )}
     </div>

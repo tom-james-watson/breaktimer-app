@@ -3,6 +3,37 @@ export enum NotificationType {
   Popup = "POPUP",
 }
 
+export enum UiLanguage {
+  ZhCN = "zh-CN",
+  EnUS = "en-US",
+}
+
+export interface DefaultBreakCopy {
+  title: string;
+  message: string;
+}
+
+export const defaultBreakCopyByLanguage: Record<UiLanguage, DefaultBreakCopy> =
+  {
+    [UiLanguage.ZhCN]: {
+      title: "休息一下吧",
+      message:
+        "喝口水，换换脑子\n休息一下，效率更稳\n看远20秒，眼睛眨一眨",
+    },
+    [UiLanguage.EnUS]: {
+      title: "Time for a break.",
+      message: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
+    },
+  };
+
+export function getDefaultBreakCopy(
+  language: UiLanguage | string | undefined,
+): DefaultBreakCopy {
+  const normalizedLanguage =
+    language === UiLanguage.EnUS ? UiLanguage.EnUS : UiLanguage.ZhCN;
+  return defaultBreakCopyByLanguage[normalizedLanguage];
+}
+
 export interface WorkingHoursRange {
   fromMinutes: number;
   toMinutes: number;
@@ -23,6 +54,7 @@ export enum SoundType {
 }
 
 export interface Settings {
+  language: UiLanguage;
   autoLaunch: boolean;
   breaksEnabled: boolean;
   notificationType: NotificationType;
@@ -61,6 +93,7 @@ export const defaultWorkingRange: WorkingHoursRange = {
 };
 
 export const defaultSettings: Settings = {
+  language: UiLanguage.ZhCN,
   autoLaunch: true,
   breaksEnabled: true,
   notificationType: NotificationType.Popup,
@@ -102,8 +135,8 @@ export const defaultSettings: Settings = {
   idleResetNotification: false,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
-  breakTitle: "Time for a break.",
-  breakMessage: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
+  breakTitle: getDefaultBreakCopy(UiLanguage.ZhCN).title,
+  breakMessage: getDefaultBreakCopy(UiLanguage.ZhCN).message,
   backgroundColor: "#16a085",
   textColor: "#ffffff",
   showBackdrop: true,

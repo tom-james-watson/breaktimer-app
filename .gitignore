@@ -14,6 +14,7 @@ node_modules
 
 # Build files
 release
+output
 app/main/dist
 app/renderer/dist
 dist

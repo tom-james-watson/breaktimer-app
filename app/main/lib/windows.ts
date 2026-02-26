@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
 import path from "path";
+import { translate } from "../../i18n";
 import { endPopupBreak } from "./breaks";
 import { getSettings } from "./store";
 
@@ -41,8 +42,10 @@ export function createSettingsWindow(): void {
     return;
   }
 
+  const settings = getSettings();
+
   settingsWindow = new BrowserWindow({
-    title: "BreakTimer — Settings",
+    title: translate(settings.language, "window.settings.title"),
     show: false,
     width: 580,
     minWidth: 580,

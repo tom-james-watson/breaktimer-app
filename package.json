@@ -131,20 +131,20 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "tom-james-watson",
+      "owner": "fanxinliuchen",
       "repo": "breaktimer-app",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/tom-james-watson/breaktimer-app.git"
+    "url": "git+ssh://git@github.com/fanxinliuchen/breaktimer-app.git"
   },
   "bugs": {
-    "url": "https://github.com/tom-james-watson/breaktimer-app/issues"
+    "url": "https://github.com/fanxinliuchen/breaktimer-app/issues"
   },
   "author": "Tom Watson <tom@tomjwatson.com>",
-  "homepage": "https://github.com/tom-james-watson/breaktimer-app",
+  "homepage": "https://github.com/fanxinliuchen/breaktimer-app",
   "devDependencies": {
     "@types/auto-launch": "^5.0.2",
     "@types/howler": "^2.2.4",

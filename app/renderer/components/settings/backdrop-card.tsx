@@ -1,5 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { useI18n } from "../../lib/i18n";
 import SettingsCard from "./settings-card";
 import { NotificationType, Settings } from "../../../types/settings";
 
@@ -14,10 +15,12 @@ export default function BackdropCard({
   onSwitchChange,
   onSliderChange,
 }: BackdropCardProps) {
+  const { t } = useI18n();
+
   return (
     <SettingsCard
-      title="Backdrop"
-      helperText="Show a colored overlay behind break windows to limit distractions."
+      title={t("settings.backdrop.title")}
+      helperText={t("settings.backdrop.helper")}
       toggle={{
         checked: settingsDraft.showBackdrop,
         onCheckedChange: (checked) => onSwitchChange("showBackdrop", checked),
@@ -25,7 +28,9 @@ export default function BackdropCard({
       }}
     >
       <div className="space-y-2">
-        <Label className="text-sm font-medium">Opacity</Label>
+        <Label className="text-sm font-medium">
+          {t("settings.backdrop.opacity")}
+        </Label>
         <div className="px-2">
           <Slider
             min={0.2}

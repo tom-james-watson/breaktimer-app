@@ -2,6 +2,7 @@ import { PowerMonitor } from "electron";
 import log from "electron-log";
 import moment from "moment";
 import { BreakTime } from "../../types/breaks";
+import { translate } from "../../i18n";
 import { IpcChannel } from "../../types/ipc";
 import {
   DayConfig,
@@ -127,11 +128,14 @@ function createIdleNotification() {
   }
 
   if (settings.idleResetNotification) {
+    const awayTime = `${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
+      idleSeconds,
+    )}`;
     showNotification(
-      "Break automatically detected",
-      `Away for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
-        idleSeconds,
-      )}`,
+      translate(settings.language, "notification.breakDetected.title"),
+      translate(settings.language, "notification.breakDetected.body", {
+        time: awayTime,
+      }),
     );
   }
 }
@@ -208,7 +212,10 @@ function doBreak(): void {
   log.info(`Break started [type=${settings.notificationType}]`);
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification("Time for a break!", stripHtml(settings.breakMessage));
+    showNotification(
+      translate(settings.language, "notification.timeForBreak"),
+      stripHtml(settings.breakMessage),
+    );
     if (settings.soundType !== SoundType.None) {
       sendIpc(
         IpcChannel.SoundStartPlay,
