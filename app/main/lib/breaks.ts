@@ -208,7 +208,10 @@ function doBreak(): void {
   log.info(`Break started [type=${settings.notificationType}]`);
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification("Time for a break!", stripHtml(settings.breakMessage));
+    showNotification(
+      stripHtml(settings.breakTitle),
+      stripHtml(settings.breakMessage),
+    );
     if (settings.soundType !== SoundType.None) {
       sendIpc(
         IpcChannel.SoundStartPlay,
