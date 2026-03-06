@@ -104,7 +104,7 @@ export function BreakNotification({
               ? "Start your break when ready..."
               : `Break starting in ${secondsRemaining}s...`}
           </h2>
-          {timeSinceLastBreak && (
+          {timeSinceLastBreak !== null && (
             <p
               className="text-sm opacity-80 font-medium"
               style={{ color: textColor }}

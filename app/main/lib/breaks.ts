@@ -76,6 +76,7 @@ export function completeBreakTracking(breakDurationMs: number): void {
       )}s] [required=${settings.breakLengthSeconds}s]`,
     );
   } else {
+    hasSkippedOrSnoozedSinceLastBreak = true;
     log.info(
       `Break too short [duration=${Math.round(
         breakDurationMs / 1000,
@@ -163,6 +164,11 @@ export function scheduleNextBreak(isPostpone = false): void {
 }
 
 export function endPopupBreak(): void {
+  if (currentBreakStartTime) {
+    const breakDurationMs = Date.now() - currentBreakStartTime.getTime();
+    completeBreakTracking(breakDurationMs);
+  }
+
   log.info("Break ended");
   const existingBreakTime = breakTime;
   const now = moment();
