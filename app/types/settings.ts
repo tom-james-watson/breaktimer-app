@@ -22,9 +22,16 @@ export enum SoundType {
   Scifi = "SCIFI",
 }
 
+export enum TrayTextMode {
+  TimeToNextBreak = "TIME_TO_NEXT_BREAK",
+  TimeSinceLastBreak = "TIME_SINCE_LAST_BREAK",
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
+  trayTextEnabled: boolean;
+  trayTextMode: TrayTextMode;
   notificationType: NotificationType;
   breakFrequencySeconds: number;
   breakLengthSeconds: number;
@@ -63,6 +70,8 @@ export const defaultWorkingRange: WorkingHoursRange = {
 export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
+  trayTextEnabled: true,
+  trayTextMode: TrayTextMode.TimeSinceLastBreak,
   notificationType: NotificationType.Popup,
   breakFrequencySeconds: 28 * 60,
   breakLengthSeconds: 2 * 60,

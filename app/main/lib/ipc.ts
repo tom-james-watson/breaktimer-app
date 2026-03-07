@@ -8,6 +8,7 @@ import {
   getBreakLengthSeconds,
   getTimeSinceLastBreak,
   postponeBreak,
+  startBreakTracking,
   wasStartedFromTray,
 } from "./breaks";
 import {
@@ -47,6 +48,7 @@ ipcMain.handle(
 
 ipcMain.handle(IpcChannel.BreakStart, (): void => {
   log.info(IpcChannel.BreakStart);
+  startBreakTracking();
   // Send break end time so all windows sync their progress to the same timeline
   const breakLengthMs = getBreakLengthSeconds() * 1000;
   const breakEndTime = Date.now() + breakLengthMs;

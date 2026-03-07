@@ -33,7 +33,7 @@ let lockStart: Date | null = null;
 let lastTick: Date | null = null;
 let startedFromTray = false;
 
-let lastCompletedBreakTime: Date = new Date();
+let lastCompletedBreakTime: Date | null = new Date();
 let currentBreakStartTime: Date | null = null;
 let hasSkippedOrSnoozedSinceLastBreak = false;
 
@@ -56,8 +56,21 @@ export function getTimeSinceLastBreak(): number | null {
   return now.diff(lastBreak, "seconds");
 }
 
+export function getTimeSinceLastCompletedBreak(): number | null {
+  const now = moment();
+  const lastBreak = moment(lastCompletedBreakTime);
+  return now.diff(lastBreak, "seconds");
+}
+
 export function startBreakTracking(): void {
   currentBreakStartTime = new Date();
+}
+
+function markBreakCompleted(context: string): void {
+  lastCompletedBreakTime = new Date();
+  hasSkippedOrSnoozedSinceLastBreak = false;
+  currentBreakStartTime = null;
+  log.info(context);
 }
 
 export function completeBreakTracking(breakDurationMs: number): void {
@@ -68,9 +81,7 @@ export function completeBreakTracking(breakDurationMs: number): void {
   const halfRequiredDuration = requiredDurationMs / 2;
 
   if (breakDurationMs >= halfRequiredDuration) {
-    lastCompletedBreakTime = new Date();
-    hasSkippedOrSnoozedSinceLastBreak = false;
-    log.info(
+    markBreakCompleted(
       `Break completed [duration=${Math.round(
         breakDurationMs / 1000,
       )}s] [required=${settings.breakLengthSeconds}s]`,
@@ -208,10 +219,17 @@ export function postponeBreak(action = "snoozed"): void {
 
 function doBreak(): void {
   havingBreak = true;
-  startBreakTracking();
 
   const settings: Settings = getSettings();
   log.info(`Break started [type=${settings.notificationType}]`);
+
+  if (
+    settings.notificationType === NotificationType.Notification ||
+    settings.immediatelyStartBreaks ||
+    startedFromTray
+  ) {
+    startBreakTracking();
+  }
 
   if (settings.notificationType === NotificationType.Notification) {
     showNotification("Time for a break!", stripHtml(settings.breakMessage));
@@ -222,6 +240,7 @@ function doBreak(): void {
         settings.breakSoundVolume,
       );
     }
+    markBreakCompleted("Break completed [type=notification]");
     havingBreak = false;
     scheduleNextBreak();
   }
