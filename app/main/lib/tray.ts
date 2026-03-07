@@ -22,7 +22,6 @@ import { closeBreakWindows, createSettingsWindow } from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
-let lastTrayTitle = "";
 
 const rootPath = path.dirname(app.getPath("exe"));
 const resourcesPath =
@@ -77,36 +76,30 @@ function formatCompactDuration(seconds: number): string {
   return `${totalMinutes}m`;
 }
 
-function getTrayTitle(): string {
+function getTrayTitle(): string | null {
   const settings = getSettings();
-  if (!settings.trayTextEnabled) {
-    return "";
-  }
 
-  if (isHavingBreak()) {
-    return "";
-  }
+  if (!settings.trayTextEnabled) return null;
+  if (!settings.breaksEnabled) return null;
+  if (!checkInWorkingHours()) return null;
+  if (isHavingBreak()) return null;
 
   switch (settings.trayTextMode) {
     case TrayTextMode.TimeToNextBreak: {
       const breakTime = getBreakTime();
-      const inWorkingHours = checkInWorkingHours();
 
-      if (breakTime === null || !inWorkingHours || !settings.breaksEnabled) {
-        return "";
-      }
+      if (breakTime === null) return null;
 
       const secondsLeft = Math.max(breakTime.diff(moment(), "seconds"), 0);
       return ` ${formatCompactDuration(secondsLeft)}`;
     }
     case TrayTextMode.TimeSinceLastBreak: {
       const secondsSinceLastBreak = getTimeSinceLastCompletedBreak();
-      return secondsSinceLastBreak === null
-        ? ""
-        : ` ${formatCompactDuration(secondsSinceLastBreak)}`;
+      if (secondsSinceLastBreak === null) return null;
+      return ` ${formatCompactDuration(secondsSinceLastBreak)}`;
     }
     default:
-      return "";
+      return null;
   }
 }
 
@@ -141,7 +134,7 @@ export function buildTray(): void {
 
   if (process.platform === "darwin") {
     const trayTitle = getTrayTitle();
-    tray.setTitle(trayTitle, { fontType: "monospacedDigit" });
+    tray.setTitle(trayTitle ?? "", { fontType: "monospacedDigit" });
   }
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
@@ -292,7 +285,7 @@ export function buildTray(): void {
 export function initTray(): void {
   buildTray();
   let lastDisableText = getDisableTimeRemaining();
-  lastTrayTitle = getTrayTitle();
+  let lastTrayTitle = getTrayTitle();
 
   setInterval(() => {
     checkDisableTimeout();
