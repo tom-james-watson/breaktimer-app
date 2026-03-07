@@ -17,6 +17,7 @@ import {
   getAppInitialized,
   setAppInitialized,
 } from "./store";
+import { buildTray } from "./tray";
 import { getWindows } from "./windows";
 
 export function sendIpc(channel: IpcChannel, ...args: unknown[]): void {
@@ -84,6 +85,7 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, settings: Settings): void => {
     log.info(IpcChannel.SettingsSet);
     setSettings(settings);
+    buildTray();
   },
 );
 
