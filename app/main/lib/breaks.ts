@@ -66,11 +66,16 @@ export function startBreakTracking(): void {
   currentBreakStartTime = new Date();
 }
 
-function markBreakCompleted(context: string): void {
+export function resetTimeSinceLastBreak(context: string): void {
   lastCompletedBreakTime = new Date();
   hasSkippedOrSnoozedSinceLastBreak = false;
-  currentBreakStartTime = null;
   log.info(context);
+  buildTray();
+}
+
+function markBreakCompleted(context: string): void {
+  resetTimeSinceLastBreak(context);
+  currentBreakStartTime = null;
 }
 
 export function completeBreakTracking(breakDurationMs: number): void {
@@ -156,9 +161,7 @@ export function scheduleNextBreak(isPostpone = false): void {
     idleStart = null;
     postponedCount = 0;
 
-    lastCompletedBreakTime = new Date();
-    hasSkippedOrSnoozedSinceLastBreak = false;
-    log.info("Break auto-detected via idle reset");
+    resetTimeSinceLastBreak("Break auto-detected via idle reset");
   }
 
   const seconds = isPostpone
@@ -252,14 +255,11 @@ function doBreak(): void {
   buildTray();
 }
 
-export function checkInWorkingHours(): boolean {
-  const settings: Settings = getSettings();
-
+function checkInWorkingHoursAt(now: moment.Moment, settings: Settings): boolean {
   if (!settings.workingHoursEnabled) {
     return true;
   }
 
-  const now = moment();
   const currentMinutes = now.hours() * 60 + now.minutes();
   const dayOfWeek = now.day();
 
@@ -283,6 +283,10 @@ export function checkInWorkingHours(): boolean {
     (range) =>
       currentMinutes >= range.fromMinutes && currentMinutes <= range.toMinutes,
   );
+}
+
+export function checkInWorkingHours(): boolean {
+  return checkInWorkingHoursAt(moment(), getSettings());
 }
 
 enum IdleState {
@@ -351,6 +355,17 @@ export function wasStartedFromTray(): boolean {
 
 function tick(): void {
   try {
+    const settings = getSettings();
+    const now = moment();
+    const inWorkingHours = checkInWorkingHoursAt(now, settings);
+    const wasInWorkingHours = lastTick
+      ? checkInWorkingHoursAt(moment(lastTick), settings)
+      : inWorkingHours;
+
+    if (!wasInWorkingHours && inWorkingHours) {
+      resetTimeSinceLastBreak("Reset time since last break [working-hours]");
+    }
+
     const shouldHaveBreak = checkShouldHaveBreak();
 
     // This can happen if the computer is put to sleep. In this case, we want

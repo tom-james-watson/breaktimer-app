@@ -1,7 +1,7 @@
 import Store from "electron-store";
 import { defaultSettings, Settings } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
-import { initBreaks } from "./breaks";
+import { initBreaks, resetTimeSinceLastBreak } from "./breaks";
 
 interface Migration {
   version: number;
@@ -165,6 +165,10 @@ export function setSettings(settings: Settings, resetBreaks = true): void {
   }
 
   store.set({ settings });
+
+  if (!currentSettings.breaksEnabled && settings.breaksEnabled) {
+    resetTimeSinceLastBreak("Reset time since last break [enable]");
+  }
 
   if (resetBreaks) {
     initBreaks();
