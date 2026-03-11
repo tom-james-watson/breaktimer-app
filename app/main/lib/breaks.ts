@@ -35,7 +35,6 @@ let startedFromTray = false;
 
 let lastCompletedBreakTime: Date | null = new Date();
 let currentBreakStartTime: Date | null = null;
-let hasSkippedOrSnoozedSinceLastBreak = false;
 
 export function getBreakTime(): BreakTime {
   return breakTime;
@@ -47,10 +46,6 @@ export function getBreakLengthSeconds(): number {
 }
 
 export function getTimeSinceLastBreak(): number | null {
-  if (!hasSkippedOrSnoozedSinceLastBreak) {
-    return null;
-  }
-
   const now = moment();
   const lastBreak = moment(lastCompletedBreakTime);
   return now.diff(lastBreak, "seconds");
@@ -68,7 +63,6 @@ export function startBreakTracking(): void {
 
 export function resetTimeSinceLastBreak(context: string): void {
   lastCompletedBreakTime = new Date();
-  hasSkippedOrSnoozedSinceLastBreak = false;
   log.info(context);
   buildTray();
 }
@@ -92,7 +86,6 @@ export function completeBreakTracking(breakDurationMs: number): void {
       )}s] [required=${settings.breakLengthSeconds}s]`,
     );
   } else {
-    hasSkippedOrSnoozedSinceLastBreak = true;
     log.info(
       `Break too short [duration=${Math.round(
         breakDurationMs / 1000,
@@ -208,7 +201,6 @@ export function getAllowPostpone(): boolean {
 export function postponeBreak(action = "snoozed"): void {
   postponedCount++;
   havingBreak = false;
-  hasSkippedOrSnoozedSinceLastBreak = true;
   log.info(`Break ${action} [count=${postponedCount}]`);
 
   if (action === "skipped") {
