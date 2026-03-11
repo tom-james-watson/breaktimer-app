@@ -71,7 +71,7 @@ export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
   trayTextEnabled: true,
-  trayTextMode: TrayTextMode.TimeSinceLastBreak,
+  trayTextMode: TrayTextMode.TimeToNextBreak,
   notificationType: NotificationType.Popup,
   breakFrequencySeconds: 28 * 60,
   breakLengthSeconds: 2 * 60,

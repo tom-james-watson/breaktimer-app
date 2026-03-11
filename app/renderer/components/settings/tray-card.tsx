@@ -40,11 +40,11 @@ export default function TrayCard({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={TrayTextMode.TimeSinceLastBreak}>
-              Time since last break
-            </SelectItem>
             <SelectItem value={TrayTextMode.TimeToNextBreak}>
               Time to next break
+            </SelectItem>
+            <SelectItem value={TrayTextMode.TimeSinceLastBreak}>
+              Time since last break
             </SelectItem>
           </SelectContent>
         </Select>
