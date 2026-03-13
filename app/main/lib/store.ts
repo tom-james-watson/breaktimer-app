@@ -99,6 +99,29 @@ const migrations: Migration[] = [
       return settings;
     },
   },
+  {
+    version: 3,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    migrate: (settings: any) => {
+      // immediatelyStartBreaks to automaticallyStartBreaks migration
+      if (settings.immediatelyStartBreaks !== undefined) {
+        console.log("Migrating immediatelyStartBreaks to automaticallyStartBreaks");
+        
+        if (settings.immediatelyStartBreaks) {
+          // User wanted immediate start - enable auto start with 0 delay
+          settings.automaticallyStartBreaks = true;
+          settings.automaticallyStartBreaksDelaySeconds = 0;
+        } else {
+          // else legacy behaviour was to start breaks automatically after 120 seconds (HARD CODED)
+          settings.automaticallyStartBreaks = true;
+          settings.automaticallyStartBreaksDelaySeconds = 120; // default value
+        }
+        
+        delete settings.immediatelyStartBreaks;
+      }
+      return settings;
+    },
+  },
 ];
 
 const store = new Store({
