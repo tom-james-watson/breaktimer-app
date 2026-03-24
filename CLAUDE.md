@@ -38,48 +38,48 @@ Cross-platform Electron desktop app for managing periodic breaks. Runs as system
 ### Development
 
 ```bash
-npm run dev                    # Start development server with hot reload
-START_MINIMIZED=true npm run dev  # Start development without auto-focus
+pnpm dev                    # Start development server with hot reload
+START_MINIMIZED=true pnpm dev  # Start development without auto-focus
 ```
 
 ### Building
 
 ```bash
-npm run build                  # Build both main and renderer processes
-npm run build-main             # Build main process only
-npm run build-renderer         # Build renderer process only
+pnpm build                  # Build both main and renderer processes
+pnpm build-main             # Build main process only
+pnpm build-renderer         # Build renderer process only
 ```
 
 ### Production
 
 ```bash
-npm run start                  # Start production build
-DEBUG_PROD=true npm run start  # Start production with debugging
+pnpm start                  # Start production build
+DEBUG_PROD=true pnpm start  # Start production with debugging
 ```
 
 ### Code Quality
 
 ```bash
-npm run lint                   # Run ESLint
-npm run typecheck              # Run TypeScript compiler check
-npm run format-check           # Check code formatting
-npm run format                 # Fix code formatting
+pnpm lint                   # Run ESLint
+pnpm typecheck              # Run TypeScript compiler check
+pnpm format-check           # Check code formatting
+pnpm format                 # Fix code formatting
 ```
 
 ### Testing
 
 ```bash
-npm test                       # Run tests
+pnpm test                   # Run tests
 ```
 
 ### Packaging
 
 ```bash
-npm run package               # Package for current platform
-npm run package-all          # Package for all platforms
-npm run package-mac          # Package for macOS
-npm run package-win          # Package for Windows
-npm run package-linux        # Package for Linux
+pnpm package               # Package for current platform
+pnpm package-all          # Package for all platforms
+pnpm package-mac          # Package for macOS
+pnpm package-win          # Package for Windows
+pnpm package-linux        # Package for Linux
 ```
 
 ## Key Technologies
@@ -163,5 +163,5 @@ electron-store with TypeScript interfaces in `app/types/settings.ts`:
 **IMPORTANT**: Always run after non-trivial changes:
 
 ```bash
-npm run format && npm run lint && npm run typecheck
+pnpm format && pnpm lint && pnpm typecheck
 ```
