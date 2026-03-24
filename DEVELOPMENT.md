@@ -5,32 +5,32 @@
 Install dependencies:
 
 ```bash
-npm i
+pnpm install
 ```
 
 ## Run
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 If you don't need autofocus when your files was changed, then run `dev` with env `START_MINIMIZED=true`:
 
 ```bash
-START_MINIMIZED=true npm run dev
+START_MINIMIZED=true pnpm run dev
 ```
 
 To start the app in `production` environment:
 
 ```bash
-npm run build
-npm run start
+pnpm run build
+pnpm run start
 ```
 
 To start the app in `production` environment with debugging enabled:
 
 ```bash
-DEBUG_PROD=true npm run start
+DEBUG_PROD=true pnpm run start
 ```
 
 ## Testing
@@ -38,7 +38,7 @@ DEBUG_PROD=true npm run start
 Run normal tests:
 
 ```bash
-npm test
+pnpm test
 ```
 
 ## Packaging
@@ -46,14 +46,14 @@ npm test
 To package apps for the local platform:
 
 ```bash
-npm run package
+pnpm run package
 ```
 
 :bulb: When packaging for MacOS make sure to set your signing/notirization env variables per [the electron-builder docs](https://www.electron.build/mac#notarize). You can obtain an API key from [App Store Connect](https://appstoreconnect.apple.com/access/integrations/api).
 Create a **Team Key** (not an _Individual Key_) with **App Manager** access.:
 
 ```bash
-APPLE_API_KEY='YOUR_APPLE_API_KEY' APPLE_API_KEY_ID='YOUR_APPLE_API_KEY_ID' APPLE_API_ISSUER='YOUR_APPLE_API_ISSUER' npm run package
+APPLE_API_KEY='YOUR_APPLE_API_KEY' APPLE_API_KEY_ID='YOUR_APPLE_API_KEY_ID' APPLE_API_ISSUER='YOUR_APPLE_API_ISSUER' pnpm run package
 ```
 
 To package apps for all platforms:
@@ -63,19 +63,19 @@ First, refer to the [Multi Platform Build docs](https://www.electron.build/multi
 Then,
 
 ```bash
-npm run package-all
+pnpm run package-all
 ```
 
 To package apps with options:
 
 ```bash
-npm run package --[option]
+pnpm run package --[option]
 ```
 
 :bulb: You can debug your production build with devtools by simply setting the `DEBUG_PROD` env variable:
 
 ```bash
-DEBUG_PROD=true npm run package
+DEBUG_PROD=true pnpm run package
 ```
 
 ## Publishing
@@ -87,7 +87,7 @@ First, create a [personal access GitHub Token](https://github.com/settings/token
 The macOS build must be published from a mac, with a valid code signing certificate available in your keychain. Then, simply:
 
 ```bash
-GH_TOKEN=<github token> npm run publish-mac
+GH_TOKEN=<github token> pnpm run publish-mac
 ```
 
 This will push all relevant assets to a draft release on GitHub.
@@ -99,7 +99,7 @@ The Windows build can be built from a linux box. There are a few dependencies re
 Then run:
 
 ```bash
-GH_TOKEN=<github token> npm run publish-win
+GH_TOKEN=<github token> pnpm run publish-win
 ```
 
 This will push all relevant assets to a draft release on GitHub.
@@ -135,7 +135,7 @@ sudo apt install rpm
 Then run:
 
 ```bash
-GH_TOKEN=<github token> npm run publish-linux
+GH_TOKEN=<github token> pnpm run publish-linux
 ```
 
 This will push all relevant assets to a draft release on GitHub and push the new build to the snap store.
