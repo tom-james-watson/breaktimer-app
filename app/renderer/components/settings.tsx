@@ -14,6 +14,7 @@ import BreaksCard from "./settings/breaks-card";
 import SettingsCard from "./settings/settings-card";
 import SettingsHeader from "./settings/settings-header";
 import SkipCard from "./settings/skip-card";
+import ScreenLockCard from "./settings/screen-lock-card";
 import SmartBreaksCard from "./settings/smart-breaks-card";
 import SnoozeCard from "./settings/snooze-card";
 import StartupCard from "./settings/startup-card";
@@ -166,6 +167,11 @@ export default function SettingsEl() {
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
               onDateChange={handleDateChange}
+            />
+
+            <ScreenLockCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
             />
 
             <SnoozeCard

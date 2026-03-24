@@ -48,6 +48,7 @@ export interface Settings {
   idleResetEnabled: boolean;
   idleResetLengthSeconds: number;
   idleResetNotification: boolean;
+  resetOnScreenLock: boolean;
   soundType: SoundType;
   breakSoundVolume: number;
   breakTitle: string;
@@ -109,6 +110,7 @@ export const defaultSettings: Settings = {
   idleResetEnabled: true,
   idleResetLengthSeconds: 5 * 60,
   idleResetNotification: false,
+  resetOnScreenLock: true,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
   breakTitle: "Time for a break.",

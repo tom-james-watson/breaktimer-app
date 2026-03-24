@@ -247,7 +247,10 @@ function doBreak(): void {
   buildTray();
 }
 
-function checkInWorkingHoursAt(now: moment.Moment, settings: Settings): boolean {
+function checkInWorkingHoursAt(
+  now: moment.Moment,
+  settings: Settings,
+): boolean {
   if (!settings.workingHoursEnabled) {
     return true;
   }
@@ -307,7 +310,21 @@ export function checkIdle(): boolean {
     }
   }
 
+  // Screen just unlocked (transitioned from locked to active/idle)
+  const wasLocked = lockStart !== null;
   lockStart = null;
+
+  if (
+    wasLocked &&
+    settings.resetOnScreenLock &&
+    settings.breaksEnabled &&
+    !havingBreak
+  ) {
+    postponedCount = 0;
+    breakTime = null;
+    log.info("Break timer reset [screen-unlock]");
+    scheduleNextBreak();
+  }
 
   if (!settings.idleResetEnabled) {
     return false;
