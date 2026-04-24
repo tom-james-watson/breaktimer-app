@@ -27,9 +27,17 @@ export enum TrayTextMode {
   TimeSinceLastBreak = "TIME_SINCE_LAST_BREAK",
 }
 
+export enum MonochromeIconVariant {
+  Auto = "AUTO",
+  Dark = "DARK",
+  Light = "LIGHT",
+}
+
 export interface Settings {
   autoLaunch: boolean;
   breaksEnabled: boolean;
+  monochromeIcon: boolean;
+  monochromeIconVariant: MonochromeIconVariant;
   trayTextEnabled: boolean;
   trayTextMode: TrayTextMode;
   notificationType: NotificationType;
@@ -70,6 +78,8 @@ export const defaultWorkingRange: WorkingHoursRange = {
 export const defaultSettings: Settings = {
   autoLaunch: true,
   breaksEnabled: true,
+  monochromeIcon: false,
+  monochromeIconVariant: MonochromeIconVariant.Auto,
   trayTextEnabled: true,
   trayTextMode: TrayTextMode.TimeToNextBreak,
   notificationType: NotificationType.Popup,

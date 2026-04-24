@@ -1,9 +1,9 @@
-import { app, dialog, Menu, Tray } from "electron";
+import { app, dialog, Menu, nativeTheme, Tray } from "electron";
 import log from "electron-log";
 import moment from "moment";
 import path from "path";
 import packageJson from "../../../package.json";
-import { TrayTextMode } from "../../types/settings";
+import { MonochromeIconVariant, TrayTextMode } from "../../types/settings";
 import {
   checkIdle,
   checkInWorkingHours,
@@ -103,7 +103,32 @@ function getTrayTitle(): string | null {
   }
 }
 
+function getLinuxIconPath(
+  monochromeIcon: boolean,
+  monochromeIconVariant: MonochromeIconVariant,
+): string {
+  if (monochromeIcon) {
+    let useDark: boolean;
+    if (monochromeIconVariant === MonochromeIconVariant.Dark) {
+      useDark = true;
+    } else if (monochromeIconVariant === MonochromeIconVariant.Light) {
+      useDark = false;
+    } else {
+      useDark = nativeTheme.shouldUseDarkColors;
+    }
+    const file = useDark ? "icon-dark.png" : "icon-light.png";
+    return process.env.NODE_ENV === "development"
+      ? `resources/tray/${file}`
+      : path.join(app.getAppPath(), "..", "tray", file);
+  }
+  return process.env.NODE_ENV === "development"
+    ? "resources/tray/icon.png"
+    : path.join(app.getAppPath(), "..", "tray", "icon.png");
+}
+
 export function buildTray(): void {
+  let settings = getSettings();
+
   if (!tray) {
     let imgPath;
 
@@ -112,6 +137,11 @@ export function buildTray(): void {
         process.env.NODE_ENV === "development"
           ? "resources/tray/tray-IconTemplate.png"
           : path.join(resourcesPath, "tray", "tray-IconTemplate.png");
+    } else if (process.platform === "linux") {
+      imgPath = getLinuxIconPath(
+        settings.monochromeIcon,
+        settings.monochromeIconVariant,
+      );
     } else {
       imgPath =
         process.env.NODE_ENV === "development"
@@ -127,9 +157,11 @@ export function buildTray(): void {
         tray.popUpContextMenu();
       });
     }
+  } else if (process.platform === "linux") {
+    tray.setImage(
+      getLinuxIconPath(settings.monochromeIcon, settings.monochromeIconVariant),
+    );
   }
-
-  let settings = getSettings();
   const breaksEnabled = settings.breaksEnabled;
 
   if (process.platform === "darwin") {
@@ -284,6 +316,11 @@ export function buildTray(): void {
 
 export function initTray(): void {
   buildTray();
+
+  if (process.platform === "linux") {
+    nativeTheme.on("updated", () => buildTray());
+  }
+
   let lastDisableText = getDisableTimeRemaining();
   let lastTrayTitle = getTrayTitle();
 
