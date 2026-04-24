@@ -1,6 +1,7 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
 import {
+  MonochromeIconVariant,
   NotificationType,
   Settings,
   SoundType,
@@ -123,6 +124,13 @@ export default function SettingsEl() {
     });
   };
 
+  const handleMonochromeIconVariantChange = (value: string): void => {
+    setSettingsDraft({
+      ...settingsDraft,
+      monochromeIconVariant: value as MonochromeIconVariant,
+    });
+  };
+
   const handleTrayTextModeChange = (value: string): void => {
     if (value === "hidden") {
       setSettingsDraft({
@@ -224,21 +232,20 @@ export default function SettingsEl() {
             />
           </TabsContent>
 
-          {processEnv.SNAP === undefined && (
-            <TabsContent value="system" className="m-0 space-y-6">
+          <TabsContent value="system" className="m-0 space-y-6">
+            {processEnv.SNAP === undefined && (
               <StartupCard
                 settingsDraft={settingsDraft}
                 onSwitchChange={handleSwitchChange}
               />
-              {processPlatform === "darwin" && (
-                <TrayCard
-                  settingsDraft={settingsDraft}
-                  onSwitchChange={handleSwitchChange}
-                  onTrayTextModeChange={handleTrayTextModeChange}
-                />
-              )}
-            </TabsContent>
-          )}
+            )}
+            <TrayCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+              onTrayTextModeChange={handleTrayTextModeChange}
+              onMonochromeIconVariantChange={handleMonochromeIconVariantChange}
+            />
+          </TabsContent>
         </div>
       </Tabs>
       <WelcomeModal

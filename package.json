@@ -39,6 +39,8 @@
       "app/renderer/preload.js",
       "resources/icon.png",
       "resources/tray/icon.png",
+      "resources/tray/icon-dark.png",
+      "resources/tray/icon-light.png",
       "resources/tray/tray-iconTemplate.png",
       "resources/tray/tray-iconTemplate@2x.png",
       "resources/tray/tray-iconTemplate@3x.png",
