@@ -35,6 +35,16 @@ export default function AdvancedCard({
           />
           <Label>Allow ending break early</Label>
         </div>
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            checked={settingsDraft.returnFromBreakEnabled}
+            onCheckedChange={(checked) =>
+              onSwitchChange("returnFromBreakEnabled", checked)
+            }
+          />
+          <Label>Wait for return from break</Label>
+        </div>
       </div>
     </SettingsCard>
   );

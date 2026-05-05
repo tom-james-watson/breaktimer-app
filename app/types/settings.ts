@@ -57,6 +57,7 @@ export interface Settings {
   showBackdrop: boolean;
   backdropOpacity: number;
   endBreakEnabled: boolean;
+  returnFromBreakEnabled: boolean;
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
   immediatelyStartBreaks: boolean;
@@ -118,6 +119,7 @@ export const defaultSettings: Settings = {
   showBackdrop: true,
   backdropOpacity: 0.7,
   endBreakEnabled: true,
+  returnFromBreakEnabled: false,
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
   immediatelyStartBreaks: false,
