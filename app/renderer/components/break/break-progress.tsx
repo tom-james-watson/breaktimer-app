@@ -9,6 +9,7 @@ interface BreakProgressProps {
   breakMessage: string;
   breakTitle: string;
   endBreakEnabled: boolean;
+  returnFromBreakEnabled: boolean;
   onEndBreak: () => void;
   settings: Settings;
   textColor: string;
@@ -20,6 +21,7 @@ export function BreakProgress({
   breakMessage,
   breakTitle,
   endBreakEnabled,
+  returnFromBreakEnabled,
   onEndBreak,
   settings,
   textColor,
@@ -76,25 +78,30 @@ export function BreakProgress({
         const now = moment();
 
         if (now > moment(breakEndTime)) {
-          // Always track break completion, regardless of which window triggers it
-          const breakDurationMs =
-            new Date().getTime() - breakStartTime.getTime();
-          ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
+          if(!returnFromBreakEnabled) {
+            // Always track break completion, regardless of which window triggers it
+            const breakDurationMs =
+              new Date().getTime() - breakStartTime.getTime();
+            ipcRenderer.invokeCompleteBreakTracking(breakDurationMs);
 
-          onEndBreak();
-          return;
+            onEndBreak();
+            return;
+          } else {
+            setProgress(1);
+          }
         }
-
-        const msRemaining = moment(breakEndTime).diff(now, "milliseconds");
-        setProgress(1 - msRemaining / startMsRemaining);
-        setTimeRemaining({
-          hours: Math.floor(msRemaining / 1000 / 3600),
-          minutes: Math.floor(msRemaining / 1000 / 60),
-          seconds: (msRemaining / 1000) % 60,
-        });
-
-        if (!isClosingRef.current) {
-          timeoutId = setTimeout(tick, 50);
+        else {
+          const msRemaining = moment(breakEndTime).diff(now, "milliseconds");
+          setProgress(1 - msRemaining / startMsRemaining);
+          setTimeRemaining({
+            hours: Math.floor(msRemaining / 1000 / 3600),
+            minutes: Math.floor(msRemaining / 1000 / 60),
+            seconds: (msRemaining / 1000) % 60,
+          });
+  
+          if (!isClosingRef.current) {
+            timeoutId = setTimeout(tick, 50);
+          }
         }
       };
 
@@ -107,6 +114,7 @@ export function BreakProgress({
       }
     };
   }, [
+    returnFromBreakEnabled,
     onEndBreak,
     settings,
     breakStartTime,
@@ -149,8 +157,25 @@ export function BreakProgress({
               borderColor: "rgba(255, 255, 255, 0.2)",
             }}
           >
-            {progress < 0.5 ? "Cancel Break" : "End Break"}
+            {returnFromBreakEnabled && progress == 1 ? "I'm back" : (progress < 0.5 ? "Cancel Break" : "End Break")}
           </Button>
+        )}
+        {!endBreakEnabled && returnFromBreakEnabled && progress == 1 && (
+          <motion.div
+            {...fadeIn}
+          >
+              <Button
+                className="!bg-transparent hover:!bg-black/10 active:!bg-black/20 border-white/20"
+                onClick={onEndBreak}
+                variant="outline"
+                style={{
+                  color: textColor,
+                  borderColor: "rgba(255, 255, 255, 0.2)",
+                }}
+              >
+                I'm back
+              </Button>
+          </motion.div>
         )}
       </div>
 
