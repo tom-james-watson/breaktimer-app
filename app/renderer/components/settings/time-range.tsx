@@ -5,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTranslation } from "react-i18next";
 import { Copy, Plus, X } from "lucide-react";
 import { useState } from "react";
 import {
@@ -41,6 +42,7 @@ export default function TimeRange({
   isFirstRange,
   day,
 }: TimeRangeProps) {
+  const { t } = useTranslation();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [selectedDays, setSelectedDays] = useState<DayConfig[]>([]);
 
@@ -81,7 +83,7 @@ export default function TimeRange({
         }}
         disabled={disabled}
       />
-      <span className="text-muted-foreground">to</span>
+      <span className="text-muted-foreground">{t('to')}</span>
       <TimeInput
         precision="minutes"
         value={minutesToSeconds(range.toMinutes)}
@@ -109,7 +111,7 @@ export default function TimeRange({
                   size="sm"
                   variant="ghost"
                   disabled={disabled}
-                  title="Copy to other days"
+                  title={t('copyRangesTo')}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -122,7 +124,7 @@ export default function TimeRange({
                 avoidCollisions={true}
                 collisionPadding={32}
               >
-                <h4 className="font-semibold mb-3 text-sm">Copy ranges to:</h4>
+                <h4 className="font-semibold mb-3 text-sm">{t('copyRangesTo')}</h4>
                 <div className="flex flex-col gap-2 mb-4">
                   {daysConfig.map((otherDay) => (
                     <div
@@ -164,7 +166,7 @@ export default function TimeRange({
                   disabled={selectedDays.length === 0}
                   variant="outline"
                 >
-                  Apply
+                  {t('apply')}
                 </Button>
               </PopoverContent>
             </Popover>

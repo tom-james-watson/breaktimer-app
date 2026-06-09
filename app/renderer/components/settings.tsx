@@ -1,5 +1,6 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   NotificationType,
   Settings,
@@ -7,7 +8,9 @@ import {
   TrayTextMode,
 } from "../../types/settings";
 import { toast } from "../toaster";
+import { setLanguage } from "../i18n/config";
 import AdvancedCard from "./settings/advanced-card";
+import LanguageCard from "./settings/language-card";
 import AudioCard from "./settings/audio-card";
 import BackdropCard from "./settings/backdrop-card";
 import BreaksCard from "./settings/breaks-card";
@@ -23,6 +26,7 @@ import WorkingHoursSettings from "./settings/working-hours";
 import WelcomeModal from "./welcome-modal";
 
 export default function SettingsEl() {
+  const { t } = useTranslation();
   const [settingsDraft, setSettingsDraft] = useState<Settings | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -139,9 +143,16 @@ export default function SettingsEl() {
     });
   };
 
+  const handleLanguageChange = (language: string): void => {
+    setLanguage(language);
+    setSettingsDraft({ ...settingsDraft, language });
+  };
+
   const handleSave = async () => {
     await ipcRenderer.invokeSetSettings(settingsDraft);
-    toast("Settings saved");
+    // Sync language to main process
+    await ipcRenderer.invokeSetLanguage(settingsDraft.language);
+    toast(t('settingsSaved'));
     setSettings(settingsDraft);
   };
 
@@ -188,8 +199,8 @@ export default function SettingsEl() {
 
           <TabsContent value="working-hours" className="m-0 space-y-6">
             <SettingsCard
-              title="Working Hours"
-              helperText="Only show breaks during your configured work schedule."
+              title={t('workingHoursTitle')}
+              helperText={t('workingHoursHelper')}
               toggle={{
                 checked: settingsDraft.workingHoursEnabled,
                 onCheckedChange: (checked) =>
@@ -205,6 +216,11 @@ export default function SettingsEl() {
           </TabsContent>
 
           <TabsContent value="customization" className="m-0 space-y-8">
+            <LanguageCard
+              settingsDraft={settingsDraft}
+              onLanguageChange={handleLanguageChange}
+            />
+
             <ThemeCard
               settingsDraft={settingsDraft}
               onTextChange={handleTextChange}

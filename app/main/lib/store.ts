@@ -1,6 +1,7 @@
 import Store from "electron-store";
 import { defaultSettings, Settings } from "../../types/settings";
 import { setAutoLauch } from "./auto-launch";
+import { setMainLanguage } from "./i18n";
 import { initBreaks, resetTimeSinceLastBreak } from "./breaks";
 
 interface Migration {
@@ -165,6 +166,10 @@ export function setSettings(settings: Settings, resetBreaks = true): void {
   }
 
   store.set({ settings });
+
+  if (settings.language) {
+    setMainLanguage(settings.language);
+  }
 
   if (!currentSettings.breaksEnabled && settings.breaksEnabled) {
     resetTimeSinceLastBreak("Reset time since last break [enable]");

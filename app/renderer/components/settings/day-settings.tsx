@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { FormGroup } from "@/components/ui/form-group";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -24,6 +25,18 @@ export default function DaySettings({
   disabled,
   onApplyToAll,
 }: DaySettingsProps) {
+  const { t } = useTranslation();
+
+  const dayLabelKeys: Record<string, string> = {
+    workingHoursMonday: 'monday',
+    workingHoursTuesday: 'tuesday',
+    workingHoursWednesday: 'wednesday',
+    workingHoursThursday: 'thursday',
+    workingHoursFriday: 'friday',
+    workingHoursSaturday: 'saturday',
+    workingHoursSunday: 'sunday',
+  };
+
   const handleAddRange = () => {
     onChange({
       ...workingHours,
@@ -57,7 +70,7 @@ export default function DaySettings({
             }
             disabled={disabled}
           />
-          <Label>{day.label}</Label>
+          <Label>{t(dayLabelKeys[day.key])}</Label>
         </div>
         {workingHours.enabled && (
           <>

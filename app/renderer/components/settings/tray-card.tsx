@@ -1,4 +1,5 @@
 import { FormGroup } from "@/components/ui/form-group";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -20,17 +21,18 @@ export default function TrayCard({
   onSwitchChange,
   onTrayTextModeChange,
 }: TrayCardProps) {
+  const { t } = useTranslation();
   return (
     <SettingsCard
-      title="Menu Bar Text"
-      helperText="Show timing information next to the menu bar icon."
+      title={t('menuBarText')}
+      helperText={t('menuBarTextHelper')}
       toggle={{
         checked: settingsDraft.trayTextEnabled,
         onCheckedChange: (checked) =>
           onSwitchChange("trayTextEnabled", checked),
       }}
     >
-      <FormGroup label="Text">
+      <FormGroup label={t('text')}>
         <Select
           value={settingsDraft.trayTextMode}
           disabled={!settingsDraft.trayTextEnabled}
@@ -41,10 +43,10 @@ export default function TrayCard({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={TrayTextMode.TimeToNextBreak}>
-              Time to next break
+              {t('timeToNextBreak')}
             </SelectItem>
             <SelectItem value={TrayTextMode.TimeSinceLastBreak}>
-              Time since last break
+              {t('timeSinceLastBreak')}
             </SelectItem>
           </SelectContent>
         </Select>

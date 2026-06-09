@@ -6,6 +6,7 @@ declare const ipcRenderer: {
   invokeEndSound: (type: string, volume?: number) => Promise<unknown>;
   invokeStartSound: (type: string, volume?: number) => Promise<unknown>;
   invokeSetSettings: (settings: unknown) => Promise<void>;
+  invokeSetLanguage: (language: string) => Promise<void>;
   invokeGetTimeSinceLastBreak: () => Promise<number | null>;
   invokeCompleteBreakTracking: (breakDurationMs: number) => Promise<void>;
   invokeWasStartedFromTray: () => Promise<boolean>;

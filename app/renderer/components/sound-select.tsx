@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -22,6 +23,7 @@ export function SoundSelect({
   disabled,
   volume = 1,
 }: SoundSelectProps) {
+  const { t } = useTranslation();
   const playSound = (soundType: SoundType) => {
     if (soundType === SoundType.None) return;
     ipcRenderer.invokeStartSound(soundType, volume);
@@ -34,12 +36,12 @@ export function SoundSelect({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={SoundType.None}>None</SelectItem>
-          <SelectItem value={SoundType.Gong}>Gong</SelectItem>
-          <SelectItem value={SoundType.Blip}>Blip</SelectItem>
-          <SelectItem value={SoundType.Bloop}>Bloop</SelectItem>
-          <SelectItem value={SoundType.Ping}>Ping</SelectItem>
-          <SelectItem value={SoundType.Scifi}>Sci-fi</SelectItem>
+          <SelectItem value={SoundType.None}>{t("none")}</SelectItem>
+          <SelectItem value={SoundType.Gong}>{t("gong")}</SelectItem>
+          <SelectItem value={SoundType.Blip}>{t("blip")}</SelectItem>
+          <SelectItem value={SoundType.Bloop}>{t("bloop")}</SelectItem>
+          <SelectItem value={SoundType.Ping}>{t("ping")}</SelectItem>
+          <SelectItem value={SoundType.Scifi}>{t("scifi")}</SelectItem>
         </SelectContent>
       </Select>
       {value !== SoundType.None && (

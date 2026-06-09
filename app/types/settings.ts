@@ -60,6 +60,7 @@ export interface Settings {
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
   immediatelyStartBreaks: boolean;
+  language: string;
 }
 
 export const defaultWorkingRange: WorkingHoursRange = {
@@ -111,8 +112,8 @@ export const defaultSettings: Settings = {
   idleResetNotification: false,
   soundType: SoundType.Gong,
   breakSoundVolume: 1,
-  breakTitle: "Time for a break.",
-  breakMessage: "Rest your eyes.\nStretch your legs.\nBreathe. Relax.",
+  breakTitle: "该休息一下了。",
+  breakMessage: "让眼睛休息一下。\n伸展双腿。\n深呼吸，放松。",
   backgroundColor: "#16a085",
   textColor: "#ffffff",
   showBackdrop: true,
@@ -121,6 +122,7 @@ export const defaultSettings: Settings = {
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
   immediatelyStartBreaks: false,
+  language: "zh-CN",
 };
 
 export interface DayConfig {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +15,7 @@ interface WelcomeModalProps {
 }
 
 export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
+  const { t } = useTranslation();
   const handleUnderstood = () => {
     // Mark app as initialized when user dismisses the modal
     ipcRenderer.invokeSetAppInitialized();
@@ -27,14 +29,14 @@ export default function WelcomeModal({ open, onClose }: WelcomeModalProps) {
         showCloseButton={false}
       >
         <DialogHeader className="text-left">
-          <DialogTitle>BreakTimer runs in the background</DialogTitle>
+          <DialogTitle>{t("welcomeTitle")}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-balance pt-2">
-            The app can be accessed via your system tray.
+            {t("welcomeDescription")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button onClick={handleUnderstood} className="w-full">
-            Understood, let&apos;s go!
+            {t("understood")}
           </Button>
         </DialogFooter>
       </DialogContent>

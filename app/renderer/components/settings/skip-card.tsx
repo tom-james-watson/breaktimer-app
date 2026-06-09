@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import SettingsCard from "./settings-card";
 import { Settings } from "../../../types/settings";
 
@@ -10,10 +11,11 @@ export default function SkipCard({
   settingsDraft,
   onSwitchChange,
 }: SkipCardProps) {
+  const { t } = useTranslation();
   return (
     <SettingsCard
-      title="Skip"
-      helperText="Allow skipping breaks entirely without rescheduling them."
+      title={t('skip')}
+      helperText={t('skipHelper')}
       toggle={{
         checked:
           settingsDraft.skipBreakEnabled &&

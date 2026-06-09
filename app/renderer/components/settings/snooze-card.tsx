@@ -1,4 +1,5 @@
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -23,10 +24,11 @@ export default function SnoozeCard({
   onDateChange,
   onPostponeLimitChange,
 }: SnoozeCardProps) {
+  const { t } = useTranslation();
   return (
     <SettingsCard
-      title="Snooze"
-      helperText="Snoozing allows you to postpone breaks when busy."
+      title={t('snooze')}
+      helperText={t('snoozeHelper')}
       toggle={{
         checked:
           settingsDraft.postponeBreakEnabled &&
@@ -38,7 +40,7 @@ export default function SnoozeCard({
     >
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Length</Label>
+          <Label className="text-sm font-medium">{t('length')}</Label>
           <TimeInput
             precision="seconds"
             value={settingsDraft.postponeLengthSeconds}
@@ -56,7 +58,7 @@ export default function SnoozeCard({
           />
         </div>
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Limit</Label>
+          <Label className="text-sm font-medium">{t('limit')}</Label>
           <Select
             value={settingsDraft.postponeLimit.toString()}
             onValueChange={onPostponeLimitChange}
@@ -74,7 +76,7 @@ export default function SnoozeCard({
               <SelectItem value="3">3</SelectItem>
               <SelectItem value="4">4</SelectItem>
               <SelectItem value="5">5</SelectItem>
-              <SelectItem value="0">No limit</SelectItem>
+              <SelectItem value="0">{t('noLimit')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

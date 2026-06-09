@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import Main from "./components/main";
+import "./i18n/config";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Root container not found");

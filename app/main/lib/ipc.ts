@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain, IpcMainInvokeEvent, screen } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
+import { setMainLanguage } from "./i18n";
 import {
   completeBreakTracking,
   getAllowPostpone,
@@ -149,4 +150,9 @@ ipcMain.handle(IpcChannel.AppInitializedGet, (): boolean => {
 ipcMain.handle(IpcChannel.AppInitializedSet, (): void => {
   log.info(IpcChannel.AppInitializedSet);
   setAppInitialized();
+});
+
+ipcMain.handle(IpcChannel.SetLanguage, (_event, language: string): void => {
+  log.info(IpcChannel.SetLanguage, language);
+  setMainLanguage(language);
 });

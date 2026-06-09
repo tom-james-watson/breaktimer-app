@@ -20,6 +20,8 @@ import {
 } from "./store";
 import { closeBreakWindows, createSettingsWindow } from "./windows";
 
+import i18n from "./i18n";
+
 let tray: Tray;
 let lastMinsLeft = 0;
 
@@ -174,7 +176,7 @@ export function buildTray(): void {
 
   const createAboutWindow = (): void => {
     dialog.showMessageBox({
-      title: "About",
+      title: i18n.t('about'),
       type: "info",
       message: `BreakTimer`,
       detail: `Build: ${packageJson.version}\n\nWebsite:\nhttps://breaktimer.app\n\nSource Code:\nhttps://github.com/tom-james-watson/breaktimer-app\n\nDistributed under GPL-3.0-or-later license.`,
@@ -197,11 +199,11 @@ export function buildTray(): void {
 
   if (minsLeft !== undefined) {
     if (minsLeft > 1) {
-      nextBreak = `Next break in ${minsLeft} minutes`;
+      nextBreak = i18n.t('nextBreakInMinutes', { minutes: minsLeft });
     } else if (minsLeft === 1) {
-      nextBreak = `Next break in 1 minute`;
+      nextBreak = i18n.t('nextBreakIn1Minute');
     } else {
-      nextBreak = `Next break in less than a minute`;
+      nextBreak = i18n.t('nextBreakInLessThanMinute');
     }
   }
 
@@ -218,36 +220,36 @@ export function buildTray(): void {
       enabled: false,
     },
     {
-      label: `Disabled for ${getDisableTimeRemaining()}`,
+      label: i18n.t('disabledFor', { time: getDisableTimeRemaining() }),
       visible: disableEndTime !== null && !breaksEnabled,
       enabled: false,
     },
     {
-      label: `Outside of working hours`,
+      label: i18n.t('outsideWorkingHours'),
       visible: !inWorkingHours,
       enabled: false,
     },
     {
-      label: `Idle`,
+      label: i18n.t('idle'),
       visible: idle,
       enabled: false,
     },
     { type: "separator" },
     {
-      label: "Enable",
+      label: i18n.t('enable'),
       click: setBreaksEnabled.bind(null, true),
       visible: !breaksEnabled,
     },
     {
-      label: "Disable...",
+      label: i18n.t('disable'),
       submenu: [
-        { label: "Indefinitely", click: disableIndefinitely },
-        { label: "30 minutes", click: () => disableBreaksFor(30 * 60 * 1000) },
-        { label: "1 hour", click: () => disableBreaksFor(60 * 60 * 1000) },
-        { label: "2 hours", click: () => disableBreaksFor(2 * 60 * 60 * 1000) },
-        { label: "4 hours", click: () => disableBreaksFor(4 * 60 * 60 * 1000) },
+        { label: i18n.t('indefinitely'), click: disableIndefinitely },
+        { label: i18n.t('minutes30'), click: () => disableBreaksFor(30 * 60 * 1000) },
+        { label: i18n.t('hour1'), click: () => disableBreaksFor(60 * 60 * 1000) },
+        { label: i18n.t('hours2'), click: () => disableBreaksFor(2 * 60 * 60 * 1000) },
+        { label: i18n.t('hours4'), click: () => disableBreaksFor(4 * 60 * 60 * 1000) },
         {
-          label: "Rest of day",
+          label: i18n.t('restOfDay'),
           click: () => {
             const now = new Date();
             const endOfDay = new Date(
@@ -265,7 +267,7 @@ export function buildTray(): void {
       visible: breaksEnabled,
     },
     {
-      label: "Start break now",
+      label: i18n.t('startBreakNow'),
       visible: breakTime !== null && inWorkingHours && !havingBreak,
       click: () => {
         log.info("Start break now selected");
@@ -273,9 +275,9 @@ export function buildTray(): void {
       },
     },
     { type: "separator" },
-    { label: "Settings...", click: createSettingsWindow },
-    { label: "About...", click: createAboutWindow },
-    { label: "Quit", click: quit },
+    { label: i18n.t('settingsEllipsis'), click: createSettingsWindow },
+    { label: i18n.t('aboutEllipsis'), click: createAboutWindow },
+    { label: i18n.t('quit'), click: quit },
   ]);
 
   // Call this again for Linux because we modified the context menu

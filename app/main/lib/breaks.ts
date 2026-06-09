@@ -13,6 +13,7 @@ import { sendIpc } from "./ipc";
 import { showNotification } from "./notifications";
 import { getSettings } from "./store";
 import { buildTray } from "./tray";
+import i18n from "./i18n";
 import { createBreakWindows } from "./windows";
 
 // Helper function to strip HTML tags from text
@@ -138,10 +139,10 @@ function createIdleNotification() {
 
   if (settings.idleResetNotification) {
     showNotification(
-      "Break automatically detected",
-      `Away for ${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
+      i18n.t('breakAutoDetected'),
+      i18n.t('awayFor', { time: `${zeroPad(idleHours)}:${zeroPad(idleMinutes)}:${zeroPad(
         idleSeconds,
-      )}`,
+      )}` }),
     );
   }
 }
@@ -227,7 +228,7 @@ function doBreak(): void {
   }
 
   if (settings.notificationType === NotificationType.Notification) {
-    showNotification("Time for a break!", stripHtml(settings.breakMessage));
+    showNotification(i18n.t('timeForBreak'), stripHtml(settings.breakMessage));
     if (settings.soundType !== SoundType.None) {
       sendIpc(
         IpcChannel.SoundStartPlay,

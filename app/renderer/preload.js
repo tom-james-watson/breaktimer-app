@@ -33,6 +33,9 @@ process.once("loaded", () => {
     invokeSetSettings: (settings) => {
       return ipcRenderer.invoke("SETTINGS_SET", settings);
     },
+    invokeSetLanguage: (language) => {
+      return ipcRenderer.invoke("SET_LANGUAGE", language);
+    },
     invokeBreakWindowResize: () => {
       return ipcRenderer.invoke("BREAK_WINDOW_RESIZE");
     },
