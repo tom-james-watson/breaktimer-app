@@ -247,7 +247,10 @@ function doBreak(): void {
   buildTray();
 }
 
-function checkInWorkingHoursAt(now: moment.Moment, settings: Settings): boolean {
+function checkInWorkingHoursAt(
+  now: moment.Moment,
+  settings: Settings,
+): boolean {
   if (!settings.workingHoursEnabled) {
     return true;
   }
