@@ -110,6 +110,19 @@ function getIdleResetSeconds(): number {
   return getSecondsFromSettings(settings.idleResetLengthSeconds);
 }
 
+// A screen lock counts as a completed break once it has lasted at least this
+// long. By default the threshold is two-thirds of a break's length, derived
+// from the configured break length. A custom threshold can be set instead.
+function getLockResetSeconds(): number {
+  const settings: Settings = getSettings();
+  if (settings.lockUseCustomTime) {
+    return getSecondsFromSettings(settings.lockCustomLengthSeconds);
+  }
+  return getSecondsFromSettings(
+    Math.round((settings.breakLengthSeconds * 2) / 3),
+  );
+}
+
 function getBreakSeconds(): number {
   const settings: Settings = getSettings();
   return getSecondsFromSettings(settings.breakFrequencySeconds);
@@ -118,7 +131,13 @@ function getBreakSeconds(): number {
 function createIdleNotification() {
   const settings: Settings = getSettings();
 
-  if (!settings.idleResetEnabled || idleStart === null) {
+  // Fire for a credit from either auto-detection method. The notification
+  // itself is still gated by idleResetNotification below.
+  if (idleStart === null) {
+    return;
+  }
+
+  if (!settings.idleResetEnabled && !settings.lockScreenAsBreakEnabled) {
     return;
   }
 
@@ -299,6 +318,13 @@ export function checkIdle(): boolean {
   ) as IdleState;
 
   if (state === IdleState.Locked) {
+    if (!settings.lockScreenAsBreakEnabled) {
+      // Locking is not treated as a break, so ignore the lock entirely and let
+      // breaks schedule as normal.
+      lockStart = null;
+      return false;
+    }
+
     if (!lockStart) {
       lockStart = new Date();
       return false;
@@ -306,7 +332,7 @@ export function checkIdle(): boolean {
       const lockSeconds = Number(
         ((+new Date() - +lockStart) / 1000).toFixed(0),
       );
-      return lockSeconds > getIdleResetSeconds();
+      return lockSeconds > getLockResetSeconds();
     }
   }
 
