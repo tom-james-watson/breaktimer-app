@@ -64,6 +64,9 @@
     "asar": true,
     "artifactName": "${productName}.${ext}",
     "afterPack": "./scripts/afterPack.js",
+    "toolsets": { 
+      "appimage": "1.0.3"
+    },
     "mac": {
       "icon": "resources/icon.icns",
       "entitlements": "./internals/build/entitlements.mac.plist",
