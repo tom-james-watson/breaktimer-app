@@ -9,6 +9,7 @@ import {
 import SettingsCard from "./settings-card";
 import TimeInput from "./time-input";
 import { Settings } from "../../../types/settings";
+import { shouldStartBreakImmediately } from "./settings-utils";
 
 interface SnoozeCardProps {
   settingsDraft: Settings;
@@ -23,6 +24,8 @@ export default function SnoozeCard({
   onDateChange,
   onPostponeLimitChange,
 }: SnoozeCardProps) {
+  const immediatelyStartBreaks = shouldStartBreakImmediately(settingsDraft);
+
   return (
     <SettingsCard
       title="Snooze"
@@ -30,10 +33,10 @@ export default function SnoozeCard({
       toggle={{
         checked:
           settingsDraft.postponeBreakEnabled &&
-          !settingsDraft.immediatelyStartBreaks,
+          !immediatelyStartBreaks,
         onCheckedChange: (checked) =>
           onSwitchChange("postponeBreakEnabled", checked),
-        disabled: settingsDraft.immediatelyStartBreaks,
+        disabled: immediatelyStartBreaks,
       }}
     >
       <div className="grid grid-cols-2 gap-4">
@@ -51,7 +54,7 @@ export default function SnoozeCard({
             }}
             disabled={
               !settingsDraft.postponeBreakEnabled ||
-              settingsDraft.immediatelyStartBreaks
+              immediatelyStartBreaks
             }
           />
         </div>
@@ -62,7 +65,7 @@ export default function SnoozeCard({
             onValueChange={onPostponeLimitChange}
             disabled={
               !settingsDraft.postponeBreakEnabled ||
-              settingsDraft.immediatelyStartBreaks
+              immediatelyStartBreaks
             }
           >
             <SelectTrigger>
