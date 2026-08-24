@@ -3,6 +3,7 @@ import electronDebug from "electron-debug";
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import { setAutoLauch } from "./lib/auto-launch";
+import { applyCliAction, getCliAction } from "./lib/cli";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
@@ -13,9 +14,18 @@ import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
 const gotTheLock = app.requestSingleInstanceLock();
 
 app.on("second-instance", (event, commandLine, workingDirectory) => {
-  log.info("Second instance detected, opening settings window");
+  log.info("Second instance detected");
   log.info(`Command line: ${commandLine}`);
   log.info(`Working directory: ${workingDirectory}`);
+
+  const cliAction = getCliAction(commandLine);
+
+  if (cliAction) {
+    applyCliAction(cliAction);
+    return;
+  }
+
+  log.info("Opening settings window");
   createSettingsWindow();
 });
 
@@ -124,6 +134,12 @@ app.on("ready", async () => {
   // Required for notifications to work on windows
   if (process.platform === "win32") {
     app.setAppUserModelId("com.tomjwatson.breaktimer");
+  }
+
+  const cliAction = getCliAction(process.argv);
+
+  if (cliAction) {
+    applyCliAction(cliAction);
   }
 
   if (process.platform === "darwin") {
