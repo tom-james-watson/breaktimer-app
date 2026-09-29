@@ -11,6 +11,7 @@ import AdvancedCard from "./settings/advanced-card";
 import AudioCard from "./settings/audio-card";
 import BackdropCard from "./settings/backdrop-card";
 import BreaksCard from "./settings/breaks-card";
+import LockBreaksCard from "./settings/lock-breaks-card";
 import SettingsCard from "./settings/settings-card";
 import SettingsHeader from "./settings/settings-header";
 import SkipCard from "./settings/skip-card";
@@ -65,6 +66,8 @@ export default function SettingsEl() {
       secondsField = "postponeLengthSeconds";
     } else if (fieldName === "idleResetLength") {
       secondsField = "idleResetLengthSeconds";
+    } else if (fieldName === "lockCustomLength") {
+      secondsField = "lockCustomLengthSeconds";
     } else {
       return;
     }
@@ -94,6 +97,26 @@ export default function SettingsEl() {
     setSettingsDraft({
       ...settingsDraft,
       [field]: checked,
+    });
+  };
+
+  const handleUseCustomLockTimeChange = (checked: boolean): void => {
+    setSettingsDraft((prev) => {
+      if (prev === null) {
+        return prev;
+      }
+
+      // Seed the custom value with the current derived threshold the first time
+      // custom mode is enabled, so the input does not jump.
+      const seedCustomValue = checked && !prev.lockUseCustomTime;
+
+      return {
+        ...prev,
+        lockUseCustomTime: checked,
+        lockCustomLengthSeconds: seedCustomValue
+          ? Math.round((prev.breakLengthSeconds * 2) / 3)
+          : prev.lockCustomLengthSeconds,
+      };
     });
   };
 
@@ -166,6 +189,26 @@ export default function SettingsEl() {
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
               onDateChange={handleDateChange}
+            />
+
+            <LockBreaksCard
+              settingsDraft={settingsDraft}
+              onSwitchChange={handleSwitchChange}
+              onDateChange={handleDateChange}
+              onUseCustomTimeChange={handleUseCustomLockTimeChange}
+            />
+
+            <SettingsCard
+              title="Smart Breaks: Notification"
+              helperText="Show a notification when a break is automatically detected."
+              toggle={{
+                checked: settingsDraft.idleResetNotification,
+                onCheckedChange: (checked) =>
+                  handleSwitchChange("idleResetNotification", checked),
+                disabled:
+                  !settingsDraft.idleResetEnabled &&
+                  !settingsDraft.lockScreenAsBreakEnabled,
+              }}
             />
 
             <SnoozeCard
