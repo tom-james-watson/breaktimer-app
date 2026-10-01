@@ -210,7 +210,7 @@
     "framer-motion": "^12.23.6",
     "howler": "^2.2.4",
     "lucide-react": "^0.525.0",
-    "moment": "^2.29.4",
+    "moment": "^2.31.0",
     "next-themes": "^0.4.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
