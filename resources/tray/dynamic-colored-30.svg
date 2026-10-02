@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="640" height="640">
+    <defs>
+        <mask id="gmask">
+            <rect x="0" y="0" width="640" height="445" fill="white" />
+        </mask>
+    </defs>
+    <g>
+        <defs>
+            <linearGradient id="a">
+                <stop offset="0" stop-color="#1abc9f" />
+                <stop offset=".64999998" stop-color="#1abc9f" />
+                <stop offset=".64999998" stop-color="#16a08f" />
+                <stop offset="1" stop-color="#16a08f" />
+            </linearGradient>
+            <linearGradient xlink:href="#a" id="b" x1="327.84525" y1="587.43945" x2="563.61432" y2="587.43945" gradientUnits="userSpaceOnUse" />
+            <linearGradient xlink:href="#a" id="d" x1="347.591" y1="510.93359" x2="563.57141" y2="510.93359" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.95961 0 0 2.34385 -620.55518 -467.2338)" />
+            <linearGradient xlink:href="#a" id="c" x1="331.42856" y1="415.84433" x2="563.57141" y2="415.84433" gradientUnits="userSpaceOnUse" />
+        </defs>
+        <path d="M363.25877953 367.05133552a125.69855976 187.63562079 0 1 1-251.39711952 0 125.69855976 187.63562079 0 1 1 251.39711952 0z" fill="none" />
+        <path d="M431.55173324 281.2242926a192.50685422 158.63201085 0 1 1-385.01370844 0 192.50685422 158.63201085 0 1 1 385.01370844 0z" fill="none" />
+        <path d="M454.31603154 194.80535828a119.26517221 117.1982765 0 1 1-238.5303405 0 119.26517221 117.1982765 0 1 1 238.5303405 0z" fill="none" />
+        <path d="M563.61433 587.43945a117.88454 36.533924 0 1 1-235.76907 0 117.88454 36.533924 0 1 1 235.76907 0z" transform="matrix(1.79506 0 0 1.75957 -527.87733 -492.020616)" fill="url(#b)" />
+        <path d="M357.85009944 486.20824216a55.2889922 4.18543914 0 1 1-110.57798442 0 55.2889922 4.18543914 0 1 1 110.57798442 0z" fill="#fff" />
+        <path d="M563.57143 415.84433a116.07143 6.3392859 0 1 1-232.14286 0 116.07143 6.3392859 0 1 1 232.14286 0z" transform="matrix(1.82318 0 0 5.344 -543.66508 -2126.72078)" fill="url(#c)" />
+        <path d="M483.01879 190.07003c83.13921 133.77176 0 272.27882 0 272.27882" fill="none" />
+        <path d="M319.92681 213.37472c-.41702-1.10457 293.88354-152.72892 271.16117 75.30959-21.55652 216.33789-315.02703 168.48168-315.02703 168.48168" fill="none" stroke="#16a08f" stroke-width="53.61833954" />
+        <path fill="url(#d)" d="M60.587578 507.65036h423.23734v445.33075H60.587578z" transform="translate(0 -412.36218)" />
+        <path fill="#ece9b7" stroke="#fff" stroke-width="16.25512314" stroke-linecap="round" stroke-linejoin="round" d="M163.28412 223.05097h87.513329v144.81245H163.28412z" />
+        <path d="m209.84157 62.87404.87859 152.13545" fill="none" stroke="#fff" stroke-width="10.82436275" />
+    </g>
+    <g id="gmaster" mask="url(#gmask)">
+        <defs>
+            <linearGradient id="ga">
+                <stop offset="0" stop-color="#647270" />
+                <stop offset=".64999998" stop-color="#647270" />
+                <stop offset=".64999998" stop-color="#556160" />
+                <stop offset="1" stop-color="#556160" />
+            </linearGradient>
+            <linearGradient xlink:href="#ga" id="gb" x1="327.84525" y1="587.43945" x2="563.61432" y2="587.43945" gradientUnits="userSpaceOnUse" />
+            <linearGradient xlink:href="#ga" id="gd" x1="347.591" y1="510.93359" x2="563.57141" y2="510.93359" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.95961 0 0 2.34385 -620.55518 -467.2338)" />
+            <linearGradient xlink:href="#ga" id="gc" x1="331.42856" y1="415.84433" x2="563.57141" y2="415.84433" gradientUnits="userSpaceOnUse" />
+        </defs>
+        <path d="M363.25877953 367.05133552a125.69855976 187.63562079 0 1 1-251.39711952 0 125.69855976 187.63562079 0 1 1 251.39711952 0z" fill="none" />
+        <path d="M431.55173324 281.2242926a192.50685422 158.63201085 0 1 1-385.01370844 0 192.50685422 158.63201085 0 1 1 385.01370844 0z" fill="none" />
+        <path d="M454.31603154 194.80535828a119.26517221 117.1982765 0 1 1-238.5303405 0 119.26517221 117.1982765 0 1 1 238.5303405 0z" fill="none" />
+        <path d="M563.61433 587.43945a117.88454 36.533924 0 1 1-235.76907 0 117.88454 36.533924 0 1 1 235.76907 0z" transform="matrix(1.79506 0 0 1.75957 -527.87733 -492.020616)" fill="url(#gb)" />
+        <path d="M357.85009944 486.20824216a55.2889922 4.18543914 0 1 1-110.57798442 0 55.2889922 4.18543914 0 1 1 110.57798442 0z" fill="#fff" />
+        <path d="M563.57143 415.84433a116.07143 6.3392859 0 1 1-232.14286 0 116.07143 6.3392859 0 1 1 232.14286 0z" transform="matrix(1.82318 0 0 5.344 -543.66508 -2126.72078)" fill="url(#gc)" />
+        <path d="M483.01879 190.07003c83.13921 133.77176 0 272.27882 0 272.27882" fill="none" />
+        <path d="M319.92681 213.37472c-.41702-1.10457 293.88354-152.72892 271.16117 75.30959-21.55652 216.33789-315.02703 168.48168-315.02703 168.48168" fill="none" stroke="#556160" stroke-width="53.61833954" />
+        <path fill="url(#gd)" d="M60.587578 507.65036h423.23734v445.33075H60.587578z" transform="translate(0 -412.36218)" />
+        <path fill="#dad9cd" stroke="#fff" stroke-width="16.25512314" stroke-linecap="round" stroke-linejoin="round" d="M163.28412 223.05097h87.513329v144.81245H163.28412z" />
+        <path d="m209.84157 62.87404.87859 152.13545" fill="none" stroke="#fff" stroke-width="10.82436275" />
+    </g>
+</svg>
