@@ -188,6 +188,7 @@ export default function Break() {
             breakMessage={settings.breakMessage}
             breakTitle={settings.breakTitle}
             endBreakEnabled={settings.endBreakEnabled}
+            returnFromBreakEnabled={settings.returnFromBreakEnabled}
             onEndBreak={handleEndBreak}
             settings={settings}
             textColor={settings.textColor}
