@@ -6,20 +6,72 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings, TrayTextMode } from "../../../types/settings";
+import {
+  MonochromeIconVariant,
+  Settings,
+  TrayTextMode,
+} from "../../../types/settings";
 import SettingsCard from "./settings-card";
 
 interface TrayCardProps {
   settingsDraft: Settings;
+  onMonochromeIconVariantChange: (value: string) => void;
   onSwitchChange: (field: string, checked: boolean) => void;
   onTrayTextModeChange: (value: string) => void;
 }
 
-export default function TrayCard({
+function MonochromeIconCard({
+  settingsDraft,
+  onSwitchChange,
+  onMonochromeIconVariantChange,
+}: Pick<
+  TrayCardProps,
+  "settingsDraft" | "onSwitchChange" | "onMonochromeIconVariantChange"
+>) {
+  return (
+    <SettingsCard
+      title="Monochrome Tray Icon"
+      helperText="Use a monochrome icon in the system tray. Recommended for light or dark panels."
+      toggle={{
+        checked: settingsDraft.monochromeIcon,
+        onCheckedChange: (checked) =>
+          onSwitchChange("monochromeIcon", checked),
+      }}
+    >
+      <FormGroup label="Icon color">
+        <Select
+          value={settingsDraft.monochromeIconVariant}
+          disabled={!settingsDraft.monochromeIcon}
+          onValueChange={onMonochromeIconVariantChange}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={MonochromeIconVariant.Auto}>
+              Auto (follow system theme)
+            </SelectItem>
+            <SelectItem value={MonochromeIconVariant.Dark}>
+              Always dark
+            </SelectItem>
+            <SelectItem value={MonochromeIconVariant.Light}>
+              Always light
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </FormGroup>
+    </SettingsCard>
+  );
+}
+
+function MenuBarTextCard({
   settingsDraft,
   onSwitchChange,
   onTrayTextModeChange,
-}: TrayCardProps) {
+}: Pick<
+  TrayCardProps,
+  "settingsDraft" | "onSwitchChange" | "onTrayTextModeChange"
+>) {
   return (
     <SettingsCard
       title="Menu Bar Text"
@@ -50,5 +102,14 @@ export default function TrayCard({
         </Select>
       </FormGroup>
     </SettingsCard>
+  );
+}
+
+export default function TrayCard(props: TrayCardProps) {
+  return (
+    <>
+      {processPlatform === "linux" && <MonochromeIconCard {...props} />}
+      {processPlatform == "darwin" && <MenuBarTextCard {...props} />}
+    </>
   );
 }
