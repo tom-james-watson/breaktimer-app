@@ -1,5 +1,6 @@
 import SettingsCard from "./settings-card";
 import { Settings } from "../../../types/settings";
+import { shouldStartBreakImmediately } from "./settings-utils";
 
 interface SkipCardProps {
   settingsDraft: Settings;
@@ -10,6 +11,8 @@ export default function SkipCard({
   settingsDraft,
   onSwitchChange,
 }: SkipCardProps) {
+  const immediatelyStartBreaks = shouldStartBreakImmediately(settingsDraft);
+
   return (
     <SettingsCard
       title="Skip"
@@ -17,10 +20,10 @@ export default function SkipCard({
       toggle={{
         checked:
           settingsDraft.skipBreakEnabled &&
-          !settingsDraft.immediatelyStartBreaks,
+          !immediatelyStartBreaks,
         onCheckedChange: (checked) =>
           onSwitchChange("skipBreakEnabled", checked),
-        disabled: settingsDraft.immediatelyStartBreaks,
+        disabled: immediatelyStartBreaks,
       }}
     />
   );

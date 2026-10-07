@@ -5,6 +5,7 @@ import { BreakNotification } from "./break/break-notification";
 import { BreakProgress } from "./break/break-progress";
 import { isPrimaryBreakWindow } from "./break/break-window";
 import { createDarkerRgba } from "./break/utils";
+import { shouldStartBreakImmediately } from "./settings/settings-utils";
 
 export default function Break() {
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -33,8 +34,8 @@ export default function Break() {
       setSettings(settings);
       setTimeSinceLastBreak(timeSince);
 
-      // Skip the countdown if immediately start breaks is enabled or started from tray
-      if (settings.immediatelyStartBreaks || startedFromTray) {
+      // Skip the countdown if auto start delay is 0 or started from tray
+      if (shouldStartBreakImmediately(settings) || startedFromTray) {
         setCountingDown(false);
       }
 
@@ -135,14 +136,17 @@ export default function Break() {
             postponeBreakEnabled={
               settings.postponeBreakEnabled &&
               allowPostpone &&
-              !settings.immediatelyStartBreaks
+              !shouldStartBreakImmediately(settings)
             }
             skipBreakEnabled={
-              settings.skipBreakEnabled && !settings.immediatelyStartBreaks
+              settings.skipBreakEnabled && 
+              !shouldStartBreakImmediately(settings)
             }
             timeSinceLastBreak={timeSinceLastBreak}
             textColor={settings.textColor}
             backgroundColor={settings.backgroundColor}
+            automaticallyStartBreaksDelaySeconds={settings.automaticallyStartBreaksDelaySeconds}
+            automaticallyStartBreaks={settings.automaticallyStartBreaks}
           />
         )}
       </div>

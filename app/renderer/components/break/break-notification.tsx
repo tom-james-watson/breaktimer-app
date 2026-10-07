@@ -4,8 +4,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { formatTimeSinceLastBreak } from "./utils";
 
-const GRACE_PERIOD_MS = 60000;
-const TOTAL_COUNTDOWN_MS = 120000;
+const MAX_GRACE_PERIOD_MS = 60000;
 
 interface BreakNotificationProps {
   onCountdownOver: () => void;
@@ -17,6 +16,8 @@ interface BreakNotificationProps {
   timeSinceLastBreak: number | null;
   textColor: string;
   backgroundColor: string;
+  automaticallyStartBreaksDelaySeconds: number;
+  automaticallyStartBreaks: boolean;
 }
 
 export function BreakNotification({
@@ -29,9 +30,14 @@ export function BreakNotification({
   timeSinceLastBreak,
   textColor,
   backgroundColor,
+  automaticallyStartBreaksDelaySeconds,
+  automaticallyStartBreaks,
 }: BreakNotificationProps) {
   const [phase, setPhase] = useState<"grace" | "countdown">("grace");
   const [msRemaining, setMsRemaining] = useState<number>(0);
+
+  const totalCountdownMs = automaticallyStartBreaksDelaySeconds * 1000;
+  const gracePeriodMs = Math.min(MAX_GRACE_PERIOD_MS, totalCountdownMs);
 
   useEffect(() => {
     const startTime = moment();
@@ -41,11 +47,11 @@ export function BreakNotification({
       const now = moment();
       const elapsedMs = now.diff(startTime, "milliseconds");
 
-      if (elapsedMs < GRACE_PERIOD_MS) {
+      if (elapsedMs < gracePeriodMs || !automaticallyStartBreaks) {
         setPhase("grace");
-      } else if (elapsedMs < TOTAL_COUNTDOWN_MS) {
+      } else if (elapsedMs < totalCountdownMs) {
         setPhase("countdown");
-        setMsRemaining(TOTAL_COUNTDOWN_MS - elapsedMs);
+        setMsRemaining(totalCountdownMs - elapsedMs);
       } else {
         onCountdownOver();
         return;
@@ -61,10 +67,10 @@ export function BreakNotification({
         clearTimeout(timeoutId);
       }
     };
-  }, [onCountdownOver]);
+  }, [onCountdownOver, automaticallyStartBreaks, totalCountdownMs, gracePeriodMs]);
 
   const secondsRemaining = Math.ceil(msRemaining / 1000);
-  const countdownDurationMs = TOTAL_COUNTDOWN_MS - GRACE_PERIOD_MS;
+  const countdownDurationMs = totalCountdownMs - gracePeriodMs;
   const progressValue =
     phase === "countdown"
       ? ((countdownDurationMs - msRemaining) / countdownDurationMs) * 100
