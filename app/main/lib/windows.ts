@@ -94,12 +94,19 @@ export function createStatisticsWindow(): void {
     return;
   }
 
+  // Tall enough to show everything without scrolling, but never taller than
+  // the screen
+  const workArea = screen.getPrimaryDisplay().workAreaSize;
+
   statisticsWindow = new BrowserWindow({
     title: "BreakTimer — Statistics",
     show: false,
-    width: 580,
+    width: Math.min(680, workArea.width),
     minWidth: 580,
-    height: 720 + (process.platform === "win32" ? 40 : 0),
+    height: Math.min(
+      900 + (process.platform === "win32" ? 40 : 0),
+      workArea.height,
+    ),
     minHeight: 500 + (process.platform === "win32" ? 40 : 0),
     autoHideMenuBar: true,
     icon:
