@@ -9,8 +9,10 @@ import {
   Settings,
   SoundType,
 } from "../../types/settings";
+import { BreakEventType } from "../../types/stats";
 import { sendIpc } from "./ipc";
 import { showNotification } from "./notifications";
+import { recordBreakEvent } from "./stats";
 import { getSettings } from "./store";
 import { buildTray } from "./tray";
 import { createBreakWindows } from "./windows";
@@ -82,12 +84,14 @@ export function completeBreakTracking(breakDurationMs: number): void {
   const halfRequiredDuration = requiredDurationMs / 2;
 
   if (breakDurationMs >= halfRequiredDuration) {
+    recordBreakEvent(BreakEventType.Completed, breakDurationMs);
     markBreakCompleted(
       `Break completed [duration=${Math.round(
         breakDurationMs / 1000,
       )}s] [required=${settings.breakLengthSeconds}s]`,
     );
   } else {
+    recordBreakEvent(BreakEventType.EndedEarly, breakDurationMs);
     log.info(
       `Break too short [duration=${Math.round(
         breakDurationMs / 1000,
@@ -96,6 +100,24 @@ export function completeBreakTracking(breakDurationMs: number): void {
   }
 
   currentBreakStartTime = null;
+}
+
+// Only count time away that started and ended within working hours on the same
+// day, so that evenings, nights and weekends don't show up as breaks.
+function recordAwayBreak(awayStart: Date): void {
+  const settings = getSettings();
+  const start = moment(awayStart);
+  const end = moment();
+
+  if (
+    !start.isSame(end, "day") ||
+    !checkInWorkingHoursAt(start, settings) ||
+    !checkInWorkingHoursAt(end, settings)
+  ) {
+    return;
+  }
+
+  recordBreakEvent(BreakEventType.Away, end.diff(start));
 }
 
 function zeroPad(n: number) {
@@ -153,6 +175,7 @@ export function scheduleNextBreak(isPostpone = false): void {
 
   if (idleStart) {
     createIdleNotification();
+    recordAwayBreak(idleStart);
     idleStart = null;
     postponedCount = 0;
 
@@ -204,6 +227,9 @@ export function postponeBreak(action = "snoozed"): void {
   postponedCount++;
   havingBreak = false;
   log.info(`Break ${action} [count=${postponedCount}]`);
+  recordBreakEvent(
+    action === "skipped" ? BreakEventType.Skipped : BreakEventType.Snoozed,
+  );
 
   if (action === "skipped") {
     log.info("Creating break with normal frequency");
@@ -237,6 +263,7 @@ function doBreak(): void {
         settings.breakSoundVolume,
       );
     }
+    recordBreakEvent(BreakEventType.Completed);
     markBreakCompleted("Break completed [type=notification]");
     havingBreak = false;
     scheduleNextBreak();
@@ -381,6 +408,9 @@ function tick(): void {
       // notification, so just reset the break
       lockStart = null;
       breakTime = null;
+      if (lastTick) {
+        recordAwayBreak(lastTick);
+      }
       resetTimeSinceLastBreak("Break auto-detected via system suspension");
     } else if (
       lockStart &&

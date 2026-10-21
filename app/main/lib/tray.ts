@@ -18,7 +18,11 @@ import {
   setDisableEndTime,
   setSettings,
 } from "./store";
-import { closeBreakWindows, createSettingsWindow } from "./windows";
+import {
+  closeBreakWindows,
+  createSettingsWindow,
+  createStatisticsWindow,
+} from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
@@ -274,6 +278,7 @@ export function buildTray(): void {
     },
     { type: "separator" },
     { label: "Settings...", click: createSettingsWindow },
+    { label: "Statistics...", click: createStatisticsWindow },
     { label: "About...", click: createAboutWindow },
     { label: "Quit", click: quit },
   ]);
