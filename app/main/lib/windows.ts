@@ -5,11 +5,12 @@ import { endPopupBreak } from "./breaks";
 import { getSettings } from "./store";
 
 let settingsWindow: BrowserWindow | null = null;
+let statisticsWindow: BrowserWindow | null = null;
 let soundsWindow: BrowserWindow | null = null;
 let breakWindows: BrowserWindow[] = [];
 
 const getBrowserWindowUrl = (
-  page: "settings" | "sounds" | "break",
+  page: "settings" | "statistics" | "sounds" | "break",
   windowId?: number,
 ): string => {
   const windowParam = windowId !== undefined ? `&windowId=${windowId}` : "";
@@ -27,6 +28,9 @@ export function getWindows(): BrowserWindow[] {
   const windows = [];
   if (settingsWindow !== null) {
     windows.push(settingsWindow);
+  }
+  if (statisticsWindow !== null) {
+    windows.push(statisticsWindow);
   }
   if (soundsWindow !== null) {
     windows.push(soundsWindow);
@@ -81,6 +85,45 @@ export function createSettingsWindow(): void {
 
   settingsWindow.on("closed", () => {
     settingsWindow = null;
+  });
+}
+
+export function createStatisticsWindow(): void {
+  if (statisticsWindow) {
+    statisticsWindow.show();
+    return;
+  }
+
+  statisticsWindow = new BrowserWindow({
+    title: "BreakTimer — Statistics",
+    show: false,
+    width: 580,
+    minWidth: 580,
+    height: 720 + (process.platform === "win32" ? 40 : 0),
+    minHeight: 500 + (process.platform === "win32" ? 40 : 0),
+    autoHideMenuBar: true,
+    icon:
+      process.env.NODE_ENV === "development"
+        ? path.join(__dirname, "../../../resources/tray/icon.png")
+        : path.join(process.resourcesPath, "app/resources/tray/icon.png"),
+    webPreferences: {
+      devTools: true,
+      preload: path.join(__dirname, "../../renderer/preload.js"),
+    },
+  });
+
+  statisticsWindow.loadURL(getBrowserWindowUrl("statistics"));
+
+  statisticsWindow.on("ready-to-show", () => {
+    if (!statisticsWindow) {
+      throw new Error('"statisticsWindow" is not defined');
+    }
+    statisticsWindow.show();
+    statisticsWindow.focus();
+  });
+
+  statisticsWindow.on("closed", () => {
+    statisticsWindow = null;
   });
 }
 

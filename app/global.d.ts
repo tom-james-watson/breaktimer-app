@@ -13,6 +13,8 @@ declare const ipcRenderer: {
   invokeSetAppInitialized: () => Promise<void>;
   invokeGetStats: () => Promise<unknown>;
   invokeClearStats: () => Promise<void>;
+  invokeGetStatsRetention: () => Promise<number>;
+  invokeSetStatsRetention: (retentionDays: number) => Promise<void>;
   invokeBreakStart: () => Promise<void>;
   invokeBreakEnd: () => Promise<void>;
   onPlayEndSound: (

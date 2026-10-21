@@ -12,7 +12,12 @@ import {
   startBreakTracking,
   wasStartedFromTray,
 } from "./breaks";
-import { clearBreakEvents, getBreakEvents, pruneBreakEvents } from "./stats";
+import {
+  clearBreakEvents,
+  getBreakEvents,
+  getRetentionDays,
+  setRetentionDays,
+} from "./stats";
 import {
   getSettings,
   setSettings,
@@ -87,7 +92,6 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, settings: Settings): void => {
     log.info(IpcChannel.SettingsSet);
     setSettings(settings);
-    pruneBreakEvents();
     buildTray();
   },
 );
@@ -96,6 +100,19 @@ ipcMain.handle(IpcChannel.StatsGet, (): BreakEvent[] => {
   log.info(IpcChannel.StatsGet);
   return getBreakEvents();
 });
+
+ipcMain.handle(IpcChannel.StatsRetentionGet, (): number => {
+  log.info(IpcChannel.StatsRetentionGet);
+  return getRetentionDays();
+});
+
+ipcMain.handle(
+  IpcChannel.StatsRetentionSet,
+  (_event: IpcMainInvokeEvent, retentionDays: number): void => {
+    log.info(IpcChannel.StatsRetentionSet);
+    setRetentionDays(retentionDays);
+  },
+);
 
 ipcMain.handle(IpcChannel.StatsClear, (): void => {
   log.info(IpcChannel.StatsClear);

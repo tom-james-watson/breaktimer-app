@@ -3,7 +3,6 @@ import { BreakEventType } from "../../types/stats";
 
 vi.mock("electron-store", () => ({ default: class {} }));
 vi.mock("electron-log", () => ({ default: { info: vi.fn() } }));
-vi.mock("./store", () => ({ getSettings: vi.fn() }));
 
 describe("filterExpiredEvents", () => {
   it("drops events older than the retention period", async () => {

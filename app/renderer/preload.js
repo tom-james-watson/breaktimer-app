@@ -57,6 +57,12 @@ process.once("loaded", () => {
     invokeClearStats: () => {
       return ipcRenderer.invoke("STATS_CLEAR");
     },
+    invokeGetStatsRetention: () => {
+      return ipcRenderer.invoke("STATS_RETENTION_GET");
+    },
+    invokeSetStatsRetention: (retentionDays) => {
+      return ipcRenderer.invoke("STATS_RETENTION_SET", retentionDays);
+    },
     invokeBreakStart: () => {
       return ipcRenderer.invoke("BREAK_START");
     },
