@@ -51,6 +51,12 @@ process.once("loaded", () => {
     invokeSetAppInitialized: () => {
       return ipcRenderer.invoke("APP_INITIALIZED_SET");
     },
+    invokeGetStats: () => {
+      return ipcRenderer.invoke("STATS_GET");
+    },
+    invokeClearStats: () => {
+      return ipcRenderer.invoke("STATS_CLEAR");
+    },
     invokeBreakStart: () => {
       return ipcRenderer.invoke("BREAK_START");
     },

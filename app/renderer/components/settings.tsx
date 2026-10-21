@@ -7,6 +7,7 @@ import {
   TrayTextMode,
 } from "../../types/settings";
 import { toast } from "../toaster";
+import Statistics from "./statistics/statistics";
 import AdvancedCard from "./settings/advanced-card";
 import AudioCard from "./settings/audio-card";
 import BackdropCard from "./settings/backdrop-card";
@@ -78,6 +79,11 @@ export default function SettingsEl() {
   const handlePostponeLimitChange = (value: string): void => {
     const postponeLimit = Number(value);
     setSettingsDraft({ ...settingsDraft, postponeLimit });
+  };
+
+  const handleStatsRetentionDaysChange = (value: string): void => {
+    const statsRetentionDays = Number(value);
+    setSettingsDraft({ ...settingsDraft, statsRetentionDays });
   };
 
   const handleTextChange = (
@@ -221,6 +227,13 @@ export default function SettingsEl() {
               settingsDraft={settingsDraft}
               onSwitchChange={handleSwitchChange}
               onSliderChange={handleSliderChange}
+            />
+          </TabsContent>
+
+          <TabsContent value="statistics" className="m-0 space-y-8">
+            <Statistics
+              settingsDraft={settingsDraft}
+              onRetentionDaysChange={handleStatsRetentionDaysChange}
             />
           </TabsContent>
 

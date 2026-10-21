@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain, IpcMainInvokeEvent, screen } from "electron";
 import log from "electron-log";
 import { IpcChannel } from "../../types/ipc";
 import { Settings, SoundType } from "../../types/settings";
+import { BreakEvent } from "../../types/stats";
 import {
   completeBreakTracking,
   getAllowPostpone,
@@ -11,6 +12,7 @@ import {
   startBreakTracking,
   wasStartedFromTray,
 } from "./breaks";
+import { clearBreakEvents, getBreakEvents, pruneBreakEvents } from "./stats";
 import {
   getSettings,
   setSettings,
@@ -85,9 +87,20 @@ ipcMain.handle(
   (_event: IpcMainInvokeEvent, settings: Settings): void => {
     log.info(IpcChannel.SettingsSet);
     setSettings(settings);
+    pruneBreakEvents();
     buildTray();
   },
 );
+
+ipcMain.handle(IpcChannel.StatsGet, (): BreakEvent[] => {
+  log.info(IpcChannel.StatsGet);
+  return getBreakEvents();
+});
+
+ipcMain.handle(IpcChannel.StatsClear, (): void => {
+  log.info(IpcChannel.StatsClear);
+  clearBreakEvents();
+});
 
 ipcMain.handle(IpcChannel.BreakLengthGet, (): number => {
   log.info(IpcChannel.BreakLengthGet);

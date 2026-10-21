@@ -6,6 +6,7 @@ import { setAutoLauch } from "./lib/auto-launch";
 import { initBreaks } from "./lib/breaks";
 import "./lib/ipc";
 import { showNotification } from "./lib/notifications";
+import { initStats } from "./lib/stats";
 import { getAppInitialized } from "./lib/store";
 import { initTray } from "./lib/tray";
 import { createSettingsWindow, createSoundsWindow } from "./lib/windows";
@@ -144,6 +145,7 @@ app.on("ready", async () => {
   }
 
   initBreaks();
+  initStats();
   initTray();
   createSoundsWindow();
 

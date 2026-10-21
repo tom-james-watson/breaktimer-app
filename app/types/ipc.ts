@@ -13,6 +13,8 @@ export enum IpcChannel {
   SoundStartPlay = "SOUND_START_PLAY",
   SettingsGet = "SETTINGS_GET",
   SettingsSet = "SETTINGS_SET",
+  StatsClear = "STATS_CLEAR",
+  StatsGet = "STATS_GET",
   TimeSinceLastBreakGet = "TIME_SINCE_LAST_BREAK_GET",
   WasStartedFromTrayGet = "WAS_STARTED_FROM_TRAY_GET",
 }

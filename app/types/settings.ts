@@ -60,6 +60,7 @@ export interface Settings {
   skipBreakEnabled: boolean;
   postponeBreakEnabled: boolean;
   immediatelyStartBreaks: boolean;
+  statsRetentionDays: number;
 }
 
 export const defaultWorkingRange: WorkingHoursRange = {
@@ -121,6 +122,7 @@ export const defaultSettings: Settings = {
   skipBreakEnabled: false,
   postponeBreakEnabled: true,
   immediatelyStartBreaks: false,
+  statsRetentionDays: 30,
 };
 
 export interface DayConfig {
