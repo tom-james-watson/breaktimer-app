@@ -1,7 +1,8 @@
 import { app, BrowserWindow, screen } from "electron";
 import log from "electron-log";
+import moment from "moment";
 import path from "path";
-import { endPopupBreak } from "./breaks";
+import { endPopupBreak, getBreakTime, isHavingBreak } from "./breaks";
 import { getSettings } from "./store";
 
 let settingsWindow: BrowserWindow | null = null;
@@ -23,6 +24,45 @@ const getBrowserWindowUrl = (
   }
 };
 
+function formatRemainingTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return [hours, minutes, remainingSeconds]
+    .map((part) => String(part).padStart(2, "0"))
+    .join(":");
+}
+
+/** Update the Windows taskbar button for the Settings window with the next-break countdown. */
+export function updateTaskbarCountdown(): void {
+  if (process.platform !== "win32" || !settingsWindow || settingsWindow.isDestroyed()) {
+    return;
+  }
+
+  const settings = getSettings();
+  const breakTime = getBreakTime();
+  const shouldShowCountdown =
+    settings.breaksEnabled &&
+    !isHavingBreak() &&
+    breakTime !== null;
+
+  if (!shouldShowCountdown) {
+    settingsWindow.setTitle("BreakTimer — Settings");
+    settingsWindow.setProgressBar(-1);
+    return;
+  }
+
+  const secondsLeft = Math.max(breakTime.diff(moment(), "seconds"), 0);
+  const totalSeconds = Math.max(settings.breakFrequencySeconds, 1);
+  const progress = Math.min(1, Math.max(0, 1 - secondsLeft / totalSeconds));
+
+  settingsWindow.setTitle(
+    `BreakTimer — ${formatRemainingTime(secondsLeft)} until break`,
+  );
+  settingsWindow.setProgressBar(progress);
+}
+
 export function getWindows(): BrowserWindow[] {
   const windows = [];
   if (settingsWindow !== null) {
@@ -38,6 +78,7 @@ export function getWindows(): BrowserWindow[] {
 export function createSettingsWindow(): void {
   if (settingsWindow) {
     settingsWindow.show();
+    updateTaskbarCountdown();
     return;
   }
 
@@ -77,6 +118,7 @@ export function createSettingsWindow(): void {
     }
     settingsWindow.show();
     settingsWindow.focus();
+    updateTaskbarCountdown();
   });
 
   settingsWindow.on("closed", () => {
