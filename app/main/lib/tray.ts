@@ -18,7 +18,11 @@ import {
   setDisableEndTime,
   setSettings,
 } from "./store";
-import { closeBreakWindows, createSettingsWindow } from "./windows";
+import {
+  closeBreakWindows,
+  createSettingsWindow,
+  updateTaskbarCountdown,
+} from "./windows";
 
 let tray: Tray;
 let lastMinsLeft = 0;
@@ -136,6 +140,8 @@ export function buildTray(): void {
     const trayTitle = getTrayTitle();
     tray.setTitle(trayTitle ?? "", { fontType: "monospacedDigit" });
   }
+
+  updateTaskbarCountdown();
 
   const setBreaksEnabled = (breaksEnabled: boolean): void => {
     if (breaksEnabled) {
@@ -305,14 +311,14 @@ export function initTray(): void {
     }
 
     const breakTime = getBreakTime();
-    if (breakTime === null) {
-      return;
+    if (breakTime !== null) {
+      const minsLeft = breakTime.diff(moment(), "minutes");
+      if (minsLeft !== lastMinsLeft) {
+        buildTray();
+        lastMinsLeft = minsLeft;
+      }
     }
 
-    const minsLeft = breakTime.diff(moment(), "minutes");
-    if (minsLeft !== lastMinsLeft) {
-      buildTray();
-      lastMinsLeft = minsLeft;
-    }
-  }, 5000);
+    updateTaskbarCountdown();
+  }, 1000);
 }
